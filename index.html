@@ -10,34 +10,39 @@
         :root[data-theme="dark"]{--bg:#121212;--card:#1e1e1e;--text:#e4e6eb;--text-muted:#aaa;--border:#333;--input-bg:#2a2a2a;--primary:#6b9fd4;--success:#6ba87e;--warning:#d9a05b;--danger:#d46b6b;--purple:#a689cc}
         body{font-family:-apple-system,sans-serif;padding:10px;max-width:800px;margin:auto;background:var(--bg);color:var(--text);transition:.3s}
         
-        /* TOP BAR */
         .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
         h2{font-weight:800;font-size:20px;margin:0;letter-spacing:-0.5px}
         .top-actions{display:flex;gap:8px}
         .btn-sm{background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 12px;border-radius:20px;font-size:12px;font-weight:bold;cursor:pointer}
         .btn-auth{background:var(--primary);color:#fff;border:none} .btn-auth.logged-in{background:var(--success)}
 
-        /* CONTAINERS */
         .section{background:var(--card);padding:15px;border-radius:12px;margin-bottom:15px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.05)}
         label.lbl{display:block;margin-top:8px;font-size:13px;color:var(--text-muted);font-weight:600}
         input,select,textarea{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px}
         input:focus,select:focus,textarea:focus{border-color:var(--primary);outline:none}
         .row{display:flex;gap:10px;align-items:center} .row>div{flex:1}
         
+        .fake-input{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px;min-height:46px;outline:none;cursor:text;}
+        .fake-input:empty:before{content:attr(data-placeholder);color:var(--text-muted);}
+        .fake-input:focus{border-color:var(--primary);}
+
+        .toggle-header{font-size:15px;font-weight:bold;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:8px;padding:5px 0;}
+        .toggle-header span{font-family:monospace;font-size:18px;}
+
         .big-search{font-size:16px!important;padding:14px!important;font-weight:bold;border:2px solid var(--primary)!important;margin-bottom:10px}
         .btn-main{width:100%;padding:14px;margin-top:10px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer}
         .btn-main:disabled{background:var(--border)!important;color:var(--text-muted)!important}
         .btn-suc{background:var(--success);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;flex:1}
         .btn-gry{background:var(--text-muted);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;flex:1}
 
-        /* FILTERS & TOGGLES */
         details.filters{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:10px}
         details.filters summary{font-size:14px;font-weight:bold;color:var(--text);cursor:pointer;outline:none}
-        .cat-btn{background:var(--input-bg);color:var(--text-muted);border:1px solid var(--border);padding:8px 10px;border-radius:6px;font-size:12px;font-weight:bold;cursor:pointer;flex:1;text-align:center;transition:.2s}
+        
+        .btn-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;margin-top:10px}
+        .cat-btn{background:var(--input-bg);color:var(--text-muted);border:1px solid var(--border);padding:10px 5px;border-radius:6px;font-size:12px;font-weight:bold;cursor:pointer;text-align:center;transition:.2s;width:100%;box-sizing:border-box;}
         .cat-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-        /* ROCK-SOLID UI GRID */
-        #resDiv{max-height:550px;overflow-y:auto;background:var(--card);border-radius:8px;overflow-x:hidden}
+        #resDiv{max-height:550px;overflow-y:auto;background:var(--card);border-radius:8px;overflow-x:hidden;margin-top:10px;}
         .yt-item{display:table;width:100%;table-layout:fixed;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}
         .yt-item:last-child{border-bottom:none}
         .yt-col-chk{display:table-cell;vertical-align:middle;width:40px;text-align:center}
@@ -46,22 +51,31 @@
         .yt-pic{width:120px;height:68px;object-fit:cover;border-radius:6px;background:#222;display:block}
         .yt-col-dat{display:table-cell;vertical-align:top;padding-left:10px;padding-right:10px}
         
-        /* EXPANDABLE TEXT */
         .yt-ttl{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-wrap:break-word;white-space:normal}
         .expanded-text .yt-ttl {display:block; -webkit-line-clamp:unset; overflow:visible}
         
         .yt-chn{font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        
+        .yt-meta{display:none;font-size:10px;color:var(--text-muted);margin-top:5px;gap:6px;flex-wrap:wrap;}
+        .show-date .meta-date{display:inline-block}
+        .show-dur .meta-dur{display:inline-block}
+        .show-date .yt-meta, .show-dur .yt-meta{display:flex}
+        .meta-date, .meta-dur{display:none;background:var(--input-bg);padding:2px 5px;border-radius:4px;border:1px solid var(--border);font-weight:bold;}
+        
         .yt-col-opt{display:table-cell;vertical-align:middle;width:40px;text-align:center}
         .menu-btn{background:none;border:none;color:var(--text);font-size:20px;padding:10px;cursor:pointer}
-
         .badge{font-size:10px;padding:2px 4px;border-radius:4px;font-weight:bold;margin-right:4px} 
         .b-vid{background:var(--danger);color:#fff} .b-pl{background:var(--primary);color:#fff} .b-ch{background:var(--purple);color:#fff}
 
-        /* BOTTOM SHEET */
         #sheetOverlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:none;z-index:999}
-        #botSheet{position:fixed;bottom:-100%;left:0;right:0;background:var(--card);padding:20px;border-radius:20px 20px 0 0;box-shadow:0 -5px 15px rgba(0,0,0,0.3);transition:bottom 0.3s;z-index:1000}
+        #botSheet{position:fixed;bottom:-100%;left:0;right:0;background:var(--card);padding:20px;border-radius:20px 20px 0 0;box-shadow:0 -5px 15px rgba(0,0,0,0.3);transition:bottom 0.3s;z-index:1000;max-height:85vh;overflow-y:auto;}
         #sheetTitle{font-size:14px;font-weight:bold;color:var(--text);margin-top:0;margin-bottom:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .sheet-btn{width:100%;padding:14px;margin-bottom:10px;border:none;border-radius:8px;font-weight:bold;color:#fff;cursor:pointer}
+        .sheet-btn{width:100%;padding:14px;margin-bottom:10px;border:none;border-radius:8px;font-weight:bold;color:#fff;cursor:pointer;font-size:13px;}
+        .menu-divider{height:1px; background:var(--border); margin:15px 0;}
+        .menu-subtitle{font-size:11px; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; font-weight:bold; letter-spacing:0.5px;}
+        
+        #statusBanner{text-align:center;font-weight:bold;font-size:11px;padding:8px;border-radius:6px;background:var(--input-bg);border:1px solid var(--border);margin-top:10px;cursor:pointer;transition:0.2s;}
+        #statusBanner:active{transform:scale(0.98)}
     </style>
 </head>
 <body>
@@ -74,141 +88,196 @@
         </div>
     </div>
 
-    <div id="status" style="text-align:center;font-weight:bold;margin-bottom:15px;font-size:13px;padding:10px;border-radius:8px;background:var(--card);border:1px solid var(--border)">Checking app status...</div>
-
     <div class="section" id="appUI">
-        <div id="lockMsg" onclick="document.getElementById('setupUI').scrollIntoView({behavior: 'smooth'})" style="text-align:center;color:var(--danger);font-weight:600;padding:12px;background:rgba(192,92,92,0.1);border-radius:8px;margin-bottom:15px;cursor:pointer;">🔒 App Locked. Tap here to setup keys.</div>
+        <div id="lockMsg" onclick="$('setupWrapper').style.display='block';$('setupWrapper').scrollIntoView({behavior: 'smooth'})" style="text-align:center;color:var(--danger);font-weight:600;padding:12px;background:rgba(192,92,92,0.1);border-radius:8px;margin-bottom:15px;cursor:pointer;">🔒 App Locked. Tap here to setup keys.</div>
+        
         <form action="javascript:void(0);" onsubmit="runSearch(); return false;">
-            
-            <label class="lbl">🔍 Search Query or Target ID:</label>
-            <input type="search" id="qBox" class="big-search" placeholder="Keyword, UC..., or PL..." disabled required>
+            <div class="row" style="align-items:flex-end;">
+                <div style="flex:3;">
+                    <label class="lbl">🔍 Search Query, URL, or Target ID:</label>
+                    <input type="search" id="qBox" class="big-search" placeholder="Type name, URL, or ID..." disabled required>
+                </div>
+                <div style="flex:1; margin-bottom:10px;">
+                    <label class="lbl">Limit:</label>
+                    <select id="mBox" disabled style="padding:14px; font-weight:bold; border:2px solid var(--border);">
+                        <option value="25">25</option><option value="50" selected>50</option><option value="100">100</option><option value="250">250</option>
+                    </select>
+                </div>
+            </div>
 
             <details class="filters">
-                <summary>⚙️ Settings & Advanced Filters</summary>
+                <summary>⚙️ Search Filters (Type & Date)</summary>
                 <div class="row" style="margin-top:10px;">
-                    <div><label class="lbl">Limit:</label><select id="mBox" disabled><option value="25">25</option><option value="50" selected>50</option><option value="100">100</option><option value="250">250</option></select></div>
-                    <div><label class="lbl">Type:</label><select id="tBox" disabled><option value="all" selected>All (Default)</option><option value="video">Videos</option><option value="playlist">Playlists</option><option value="channel">Channels</option></select></div>
-                </div>
-                <div class="row">
-                    <div><label class="lbl">Duration (Search Only):</label><select id="durBox" disabled><option value="any">Any</option><option value="short">Shorts (< 4m)</option><option value="long">Long (> 20m)</option></select></div>
-                    <div><label class="lbl">Broadcast (Search Only):</label><select id="liveBox" disabled><option value="any">Any</option><option value="completed">Past Live Streams</option><option value="live">Live Now</option></select></div>
-                </div>
-                <div class="row">
+                    <div><label class="lbl">Type:</label><select id="tBox" disabled><option value="all" selected>All</option><option value="video">Videos</option><option value="playlist">Playlists</option><option value="channel">Channels</option></select></div>
                     <div><label class="lbl">Date After:</label><input type="date" id="dAfter" disabled></div>
                     <div><label class="lbl">Date Before:</label><input type="date" id="dBefore" disabled></div>
                 </div>
             </details>
 
-            <button type="submit" id="sBtn" class="btn-main" disabled>🚀 RUN SEARCH</button>
+            <div class="row">
+                <button type="submit" id="sBtn" class="btn-main" style="flex:3;" disabled>🚀 RUN SEARCH</button>
+                <button type="button" class="btn-gry" style="margin-top:10px; flex:1;" onclick="res=[]; drawRes(); updateBanner('✅ Results Cleared.')">🗑️ Clear</button>
+            </div>
+            
+            <button type="button" id="subBtn" class="btn-main" style="background:var(--purple); display:none;" onclick="getSubs()">📥 Get Latest Subscriptions</button>
+            <div id="statusBanner" onclick="jumpToSetup()">Checking status...</div>
         </form>
     </div>
     
     <div class="section" style="padding:15px;">
-        <label class="lbl" style="margin-top:0;">🧹 Filter & View Options:</label>
-        <div class="row" style="margin-bottom:10px; flex-wrap:wrap;">
-            <button id="btn-cat-video" class="cat-btn active" onclick="toggleCat('video')">🎬 Videos</button>
-            <button id="btn-cat-playlist" class="cat-btn" onclick="toggleCat('playlist')">📂 Playlists</button>
-            <button id="btn-cat-channel" class="cat-btn" onclick="toggleCat('channel')">📺 Channels</button>
-            <button class="cat-btn" style="background:var(--border);color:var(--text);" onclick="document.getElementById('resDiv').classList.toggle('expanded-text')">↕️ Expand Text</button>
-        </div>
-        <input type="text" id="filt" placeholder="Type a word to hide unwanted results..." onkeyup="drawRes()" disabled style="margin-bottom:15px;">
+        <details class="filters" style="margin-top:0; margin-bottom:15px;" open>
+            <summary>👁️ View Options & Toggles</summary>
+            <label class="lbl" style="margin-top:10px;">🧹 Local Result Filter:</label>
+            <input type="text" id="filt" placeholder="Type a word to hide unwanted results..." onkeyup="filterRes()" disabled>
+            
+            <div class="btn-grid">
+                <button id="btn-cat-video" class="cat-btn active" onclick="toggleCat('video')">🎬 Videos</button>
+                <button id="btn-cat-playlist" class="cat-btn" onclick="toggleCat('playlist')">📂 Playlists</button>
+                <button id="btn-cat-channel" class="cat-btn" onclick="toggleCat('channel')">📺 Channels</button>
+                <button class="cat-btn" style="background:var(--border);color:var(--text);" onclick="document.getElementById('resDiv').classList.toggle('expanded-text')">↕️ Expand Text</button>
+                <button class="cat-btn" style="background:var(--border);color:var(--text);" onclick="document.getElementById('resDiv').classList.toggle('show-date')">📅 Date</button>
+                <button class="cat-btn" style="background:var(--border);color:var(--text);" onclick="document.getElementById('resDiv').classList.toggle('show-dur')">⏱️ Duration</button>
+            </div>
+        </details>
         
         <div id="resDiv"><div style="padding:20px; text-align:center; color:var(--text-muted);">Results will appear here...</div></div>
         
         <div class="row" style="margin-top:15px;">
             <button class="btn-gry" onclick="selAll()">☑️ Select All</button>
             <button class="btn-suc" onclick="addQ()">⬇️ Add to Queue</button>
+            <button class="btn-gry" onclick="res=[]; drawRes(); updateBanner('✅ Results Cleared.')">🗑️ Clear</button>
         </div>
     </div>
     
     <div class="section">
-        <h3 style="color:var(--success);margin-top:0;font-size:16px">📦 Download Queue</h3>
+        <h3 style="color:var(--success);margin-top:0;font-size:16px">📦 Download Queue (No Duplicates)</h3>
         <textarea id="qArea" rows="6"></textarea>
         <div class="row" style="margin-top:10px;">
-            <button class="btn-gry" onclick="document.getElementById('qArea').value=''">Clear</button>
+            <button class="btn-gry" onclick="document.getElementById('qArea').value='';updateBanner('✅ Queue Cleared.')">Clear</button>
             <button class="btn-gry" onclick="navigator.clipboard.writeText(document.getElementById('qArea').value);alert('Copied!')">Copy</button>
-            <button class="btn-suc" style="background:#4285F4;" onclick="shareQ()">Share</button>
+            <button class="btn-suc" style="background:#4285F4;" onclick="shareQ()">Share Menu</button>
+        </div>
+        <div class="row" style="margin-top:10px;">
+            <button class="btn-main" style="background:var(--danger); margin-top:0;" onclick="downloaderIntent()">⬇️ Send to Downloader</button>
+            <button class="btn-main" id="plBtn" style="background:var(--purple); margin-top:0; display:none;" onclick="createSecretPlaylist()">🔒 Create Playlist</button>
+        </div>
+        <div style="text-align:center; margin-top:10px;">
+            <a id="plLink" href="https://www.youtube.com/feed/playlists" target="_blank" style="display:none; font-size:13px; color:var(--primary); font-weight:bold; text-decoration:none;">🔗 Open my YouTube Playlists</a>
         </div>
     </div>
 
-    <form class="section" id="setupUI" style="margin-top:30px;border:1px dashed var(--border)" onsubmit="event.preventDefault();">
-        <h3 style="margin-top:0;font-size:16px">🔑 Core API Setup</h3>
-        <label class="lbl">API Key (Username Field):</label>
-        <input type="text" id="ak" name="username" autocomplete="username" placeholder="AIzaSy..." oninput="saveK()">
-        <label class="lbl">Client ID (Password Field):</label>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Authorize this exact URL in Google Console: <b class="dyn-url">...</b></div>
-        <input type="password" id="cid" name="password" autocomplete="current-password" placeholder="...apps.googleusercontent.com" oninput="saveK()">
-    </form>
+    <div id="setupWrapper">
+        <form class="section" id="setupUI" style="border:2px dashed var(--primary)" onsubmit="event.preventDefault();">
+            <div class="toggle-header" onclick="toggleSec('setupBody', 'setupIcon')"><span id="setupIcon">➖</span> API Configuration</div>
+            <div id="setupBody">
+                <label class="lbl">API Key:</label>
+                <input type="text" id="username_ak" name="username" autocomplete="username" placeholder="AIzaSy..." oninput="saveK()">
+                <label class="lbl">Client ID:</label>
+                <input type="password" id="password_cid" name="password" autocomplete="current-password" placeholder="...apps.googleusercontent.com" oninput="saveK()">
+                <button type="submit" style="display:none">Save</button>
+            </div>
+        </form>
 
-    <div class="section" id="genUI" style="margin-top:15px;border:1px solid var(--border)">
-        <h3 style="color:var(--purple);margin-top:0;font-size:15px">🛠️ Generate Clean App</h3>
-        <label class="lbl">Reminder Email (Optional):</label>
-        <input type="text" id="x_rem_z" placeholder="Your Google email..." autocomplete="off" data-bwignore="true">
-        <button class="btn-main" style="background:var(--purple);margin-top:15px;" onclick="genApp()">📥 Download Clean App</button>
+        <div class="section" id="genUI" style="border:1px solid var(--border)">
+            <div class="toggle-header" style="color:var(--purple);" onclick="toggleSec('genBody', 'genIcon')"><span id="genIcon">➕</span> Generate Clean App</div>
+            <div id="genBody" style="display:none; margin-top:10px;">
+                <label class="lbl">Reminder Email (Optional):</label>
+                <div contenteditable="true" id="x_rem_z" class="fake-input" data-placeholder="Your Google email..."></div>
+                <button class="btn-main" style="background:var(--purple);margin-top:15px;" onclick="genApp()">📥 Download Clean App</button>
+            </div>
+        </div>
     </div>
 
     <div id="sheetOverlay" onclick="closeMenu()"></div>
     <div id="botSheet">
         <div style="width:40px;height:5px;background:var(--border);border-radius:5px;margin:0 auto 15px;"></div>
         <h4 id="sheetTitle">Options</h4>
-        <button class="sheet-btn" style="background:var(--success);" onclick="scrapeParentChannel()">📺 View Channel Content (Sorted by Newest)</button>
-        <button class="sheet-btn" style="background:var(--purple);" onclick="findPlaylists()">📂 Find ALL Playlists by Channel</button>
-        <button class="sheet-btn" style="background:var(--text-muted);" onclick="closeMenu()">Cancel</button>
+        <div id="sheetOptions"></div>
     </div>
 
     <script>
         let res=[], token=null;
-        let menuTargetChannel = '';
-        let showCat = { video: true, playlist: false, channel: false }; // Video default only
+        let showCat = { video: true, playlist: false, channel: false }; 
         
         const $=(id)=>document.getElementById(id);
-        const getK=()=>window.H_AK || ($('ak')?$('ak').value.trim():"");
-        const getC=()=>window.H_CID || ($('cid')?$('cid').value.trim():"");
+        const getK=()=>window.H_AK || ($('username_ak')?$('username_ak').value.trim():"");
+        const getC=()=>window.H_CID || ($('password_cid')?$('password_cid').value.trim():"");
         
         function initTheme() { document.documentElement.setAttribute('data-theme', localStorage.getItem('t')||'light'); }
         function toggleTheme() { let t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',t); localStorage.setItem('t',t); }
         
         window.onload = function() {
             initTheme();
-            if($('ak')&&localStorage.getItem('y_ak')) $('ak').value=localStorage.getItem('y_ak');
-            if($('cid')&&localStorage.getItem('y_ci')) $('cid').value=localStorage.getItem('y_ci');
-            
-            let loc = (window.location.origin !== "null" && window.location.origin !== "file://") ? window.location.origin : "Local File";
-            document.querySelectorAll('.dyn-url').forEach(el => el.innerText = loc);
+            if($('username_ak')&&localStorage.getItem('y_ak')) $('username_ak').value=localStorage.getItem('y_ak');
+            if($('password_cid')&&localStorage.getItem('y_ci')) $('password_cid').value=localStorage.getItem('y_ci');
             checkL(); 
         };
 
-        function saveK() { if($('ak')) localStorage.setItem('y_ak',$('ak').value.trim()); if($('cid')) localStorage.setItem('y_ci',$('cid').value.trim()); checkL(); }
+        function toggleSec(bodyId, iconId) {
+            let b = $(bodyId); let i = $(iconId);
+            if(b.style.display === 'none') { b.style.display = 'block'; i.innerText = '➖'; }
+            else { b.style.display = 'none'; i.innerText = '➕'; }
+        }
+
+        function saveK() { 
+            if($('username_ak')) localStorage.setItem('y_ak',$('username_ak').value.trim()); 
+            if($('password_cid')) localStorage.setItem('y_ci',$('password_cid').value.trim()); 
+            checkL(); 
+        }
+
+        function jumpToSetup() {
+            let w = $('setupWrapper');
+            w.style.display = 'block';
+            let sb = $('setupBody'); let si = $('setupIcon');
+            if(sb.style.display === 'none') { sb.style.display = 'block'; si.innerText = '➖'; }
+            w.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+
+        function updateBanner(msg) { $('statusBanner').innerHTML = msg; }
 
         function checkL() {
             let u = getK().length>10 || token;
-            ['qBox','tBox','mBox','sBtn','dAfter','dBefore','filt','durBox','liveBox'].forEach(id=>{if($(id)) $(id).disabled=!u;});
-            if($('lockMsg')) $('lockMsg').style.display=u?'none':'block';
+            ['qBox','tBox','mBox','sBtn','dAfter','dBefore','filt'].forEach(id=>{if($(id)) $(id).disabled=!u;});
             
             let authBtn = $('authBtn');
             if(authBtn) {
                 if(!getC()) { authBtn.style.display = 'none'; }
                 else {
                     authBtn.style.display = 'block';
-                    if(token) { authBtn.innerText = 'Log Out'; authBtn.classList.add('logged-in'); } 
-                    else { authBtn.innerText = '👤 Sign In'; authBtn.classList.remove('logged-in'); }
+                    if(token) { 
+                        authBtn.innerText = 'Log Out'; authBtn.classList.add('logged-in'); 
+                        $('subBtn').style.display = 'block'; $('plBtn').style.display = 'block'; $('plLink').style.display = 'block';
+                    } else { 
+                        authBtn.innerText = '👤 Sign In'; authBtn.classList.remove('logged-in'); 
+                        $('subBtn').style.display = 'none'; $('plBtn').style.display = 'none'; $('plLink').style.display = 'none';
+                    }
                 }
             }
 
-            if($('status')){
-                if(u&&!token) $('status').innerHTML="<span style='color:var(--success)'>✅ Ready to search (API Key active).</span>";
-                else if(token) $('status').innerHTML="<span style='color:var(--success)'>✅ Logged In (Expires in 1 Hour).</span>";
-                else $('status').innerHTML="<span style='color:var(--danger)'>🔒 App Locked. Scroll down to setup keys.</span>";
+            if(u&&!token) {
+                updateBanner("<span style='color:var(--success)'>✅ Ready.</span>");
+                if(!window.H_AK && $('setupWrapper').style.display === '') toggleSec('setupBody', 'setupIcon'); 
+                $('lockMsg').style.display = 'none';
+            }
+            else if(token) {
+                updateBanner("<span style='color:var(--success)'>✅ Logged In.</span>");
+                $('lockMsg').style.display = 'none';
+            }
+            else { 
+                updateBanner("<span style='color:var(--danger)'>🔒 App Locked.</span>"); 
+                $('setupWrapper').style.display = 'block'; 
+                $('lockMsg').style.display = 'block';
             }
         }
 
         function toggleAuth() {
             if(!getC()) return alert("No Client ID found.");
-            if(token) { token = null; checkL(); $('status').innerHTML="<span style='color:var(--warning)'>Logged out. Reverting to API Key.</span>"; } 
-            else { google.accounts.oauth2.initTokenClient({ client_id: getC(), scope: 'https://www.googleapis.com/auth/youtube.readonly', callback: (r)=>{ if(r&&r.access_token){ token=r.access_token; checkL(); } } }).requestAccessToken(); }
+            if(token) { token = null; checkL(); updateBanner("<span style='color:var(--warning)'>Logged out.</span>"); } 
+            else { 
+                google.accounts.oauth2.initTokenClient({ client_id: getC(), scope: 'https://www.googleapis.com/auth/youtube', callback: (r)=>{ if(r&&r.access_token){ token=r.access_token; checkL(); } } }).requestAccessToken(); 
+            }
         }
 
-        // --- FILTER & UI LOGIC ---
         function toggleCat(cat) {
             showCat[cat] = !showCat[cat];
             let btn = $('btn-cat-'+cat);
@@ -221,46 +290,130 @@
             let cb = $(cbId); cb.checked = !cb.checked;
         }
 
-        function openMenu(e, channelId, titleText) {
+        function openMenu(e, type, id, channelId, titleText, url) {
             e.stopPropagation();
-            if(!channelId || channelId === 'undefined') return alert("Could not find the parent channel ID.");
-            menuTargetChannel = channelId;
             $('sheetTitle').innerText = titleText;
+            
+            let cleanUrl = url.replace(/^https?:\/\//, '');
+            let intentUrl = `intent://${cleanUrl}#Intent;action=android.intent.action.VIEW;scheme=https;end`;
+
+            let html = '';
+            
+            html += `<div class="row" style="margin-bottom:10px;">
+                        <button class="sheet-btn" style="background:var(--input-bg);color:var(--text);border:1px solid var(--border);margin:0;font-size:12px;padding:12px;" onclick="closeMenu();window.location.href='${intentUrl}'">📱 Open in App</button>
+                        <button class="sheet-btn" style="background:var(--input-bg);color:var(--text);border:1px solid var(--border);margin:0;font-size:12px;padding:12px;" onclick="closeMenu();window.open('${url}', '_blank')">🌐 Open in Browser</button>
+                     </div>`;
+            html += `<button class="sheet-btn" style="background:var(--input-bg);color:var(--text);border:1px solid var(--border);" onclick="closeMenu();navigator.clipboard.writeText('${url}');alert('Copied!')">📋 Copy Link</button>`;
+            html += `<div class="menu-divider"></div>`;
+
+            if(type === 'playlist') {
+                html += `<div class="menu-subtitle">Playlist Actions</div>`;
+                html += `<button class="sheet-btn" style="background:var(--success);" onclick="closeMenu();scrape('${id}', 'playlist', true)">👁️ View Playlist Contents</button>`;
+                html += `<button class="sheet-btn" style="background:var(--primary);" onclick="closeMenu();scrape('${id}', 'playlist', false)">📥 Scrape Playlist to Queue</button>`;
+                html += `<div class="menu-divider"></div>`;
+            }
+
+            if(channelId && channelId !== 'undefined') {
+                html += `<div class="menu-subtitle">Parent Channel Actions</div>`;
+                html += `<button class="sheet-btn" style="background:var(--danger);" onclick="closeMenu();scrape('${channelId}', 'channel', true)">👁️ View Channel Content</button>`;
+                html += `<button class="sheet-btn" style="background:var(--purple);" onclick="closeMenu();scrape('${channelId}', 'channel', false)">📥 Scrape Channel to Queue</button>`;
+                html += `<button class="sheet-btn" style="background:var(--warning);color:#000;" onclick="closeMenu();fetchPlaylists('${channelId}')">📂 Find Channel Playlists</button>`;
+                html += `<div class="menu-divider"></div>`;
+            }
+
+            html += `<button class="sheet-btn" style="background:var(--text-muted);" onclick="closeMenu()">Cancel</button>`;
+            $('sheetOptions').innerHTML = html;
+            
             $('sheetOverlay').style.display = 'block';
             setTimeout(() => $('botSheet').style.bottom = '0', 10);
         }
+        
         function closeMenu() {
             $('botSheet').style.bottom = '-100%';
             setTimeout(() => $('sheetOverlay').style.display = 'none', 300);
         }
-        function scrapeParentChannel() { closeMenu(); scrape(menuTargetChannel, 'channel'); }
-        function findPlaylists() { closeMenu(); fetchPlaylists(menuTargetChannel); }
 
         function shareQ() {
             let txt = $('qArea').value;
             if(!txt) return alert("Queue is empty!");
-            if(navigator.share) { navigator.share({ title: 'YT Scraper Links', text: txt }).catch(e=>console.log(e)); } 
-            else { navigator.clipboard.writeText(txt); alert("Copied to clipboard!"); }
+            let intentUrl = `intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodeURIComponent(txt)};end`;
+            try {
+                if(navigator.share) { navigator.share({ title: 'YT Scraper Links', text: txt }).catch(e=>{ window.location.href = intentUrl; }); } 
+                else { window.location.href = intentUrl; }
+            } catch(e) { window.location.href = intentUrl; }
+        }
+
+        function downloaderIntent() {
+            let txt = $('qArea').value;
+            if(!txt) return alert("Queue is empty!");
+            let intentUrl = `intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodeURIComponent(txt)};end`;
+            window.location.href = intentUrl;
+        }
+
+        function addQ() { 
+            let u=Array.from(document.querySelectorAll('.yt-chk:checked')).map(b=>b.value).filter(v=>v); 
+            if(!u.length) return; 
+            let exist = new Set($('qArea').value.split('\n').map(s=>s.trim()).filter(s=>s));
+            u.forEach(link => exist.add(link));
+            $('qArea').value = Array.from(exist).join('\n'); 
+            updateBanner(`<span style='color:var(--primary)'>📦 Added. Total: ${exist.size} unique URLs.</span>`); 
+        }
+
+        async function createSecretPlaylist() {
+            if(!token) return alert("You must sign in first.");
+            let txt = $('qArea').value.split('\n').map(s=>s.trim()).filter(s=>s);
+            if(!txt.length) return alert("Queue is empty!");
+
+            let invalidUrls = txt.filter(url => !url.includes('watch?v='));
+            let validIds = txt.filter(url => url.includes('watch?v=')).map(url => url.split('v=')[1].split('&')[0]);
+
+            if(invalidUrls.length > 0) {
+                if(confirm(`⚠️ Warning: Found ${invalidUrls.length} Channel/Playlist URLs in queue. Playlists can only contain Videos.\n\nClick OK to copy invalid URLs to clipboard and remove them, or Cancel to abort.`)) {
+                    navigator.clipboard.writeText(invalidUrls.join('\n'));
+                    $('qArea').value = txt.filter(url => url.includes('watch?v=')).join('\n');
+                    alert("Invalid URLs removed from queue. Click 'Create Playlist' again to proceed with videos only.");
+                }
+                return;
+            }
+
+            if(!validIds.length) return alert("No valid videos to add.");
+
+            updateBanner("⏳ Creating Private Playlist...");
+            let hd = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+            try {
+                let pRes = await fetch('https://www.googleapis.com/youtube/v3/playlists?part=snippet,status', {
+                    method: 'POST', headers: hd,
+                    body: JSON.stringify({ snippet: { title: `Scraped List ${new Date().toLocaleDateString()}` }, status: { privacyStatus: "private" } })
+                });
+                let pData = await pRes.json();
+                if(pData.error) throw new Error(pData.error.message);
+                let pid = pData.id;
+
+                updateBanner(`⏳ Injecting ${validIds.length} videos...`);
+                for(let vid of validIds) {
+                    await fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet', {
+                        method: 'POST', headers: hd,
+                        body: JSON.stringify({ snippet: { playlistId: pid, resourceId: { kind: "youtube#video", videoId: vid } } })
+                    });
+                }
+                updateBanner(`<span style='color:var(--success)'>✅ Playlist Created Successfully!</span>`);
+            } catch(e) { updateBanner(`<span style='color:var(--danger)'>❌ Error: ${e.message}</span>`); }
         }
 
         function genApp() {
             if(!getK()&&!getC()) return alert("Paste keys first.");
-            if(getC() && !confirm("⚠️ IMPORTANT:\n\nYou MUST add your new web link to Google Console Authorized URIs, or Login will fail.\n\nContinue?")) return;
-            
             let hc = document.documentElement.cloneNode(true);
-            if(hc.querySelector('#setupUI')) hc.querySelector('#setupUI').remove();
-            if(hc.querySelector('#genUI')) hc.querySelector('#genUI').remove();
-            if(hc.querySelector('#lockMsg')) hc.querySelector('#lockMsg').remove();
+            if(hc.querySelector('#setupWrapper')) hc.querySelector('#setupWrapper').remove();
             
-            let emStr = $('x_rem_z').value ? `Account: ${$('x_rem_z').value}` : "Private App generated.";
+            let remVal = $('x_rem_z').innerText.trim();
+            let emStr = remVal ? `Account: ${remVal}` : "Private App generated.";
             
-            let genUrl = window.location.href;
             let f = document.createElement('div');
-            f.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:20px;padding:15px;border-top:1px solid var(--border)">${emStr}<br><br><b class="dyn-url">...</b><br><br><a href="${genUrl}" style="color:var(--primary);text-decoration:none;font-weight:bold">🔄 Back to Generator</a></div>`;
+            f.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:20px;padding:15px;border-top:1px solid var(--border)">${emStr}</div>`;
             hc.querySelector('body').appendChild(f);
-
+            
             let scr = document.createElement('script');
-            scr.textContent = `window.H_AK="${getK()}";window.H_CID="${getC()}";window.onload=function(){initTheme();checkL();document.querySelectorAll('.dyn-url').forEach(e=>e.innerText=window.location.origin);};`;
+            scr.textContent = `window.H_AK="${getK()}";window.H_CID="${getC()}";window.onload=function(){initTheme();checkL();};`;
             hc.querySelector('body').insertBefore(scr,hc.querySelector('body').firstChild);
             
             let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(["<!DOCTYPE html>\n<html lang='en'>\n"+hc.innerHTML+"\n</html>"], {type:'text/html'}));
@@ -274,49 +427,122 @@
             return '';
         }
 
+        function parsePT(pt) {
+            if(!pt) return ''; let m = pt.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/); if(!m) return '';
+            let h = m[1]||0, min = m[2]||0, s = m[3]||0;
+            if(h>0) return `${h}:${min.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            return `${min}:${s.toString().padStart(2,'0')}`;
+        }
+        
+        function timeAgo(dateStr) {
+            if(!dateStr) return ''; let d = new Date(dateStr); let diffMs = new Date() - d; let diffDay = Math.floor(diffMs / 86400000);
+            if (diffDay >= 30) return dateStr.split('T')[0];
+            if (diffDay > 0) return diffDay + (diffDay===1?" day":" days") + " ago";
+            let diffHr = Math.floor(diffMs / 3600000); if (diffHr > 0) return diffHr + (diffHr===1?" hour":" hours") + " ago";
+            let diffMin = Math.floor(diffMs / 60000); if (diffMin > 0) return diffMin + (diffMin===1?" min":" mins") + " ago";
+            return "Just now";
+        }
+
+        async function fetchDurations() {
+            let vids = res.filter(i=>i.k==='video' && !i.dur).map(i=>i.v);
+            if(!vids.length || (!getK() && !token)) return;
+            let hd=token?{'Authorization':`Bearer ${token}`}:{};
+            for(let i=0; i<vids.length; i+=50) {
+                let chunk = vids.slice(i, i+50).join(',');
+                let u = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${chunk}`;
+                if(!token) u += `&key=${getK()}`;
+                try {
+                    let d = await (await fetch(u, {headers:hd})).json();
+                    if(d.items) {
+                        let durMap = {}; d.items.forEach(v => durMap[v.id] = parsePT(v.contentDetails.duration));
+                        res.forEach(r => { if(r.k==='video' && durMap[r.v]) r.dur = durMap[r.v]; });
+                    }
+                } catch(e){}
+            }
+            drawRes(); 
+        }
+
         async function runSearch() {
             if(!getK()&&!token) return; if(!$('qBox').value) return;
             $('resDiv').innerHTML="<div style='text-align:center;padding:30px;font-weight:bold;'>⏳ Searching...</div>"; res=[]; $('filt').value="";
+            
+            let q=$('qBox').value.trim();
+            let plMatch = q.match(/[&?]list=([^&]+)/i);
+            if(plMatch) return scrape(plMatch[1], 'playlist', true);
+            let vMatch = q.match(/(?:youtu\.be\/|v=)([\w-]{11})/i);
+            if(vMatch) q = vMatch[1]; 
+            
             try {
-                let q=$('qBox').value.trim(), pt='', f=0, mx=parseInt($('mBox').value), hd=token?{'Authorization':`Bearer ${token}`}:{};
-                if(q.startsWith("PL")&&q.length>15) return scrape(q,'playlist');
-                
+                let pt='', f=0, mx=parseInt($('mBox').value), hd=token?{'Authorization':`Bearer ${token}`}:{};
                 let aft=$('dAfter').value, bef=$('dBefore').value;
-                let dur=$('durBox').value, liv=$('liveBox').value;
 
-                while(f<mx){
-                    let u=`search?part=snippet&maxResults=50`; if(!token) u+=`&key=${getK()}`; 
-                    
-                    if($('tBox').value !== 'all') u+=`&type=${$('tBox').value}`;
-                    else if (dur !== 'any' || liv !== 'any') u+=`&type=video`; // API requires type=video for duration/live filters
-                    
-                    u+= (q.startsWith("UC")&&q.length===24) ? `&channelId=${q}` : `&q=${encodeURIComponent(q)}`; 
-                    if(pt) u+=`&pageToken=${pt}`;
-                    if(aft) u+=`&publishedAfter=${new Date(aft).toISOString()}`;
-                    if(bef) u+=`&publishedBefore=${new Date(bef).toISOString()}`;
-                    if(dur !== 'any') u+=`&videoDuration=${dur}`;
-                    if(liv !== 'any') u+=`&eventType=${liv}`;
-
-                    let d = await (await fetch(`https://www.googleapis.com/youtube/v3/${u}`,{headers:hd})).json();
-                    if(d.error) throw new Error(d.error.message); if(!d.items) break;
-                    
-                    res.push(...d.items.map(i=>{
-                        let s=i.snippet||{}, o=i.id||{};
-                        return { t:s.title||'Unknown', k:(o.kind||'').replace('youtube#',''), v:o.videoId||'', p:o.playlistId||'', c:s.channelId||o.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s) };
-                    }));
-                    f+=d.items.length; pt=d.nextPageToken; if(!pt||f>=mx) break;
+                if(q.length === 11 && !q.includes(' ')) {
+                    let u=`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${q}`; if(!token) u+=`&key=${getK()}`;
+                    let d = await (await fetch(u,{headers:hd})).json();
+                    if(d.error) throw new Error(d.error.message);
+                    if(d.items) {
+                        let mapped = d.items.map(i=>{ let s=i.snippet||{}; return { t:s.title||'Unknown', k:'video', v:i.id, c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt, desc:s.description||'' }; });
+                        res.push(...mapped);
+                    }
+                } 
+                else if (q.startsWith("PL")&&q.length>15&&!q.includes(' ')) {
+                    return scrape(q,'playlist', true);
                 }
-                if(res.length>mx) res=res.slice(0,mx); drawRes(); $('status').innerHTML=`<span style='color:var(--success)'>✅ Found ${res.length} items.</span>`;
-            } catch(e) { $('resDiv').innerHTML=`<div style='color:var(--danger);padding:20px'>Error: ${e.message}</div>`; $('status').innerHTML="<span style='color:var(--danger)'>❌ Failed.</span>"; }
+                else {
+                    while(f<mx){
+                        let u=`search?part=snippet&maxResults=50&safeSearch=strict`; if(!token) u+=`&key=${getK()}`; 
+                        if($('tBox').value !== 'all') u+=`&type=${$('tBox').value}`;
+                        u+= (q.startsWith("UC")&&q.length===24) ? `&channelId=${q}` : `&q=${encodeURIComponent(q)}`; 
+                        if(pt) u+=`&pageToken=${pt}`;
+                        if(aft) u+=`&publishedAfter=${new Date(aft).toISOString()}`;
+                        if(bef) u+=`&publishedBefore=${new Date(bef).toISOString()}`;
+
+                        let d = await (await fetch(`https://www.googleapis.com/youtube/v3/${u}`,{headers:hd})).json();
+                        if(d.error) throw new Error(d.error.message); if(!d.items) break;
+                        
+                        let mapped = d.items.map(i=>{
+                            let s=i.snippet||{}, o=i.id||{};
+                            return { t:s.title||'Unknown', k:(o.kind||'').replace('youtube#',''), v:o.videoId||'', p:o.playlistId||'', c:s.channelId||o.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt, desc:s.description||'' };
+                        });
+                        
+                        res.push(...mapped);
+                        f+=d.items.length; pt=d.nextPageToken; if(!pt||f>=mx) break;
+                    }
+                }
+                if(res.length>mx) res=res.slice(0,mx); 
+                drawRes(); fetchDurations(); 
+                updateBanner(`<span style='color:var(--success)'>✅ Found ${res.length} items.</span>`);
+            } catch(e) { $('resDiv').innerHTML=`<div style='color:var(--danger);padding:20px'>Error: ${e.message}</div>`; updateBanner("<span style='color:var(--danger)'>❌ Failed.</span>"); }
         }
 
-        async function scrape(id, type) {
-            $('resDiv').innerHTML="<div style='text-align:center;padding:30px;color:var(--primary);font-weight:bold;'>⏳ Loading Channel Content...</div>"; res=[]; $('filt').value="";
+        async function getSubs() {
+            if(!token) return alert("Must be signed in.");
+            $('resDiv').innerHTML="<div style='text-align:center;padding:30px;color:var(--primary);font-weight:bold;'>⏳ Loading Subscriptions...</div>"; res=[]; $('filt').value="";
+            try {
+                let d = await (await fetch(`https://www.googleapis.com/youtube/v3/activities?part=snippet,contentDetails&home=true&maxResults=50`,{headers:{'Authorization':`Bearer ${token}`}})).json();
+                if(d.error) throw new Error(d.error.message);
+                if(d.items) {
+                    let mapped = d.items.filter(i=>i.contentDetails&&i.contentDetails.upload).map(i=>{
+                        let s=i.snippet||{}, v=i.contentDetails.upload.videoId;
+                        return { t:s.title||'Unknown', k:'video', v:v, c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt, desc:s.description||'' };
+                    });
+                    res = mapped;
+                }
+                if(!showCat.video) toggleCat('video'); drawRes(); fetchDurations();
+                updateBanner(`<span style='color:var(--success)'>✅ Loaded Latest Subscriptions.</span>`);
+            } catch(e) { $('resDiv').innerHTML=`<div style='color:var(--danger);padding:20px'>${e.message}</div>`; updateBanner("❌ Failed."); }
+        }
+
+        async function scrape(id, type, viewOnly) {
+            $('resDiv').innerHTML="<div style='text-align:center;padding:30px;color:var(--primary);font-weight:bold;'>⏳ Loading Content...</div>"; 
+            if(viewOnly) { res=[]; $('filt').value=""; }
+            
             let hd=token?{'Authorization':`Bearer ${token}`}:{};
+            let tempRes = [];
             try {
                 let tid = id;
                 if(type==='channel'){
-                    $('status').innerHTML="⏳ Locating channel database...";
+                    updateBanner("⏳ Locating channel database...");
                     let u=`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${id}`; if(!token) u+=`&key=${getK()}`;
                     let d = await (await fetch(u,{headers:hd})).json(); if(d.error) throw new Error(d.error.message);
                     if(!d.items||!d.items.length) throw new Error("Channel not found.");
@@ -324,20 +550,32 @@
                 }
                 let pt=''; let pages=0;
                 do {
-                    pages++; $('status').innerHTML=`⏳ Scraping page ${pages}... (${res.length} grabbed)`;
+                    pages++; updateBanner(`⏳ Scraping page ${pages}...`);
                     let u=`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${tid}`; if(!token) u+=`&key=${getK()}`; if(pt) u+=`&pageToken=${pt}`;
                     let d = await (await fetch(u,{headers:hd})).json(); if(d.error) throw new Error(d.error.message);
                     
-                    if(d.items) res.push(...d.items.map(i=>{
-                        let s=i.snippet||{}, r=s.resourceId||{};
-                        return { t:s.title||'Unknown', k:'video', v:r.videoId||'', c:s.videoOwnerChannelId||s.channelId||'', ct:s.videoOwnerChannelTitle||s.channelTitle||'Unknown', th:getThumb(s) };
-                    }));
+                    if(d.items) {
+                        let mapped = d.items.map(i=>{
+                            let s=i.snippet||{}, r=s.resourceId||{};
+                            return { t:s.title||'Unknown', k:'video', v:r.videoId||'', c:s.videoOwnerChannelId||s.channelId||'', ct:s.videoOwnerChannelTitle||s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt, desc:s.description||'' };
+                        });
+                        tempRes.push(...mapped);
+                    }
                     pt=d.nextPageToken||'';
                 } while(pt);
-                // Force "Videos" category toggle ON so results aren't accidentally hidden
-                if(!showCat.video) toggleCat('video'); 
-                drawRes(); $('status').innerHTML=`<span style='color:var(--success)'>✅ Scraped ${res.length} videos (Sorted Newest to Oldest).</span>`;
-            } catch(e) { $('resDiv').innerHTML=`<div style='color:var(--danger);padding:20px'>${e.message}</div>`; $('status').innerHTML="<span style='color:var(--danger)'>❌ Scrape Failed.</span>"; }
+
+                if(viewOnly) {
+                    res = tempRes;
+                    if(!showCat.video) toggleCat('video'); 
+                    drawRes(); fetchDurations();
+                } else {
+                    let exist = new Set($('qArea').value.split('\n').map(s=>s.trim()).filter(s=>s));
+                    tempRes.forEach(item => exist.add(`https://www.youtube.com/watch?v=${item.v}`));
+                    $('qArea').value = Array.from(exist).join('\n'); 
+                    $('resDiv').innerHTML="<div style='padding:20px;text-align:center;'>✅ Added directly to queue.</div>";
+                }
+                updateBanner(`<span style='color:var(--success)'>✅ Processed ${tempRes.length} videos.</span>`);
+            } catch(e) { $('resDiv').innerHTML=`<div style='color:var(--danger);padding:20px'>${e.message}</div>`; updateBanner("<span style='color:var(--danger)'>❌ Scrape Failed.</span>"); }
         }
 
         async function fetchPlaylists(channelId) {
@@ -346,31 +584,32 @@
             try {
                 let pt=''; let pages=0;
                 do {
-                    pages++; $('status').innerHTML=`⏳ Scanning page ${pages}...`;
+                    pages++; updateBanner(`⏳ Scanning page ${pages}...`);
                     let u=`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${channelId}&maxResults=50`; if(!token) u+=`&key=${getK()}`; if(pt) u+=`&pageToken=${pt}`;
                     let d = await (await fetch(u,{headers:hd})).json(); if(d.error) throw new Error(d.error.message);
                     
-                    if(d.items) res.push(...d.items.map(i=>{
-                        let s=i.snippet||{};
-                        return { t:s.title||'Unknown', k:'playlist', p:i.id||'', c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s) };
-                    }));
+                    if(d.items) {
+                        let mapped = d.items.map(i=>{
+                            let s=i.snippet||{};
+                            return { t:s.title||'Unknown', k:'playlist', p:i.id||'', c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt, desc:s.description||'' };
+                        });
+                        res.push(...mapped);
+                    }
                     pt=d.nextPageToken||'';
                 } while(pt);
-                // Force "Playlists" category toggle ON so results aren't hidden
                 if(!showCat.playlist) toggleCat('playlist'); 
-                drawRes(); $('status').innerHTML=`<span style='color:var(--success)'>✅ Found ${res.length} playlists.</span>`;
-            } catch(e) { $('resDiv').innerHTML=`<div style='color:var(--danger);padding:20px'>${e.message}</div>`; $('status').innerHTML="<span style='color:var(--danger)'>❌ Search Failed.</span>"; }
+                drawRes(); updateBanner(`<span style='color:var(--success)'>✅ Found ${res.length} playlists.</span>`);
+            } catch(e) { $('resDiv').innerHTML=`<div style='color:var(--danger);padding:20px'>${e.message}</div>`; updateBanner("<span style='color:var(--danger)'>❌ Search Failed.</span>"); }
         }
 
+        function filterRes() { drawRes(); }
+        
         function drawRes() {
             let f=$('filt').value.toLowerCase();
-            let h=''; 
-            let visibleCount = 0;
+            let h=''; let visibleCount = 0;
 
             res.forEach((i,x)=>{
-                // 1. Check Category Toggle Filter
                 if(!showCat[i.k]) return; 
-                // 2. Check Text Filter
                 if(f && !(i.t||'').toLowerCase().includes(f)) return;
 
                 visibleCount++;
@@ -382,6 +621,11 @@
                 let imgTag = i.th ? `<img src="${i.th}" class="yt-pic">` : `<div class="yt-pic" style="display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;">No Image</div>`;
                 let safeTitle = (i.t||"").replace(/'/g,"\\'").replace(/"/g,'&quot;');
                 
+                let metaHTML = `<div class="yt-meta">`;
+                if(i.dt) metaHTML += `<span class="meta-date">📅 ${timeAgo(i.dt)}</span>`;
+                if(i.dur) metaHTML += `<span class="meta-dur">⏱️ ${i.dur}</span>`;
+                metaHTML += `</div>`;
+                
                 h+=`
                 <div class="yt-item" onclick="toggleRow(event, 'i${x}')">
                     <div class="yt-col-chk"><input type="checkbox" class="yt-chk" value="${l}" id="i${x}"></div>
@@ -389,21 +633,17 @@
                     <div class="yt-col-dat">
                         <div class="yt-ttl">${b}${i.t}</div>
                         <div class="yt-chn">${i.ct}</div>
+                        ${metaHTML}
                     </div>
                     <div class="yt-col-opt">
-                        <button class="menu-btn" onclick="openMenu(event, '${i.c}', '${safeTitle}')">⋮</button>
+                        <button class="menu-btn" onclick="openMenu(event, '${i.k}', '${i.v||i.p||i.c}', '${i.c}', '${safeTitle}', '${l}')">⋮</button>
                     </div>
                 </div>`;
             }); 
             
-            if(visibleCount === 0) {
-                $('resDiv').innerHTML="<div style='padding:20px;text-align:center;color:var(--text-muted);'>No items match your current filters.</div>";
-            } else {
-                $('resDiv').innerHTML=h;
-            }
+            if(visibleCount === 0) $('resDiv').innerHTML="<div style='padding:20px;text-align:center;color:var(--text-muted);'>No items match filters.</div>";
+            else $('resDiv').innerHTML=h;
         }
-
-        function filterRes() { drawRes(); }
 
         function selAll() { 
             let c=document.querySelectorAll('.yt-chk'); 
@@ -411,13 +651,6 @@
             if(!visibleCbs.length) return; 
             let all = visibleCbs.every(b=>b.checked); 
             visibleCbs.forEach(b=>b.checked=!all); 
-        }
-        
-        function addQ() { 
-            let u=Array.from(document.querySelectorAll('.yt-chk:checked')).map(b=>b.value).filter(v=>v); 
-            if(!u.length) return; 
-            $('qArea').value=$('qArea').value?$('qArea').value+"\n"+u.join('\n'):u.join('\n'); 
-            $('status').innerHTML=`<span style='color:var(--primary)'>📦 Added ${u.length} URLs.</span>`; 
         }
     </script>
 </body>
