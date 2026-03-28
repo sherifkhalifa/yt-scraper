@@ -9,7 +9,7 @@
         :root[data-theme="light"]{--bg:#f0f2f5;--card:#fff;--text:#333;--text-muted:#666;--border:#dadae0;--input-bg:#fafafa;--primary:#5c8bc0;--success:#5c9c6f;--warning:#c28c46;--danger:#c05c5c;--purple:#9074b3}
         :root[data-theme="dark"]{--bg:#18191a;--card:#242526;--text:#e4e6eb;--text-muted:#b0b3b8;--border:#3e4042;--input-bg:#3a3b3c;--primary:#6b9fd4;--success:#6ba87e;--warning:#d9a05b;--danger:#d46b6b;--purple:#a689cc}
         body{font-family:-apple-system,sans-serif;padding:12px;max-width:800px;margin:auto;background:var(--bg);color:var(--text);transition:.3s}
-        h2{text-align:center;font-weight:600;margin-bottom:5px}
+        h2{text-align:center;font-weight:600;margin-bottom:5px;font-size:22px}
         .section{background:var(--card);padding:15px;border-radius:10px;margin-bottom:15px;border:1px solid var(--border)}
         label{display:block;margin-top:8px;font-size:14px;color:var(--text-muted);font-weight:600}
         input,select,textarea{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:6px;font-size:15px}
@@ -17,7 +17,7 @@
         .big-search{font-size:18px!important;padding:16px!important;font-weight:bold}
         .help{font-size:13px;color:var(--text-muted);margin:6px 0 12px;line-height:1.5}
         .row{display:flex;gap:10px;margin-top:10px;align-items:center} .row>div{flex:1}
-        button{width:100%;padding:14px;margin-top:10px;color:#fff;border:none;border-radius:6px;font-weight:bold;font-size:15px;cursor:pointer}
+        button{width:100%;padding:14px;margin-top:10px;color:#fff;border:none;border-radius:6px;font-weight:bold;font-size:15px;cursor:pointer;transition:.2s}
         button:active{opacity:.8} button:disabled{background:var(--border)!important;color:var(--text-muted)!important;cursor:not-allowed}
         .btn-pri{background:var(--primary)} .btn-suc{background:var(--success)} .btn-gry{background:var(--text-muted)} .btn-pur{background:var(--purple)}
         #status{text-align:center;font-weight:bold;margin-bottom:15px;font-size:14px;padding:10px;border-radius:6px;background:var(--input-bg);border:1px solid var(--border)}
@@ -27,7 +27,8 @@
         .badge{font-size:11px;padding:3px 6px;border-radius:4px;font-weight:bold;margin-right:6px} .b-vid{background:var(--danger);color:#fff} .b-pl{background:var(--primary);color:#fff} .b-ch{background:var(--purple);color:#fff}
         .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
         .theme-btn{background:transparent;color:var(--text);border:1px solid var(--border);padding:6px 12px;border-radius:15px;width:auto}
-        .box{background:var(--card);border:1px solid var(--border);padding:12px;border-radius:6px;margin-bottom:15px;font-size:13px;line-height:1.5}
+        .box{background:var(--card);border:1px solid var(--border);padding:12px;border-radius:6px;margin-bottom:15px;font-size:13px;line-height:1.6}
+        .box a{color:var(--primary);text-decoration:none;font-weight:600} .box a:hover{text-decoration:underline}
         code{background:var(--border);padding:3px 6px;border-radius:4px;font-family:monospace;font-size:13px;color:var(--text);display:inline-block;margin-top:4px}
     </style>
 </head>
@@ -60,14 +61,30 @@
 
     <div class="section" id="setupUI" style="margin-top:30px;border:1px dashed var(--border)">
         <h3 style="margin-top:0;font-size:16px">⚙️ App Setup</h3>
-        <div class="box"><b>1. API Key <span style="color:var(--warning)">(Restrictions Optional)</span>:</b><br>• <span style="color:var(--text-muted)">Required for searching.</span><br>• <i>Caution:</i> You can leave it unrestricted to work anywhere, but restricting it prevents quota theft.</div>
-        <div class="box"><b>2. Client ID <span style="color:var(--danger)">(Restrictions MANDATORY)</span>:</b><br>• <span style="color:var(--text-muted)">Required for private logins.</span><br>• In Google Console, you MUST add this exact address to your Authorized URIs:<br><code class="dyn-url">...</code></div>
+        
+        <div class="box">
+            <b>1. Get your API Key <span style="color:var(--warning)">(Restrictions Optional)</span>:</b><br>
+            • Go to the <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank">YouTube Data API v3 Page</a> and click <b>Enable</b>.<br>
+            • Go to the <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Credentials Page</a>, click <b>+ CREATE CREDENTIALS</b> -> <b>API Key</b>.<br>
+            • <i>Caution:</i> To protect your quota from theft, you should edit the key, select <b>Websites</b>, and add this exact URL:<br>
+            <code class="dyn-url">...</code>
+        </div>
+        
+        <div class="box">
+            <b>2. Get your Client ID <span style="color:var(--danger)">(Restrictions MANDATORY)</span>:</b><br>
+            • On the <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Credentials Page</a>, click <b>+ CREATE CREDENTIALS</b> -> <b>OAuth client ID</b>.<br>
+            • Select <b>Web application</b>.<br>
+            • Under <b>Authorized JavaScript origins</b>, you MUST click <b>+ ADD URI</b> and paste exactly this URL:<br>
+            <code class="dyn-url">...</code>
+        </div>
+
         <label>🔑 API Key:</label><input type="password" id="ak" oninput="saveK()">
         <label>👤 Client ID:</label><input type="password" id="cid" oninput="saveK()">
+        
         <div style="margin-top:25px;padding-top:15px;border-top:1px solid var(--border)">
             <h3 style="color:var(--purple);margin-top:0;font-size:15px">🛠️ Generate Clean App</h3>
-            <div class="help">Removes this setup box completely.</div>
-            <label>📧 Reminder Email (Optional):</label><input type="email" id="uem">
+            <div class="help">Fills in your keys invisibly and removes this entire setup section permanently.</div>
+            <label>📧 Reminder Email (Optional):</label><input type="email" id="uem" placeholder="Your Google email...">
             <button class="btn-pur" onclick="genApp()">📥 Download Clean App</button>
         </div>
     </div>
@@ -116,7 +133,7 @@
         function genApp() {
             if(!getK()&&!getC()) return alert("Paste keys first.");
             if(getC()) {
-                if(!confirm("⚠️ IMPORTANT:\n\nWhen you host this new file on a site like Netlify, your web link will change.\n\nYou MUST go to Google Console and add your new Netlify link to your 'OAuth Client ID', or Login will fail.\n\nContinue download?")) return;
+                if(!confirm("⚠️ IMPORTANT WARNING:\n\nWhen you host this new file on a site like Netlify, your web link will change.\n\nYou MUST go to Google Console and add your new Netlify link to your 'OAuth Client ID' Authorized URIs, or the Login button will fail.\n\nContinue download?")) return;
             }
             
             let hc = document.documentElement.cloneNode(true);
@@ -125,10 +142,7 @@
             if(getC()&&hc.querySelector('#emDisp')) hc.querySelector('#emDisp').innerHTML=$('uem').value?`Account: <b>${$('uem').value}</b>`:"Private Login";
             else if(hc.querySelector('#logWrap')) hc.querySelector('#logWrap').remove();
 
-            // Auto-detect current generator URL for the backdoor link
             let genUrl = window.location.href;
-
-            // Inject dynamic footer for generated app utilizing the detected URL
             let f = document.createElement('div');
             f.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:20px;padding:15px;border-top:1px solid var(--border)">Running on: <b class="dyn-url">...</b><br>Ensure this URL is authorized in Google Console.<br><br><a href="${genUrl}" style="color:var(--primary);text-decoration:none;font-weight:bold">🔄 Back to Generator</a></div>`;
             hc.querySelector('body').appendChild(f);
