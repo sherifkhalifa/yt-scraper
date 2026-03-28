@@ -11,7 +11,7 @@
         body{font-family:-apple-system,sans-serif;padding:10px;max-width:800px;margin:auto;background:var(--bg);color:var(--text);transition:.3s}
         h2{text-align:center;font-weight:600;margin-bottom:5px;font-size:20px}
         .section{background:var(--card);padding:15px;border-radius:12px;margin-bottom:15px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.05)}
-        label{display:block;margin-top:8px;font-size:14px;color:var(--text-muted);font-weight:600}
+        label.input-label{display:block;margin-top:8px;font-size:14px;color:var(--text-muted);font-weight:600}
         input,select,textarea{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px}
         input:focus,select:focus,textarea:focus{border-color:var(--primary);outline:none}
         .big-search{font-size:18px!important;padding:16px!important;font-weight:bold;border:2px solid var(--primary)!important}
@@ -22,17 +22,17 @@
         .btn-pri{background:var(--primary)} .btn-suc{background:var(--success)} .btn-gry{background:var(--text-muted)} .btn-pur{background:var(--purple)}
         #status{text-align:center;font-weight:bold;margin-bottom:15px;font-size:14px;padding:10px;border-radius:8px;background:var(--card);border:1px solid var(--border)}
         
-        /* SNAPTUBE / YOUTUBE STYLE RESULTS */
-        #resDiv{max-height:500px;overflow-y:auto;background:var(--card);padding:0;border-radius:8px}
-        .item{display:flex;align-items:flex-start;gap:10px;padding:12px;border-bottom:1px solid var(--border);position:relative}
-        .item:last-child{border-bottom:none}
-        .chk{transform:scale(1.4);margin-top:15px;accent-color:var(--primary);flex-shrink:0}
-        .thumb{width:120px;height:68px;object-fit:cover;border-radius:8px;background:#000;flex-shrink:0}
-        .info{flex:1;display:flex;flex-direction:column;overflow:hidden;padding-right:15px}
-        .i-title{font-size:14px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
-        .i-channel{font-size:12px;color:var(--text-muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .menu-btn{position:absolute;top:5px;right:0;background:none;border:none;color:var(--text);font-size:20px;padding:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+        /* AD-BLOCKER SAFE SNAPTUBE UI */
+        #resDiv{max-height:550px;overflow-y:auto;background:var(--card);padding:0;border-radius:8px}
+        .yt-row{display:flex;align-items:flex-start;gap:12px;padding:12px;border-bottom:1px solid var(--border);position:relative}
+        .yt-row:last-child{border-bottom:none}
+        .yt-chk{transform:scale(1.4);margin:20px 0 0 5px;accent-color:var(--primary);flex-shrink:0}
+        .yt-pic{width:140px;height:78px;object-fit:cover;border-radius:8px;background:#222;flex-shrink:0}
+        .yt-dat{flex:1;display:flex;flex-direction:column;overflow:hidden;padding-right:25px}
+        .yt-ttl{font-size:14px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word;color:var(--text);margin-bottom:4px}
+        .yt-chn{font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         
+        .menu-btn{position:absolute;top:5px;right:0;background:none;border:none;color:var(--text);font-size:22px;padding:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer}
         .badge{font-size:10px;padding:3px 5px;border-radius:4px;font-weight:bold;margin-right:4px;vertical-align:middle} 
         .b-vid{background:var(--danger);color:#fff} .b-pl{background:var(--primary);color:#fff} .b-ch{background:var(--purple);color:#fff}
         
@@ -56,18 +56,18 @@
     <div class="section" id="appUI">
         <div id="lockMsg" style="text-align:center;color:var(--danger);font-weight:600;padding:10px;background:rgba(192,92,92,0.1);border-radius:8px;margin-bottom:15px">🔒 App Locked. Setup keys below.</div>
         <form action="javascript:void(0);" onsubmit="runSearch(); return false;">
-            <label>🔍 Search Query or Target ID:</label>
+            <label class="input-label">🔍 Search Query or Target ID:</label>
             <div class="help"><b>Keywords:</b> e.g., Python Tutorial | <b>Channels:</b> UC... | <b>Playlists:</b> PL...</div>
             <input type="search" id="qBox" class="big-search" placeholder="Enter keyword or ID..." disabled required>
             <div class="row">
-                <div><label>Type:</label><select id="tBox" disabled><option value="all">All</option><option value="video" selected>Videos</option><option value="playlist">Playlists</option><option value="channel">Channels</option></select></div>
-                <div><label>Limit:</label><select id="mBox" disabled><option value="25">25</option><option value="50" selected>50</option><option value="100">100</option><option value="250">250</option></select></div>
+                <div><label class="input-label">Type:</label><select id="tBox" disabled><option value="all">All</option><option value="video" selected>Videos</option><option value="playlist">Playlists</option><option value="channel">Channels</option></select></div>
+                <div><label class="input-label">Limit:</label><select id="mBox" disabled><option value="25">25</option><option value="50" selected>50</option><option value="100">100</option><option value="250">250</option></select></div>
             </div>
             <button type="submit" id="sBtn" class="btn-pri" disabled>🚀 RUN SEARCH</button>
         </form>
     </div>
 
-    <div class="section"><label>🧹 Local Filter:</label><input type="text" id="filt" placeholder="Type a word to hide unwanted results..." onkeyup="filterRes()"></div>
+    <div class="section"><label class="input-label">🧹 Local Filter:</label><input type="text" id="filt" placeholder="Type a word to hide unwanted results..." onkeyup="filterRes()"></div>
     
     <div class="section" style="padding:0; overflow:hidden;">
         <div id="resDiv"><div style="padding:20px; text-align:center; color:var(--text-muted);">Results will appear here...</div></div>
@@ -98,16 +98,16 @@
             • Under <b>Authorized JavaScript origins</b>, add:<br><code class="dyn-url">...</code>
         </div>
 
-        <label>🔑 API Key:</label>
+        <label class="input-label">🔑 API Key:</label>
         <input type="text" id="ak" name="username" autocomplete="username" placeholder="AIzaSy..." oninput="saveK()">
         
-        <label>👤 Client ID:</label>
+        <label class="input-label">👤 Client ID:</label>
         <input type="password" id="cid" name="password" autocomplete="current-password" placeholder="...apps.googleusercontent.com" oninput="saveK()">
         
         <div style="margin-top:25px;padding-top:15px;border-top:1px solid var(--border)">
             <h3 style="color:var(--purple);margin-top:0;font-size:15px">🛠️ Generate Clean App</h3>
             <div class="help">Removes this entire setup section permanently.</div>
-            <label>📧 Reminder Email (Optional):</label>
+            <label class="input-label">📧 Reminder Email (Optional):</label>
             <input type="email" id="uem" placeholder="Your Google email..." autocomplete="off" data-bwignore="true">
             <button class="btn-pur" onclick="genApp()">📥 Download Clean App</button>
         </div>
@@ -164,7 +164,6 @@
             google.accounts.oauth2.initTokenClient({ client_id: getC(), scope: 'https://www.googleapis.com/auth/youtube.readonly', callback: (r)=>{ if(r&&r.access_token){ token=r.access_token; $('status').innerHTML="<span style='color:var(--success)'>✅ Logged In.</span>"; checkL(); } } }).requestAccessToken();
         }
 
-        // --- MENU LOGIC ---
         function openMenu(channelId, titleText) {
             if(!channelId || channelId === 'undefined') return alert("Could not find the parent channel ID for this item.");
             menuTargetChannel = channelId;
@@ -202,6 +201,14 @@
             a.download = 'YT_Clean.html'; a.click();
         }
 
+        // Helper to safely extract thumbnails without breaking older Android WebViews
+        function getThumb(snip) {
+            if(!snip || !snip.thumbnails) return '';
+            if(snip.thumbnails.medium && snip.thumbnails.medium.url) return snip.thumbnails.medium.url;
+            if(snip.thumbnails.default && snip.thumbnails.default.url) return snip.thumbnails.default.url;
+            return '';
+        }
+
         async function runSearch() {
             if(!getK()&&!token) return; if(!$('qBox').value) return;
             $('resDiv').innerHTML="<div style='text-align:center;padding:30px;font-weight:bold;'>⏳ Searching Database...</div>"; res=[]; $('filt').value="";
@@ -214,15 +221,19 @@
                     let d = await (await fetch(`https://www.googleapis.com/youtube/v3/${u}`,{headers:hd})).json();
                     if(d.error) throw new Error(d.error.message); if(!d.items) break;
                     
-                    res.push(...d.items.map(i=>({
-                        t:i.snippet.title, 
-                        k:i.id.kind.replace('youtube#',''), 
-                        v:i.id.videoId, 
-                        p:i.id.playlistId, 
-                        c:i.snippet.channelId || i.id.channelId,
-                        ct:i.snippet.channelTitle,
-                        th:i.snippet.thumbnails?.medium?.url || i.snippet.thumbnails?.default?.url || ''
-                    })));
+                    res.push(...d.items.map(i=>{
+                        let snip = i.snippet || {};
+                        let idObj = i.id || {};
+                        return {
+                            t: snip.title || 'Unknown Title', 
+                            k: (idObj.kind || '').replace('youtube#',''), 
+                            v: idObj.videoId || '', 
+                            p: idObj.playlistId || '', 
+                            c: snip.channelId || idObj.channelId || '',
+                            ct: snip.channelTitle || 'Unknown Channel',
+                            th: getThumb(snip)
+                        };
+                    }));
                     f+=d.items.length; pt=d.nextPageToken; if(!pt||f>=mx) break;
                 }
                 if(res.length>mx) res=res.slice(0,mx); drawRes(); $('status').innerHTML=`<span style='color:var(--success)'>✅ Found ${res.length} items.</span>`;
@@ -247,14 +258,18 @@
                     let u=`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${tid}`; if(!token) u+=`&key=${getK()}`; if(pt) u+=`&pageToken=${pt}`;
                     let d = await (await fetch(u,{headers:hd})).json(); if(d.error) throw new Error(d.error.message);
                     
-                    if(d.items) res.push(...d.items.map(i=>({
-                        t:i.snippet.title, 
-                        k:'video', 
-                        v:i.snippet.resourceId.videoId,
-                        c:i.snippet.videoOwnerChannelId || '',
-                        ct:i.snippet.videoOwnerChannelTitle || i.snippet.channelTitle,
-                        th:i.snippet.thumbnails?.medium?.url || i.snippet.thumbnails?.default?.url || ''
-                    })));
+                    if(d.items) res.push(...d.items.map(i=>{
+                        let snip = i.snippet || {};
+                        let resId = snip.resourceId || {};
+                        return {
+                            t: snip.title || 'Unknown Title', 
+                            k: 'video', 
+                            v: resId.videoId || '',
+                            c: snip.videoOwnerChannelId || snip.channelId || '',
+                            ct: snip.videoOwnerChannelTitle || snip.channelTitle || 'Unknown Channel',
+                            th: getThumb(snip)
+                        };
+                    }));
                     pt=d.nextPageToken||'';
                 } while(pt);
                 drawRes(); $('status').innerHTML=`<span style='color:var(--success)'>✅ Scraped ${res.length} videos.</span>`;
@@ -271,41 +286,46 @@
                     let u=`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${channelId}&maxResults=50`; if(!token) u+=`&key=${getK()}`; if(pt) u+=`&pageToken=${pt}`;
                     let d = await (await fetch(u,{headers:hd})).json(); if(d.error) throw new Error(d.error.message);
                     
-                    if(d.items) res.push(...d.items.map(i=>({
-                        t:i.snippet.title, 
-                        k:'playlist', 
-                        p:i.id, 
-                        c:i.snippet.channelId,
-                        ct:i.snippet.channelTitle,
-                        th:i.snippet.thumbnails?.medium?.url || i.snippet.thumbnails?.default?.url || ''
-                    })));
+                    if(d.items) res.push(...d.items.map(i=>{
+                        let snip = i.snippet || {};
+                        return {
+                            t: snip.title || 'Unknown Title', 
+                            k: 'playlist', 
+                            p: i.id || '', 
+                            c: snip.channelId || '',
+                            ct: snip.channelTitle || 'Unknown Channel',
+                            th: getThumb(snip)
+                        };
+                    }));
                     pt=d.nextPageToken||'';
                 } while(pt);
                 drawRes(); $('status').innerHTML=`<span style='color:var(--success)'>✅ Found ${res.length} playlists.</span>`;
             } catch(e) { $('resDiv').innerHTML=`<div style='color:var(--danger);padding:20px'>${e.message}</div>`; $('status').innerHTML="<span style='color:var(--danger)'>❌ Search Failed.</span>"; }
         }
 
-        function filterRes() { let f=$('filt').value.toLowerCase(); document.querySelectorAll('.item').forEach(i=>{ if(i.dataset.t.toLowerCase().includes(f)) i.style.display="flex"; else{i.style.display="none"; i.querySelector('.chk').checked=false;} }); }
+        function filterRes() { let f=$('filt').value.toLowerCase(); document.querySelectorAll('.yt-row').forEach(i=>{ if(i.dataset.t.toLowerCase().includes(f)) i.style.display="flex"; else{i.style.display="none"; i.querySelector('.yt-chk').checked=false;} }); }
         
         function drawRes() {
-            if(!res.length) return $('resDiv').innerHTML="<div style='padding:20px;text-align:center;'>No items found.</div>";
+            if(!res.length) return $('resDiv').innerHTML="<div style='padding:20px;text-align:center;color:var(--text-muted);'>No items found.</div>";
             let h=''; res.forEach((i,x)=>{
                 let l="", b="";
                 if(i.k==="video"){l=`https://www.youtube.com/watch?v=${i.v}`; b=`<span class="badge b-vid">VID</span>`;}
                 else if(i.k==="playlist"){l=`https://www.youtube.com/playlist?list=${i.p}`; b=`<span class="badge b-pl">PL</span>`;}
                 else if(i.k==="channel"){l=`https://www.youtube.com/channel/${i.c}`; b=`<span class="badge b-ch">CH</span>`;}
                 
-                let imgTag = i.th ? `<img src="${i.th}" class="thumb">` : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:#666;font-size:10px;">No Img</div>`;
+                let imgTag = i.th ? `<img src="${i.th}" class="yt-pic">` : `<div class="yt-pic" style="display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;">No Image</div>`;
                 let safeTitle = (i.t||"").replace(/'/g,"\\'").replace(/"/g,'&quot;');
                 
                 h+=`
-                <div class="item" data-t="${safeTitle}">
-                    <input type="checkbox" class="chk" value="${l}" id="i${x}" checked>
-                    <label for="i${x}" style="display:flex;gap:12px;margin:0;flex:1;cursor:pointer;">
-                        ${imgTag}
-                        <div class="info">
-                            <div class="i-title">${b}${i.t}</div>
-                            <div class="i-channel">${i.ct || 'Unknown Channel'}</div>
+                <div class="yt-row" data-t="${safeTitle}">
+                    <input type="checkbox" class="yt-chk" value="${l}" id="i${x}" checked>
+                    <label for="i${x}" style="flex:1; display:block; cursor:pointer; min-width:0;">
+                        <div style="display:flex; gap:12px;">
+                            ${imgTag}
+                            <div class="yt-dat">
+                                <div class="yt-ttl">${b}${i.t}</div>
+                                <div class="yt-chn">${i.ct}</div>
+                            </div>
                         </div>
                     </label>
                     <button class="menu-btn" onclick="openMenu('${i.c}', '${safeTitle}')">⋮</button>
@@ -313,8 +333,8 @@
             }); $('resDiv').innerHTML=h;
         }
 
-        function selAll() { let c=document.querySelectorAll('.item[style!="display: none;"] .chk'); if(!c.length) return; let a=Array.from(c).every(b=>b.checked); c.forEach(b=>b.checked=!a); }
-        function addQ() { let u=Array.from(document.querySelectorAll('.chk:checked')).map(b=>b.value).filter(v=>v); if(!u.length) return; $('qArea').value=$('qArea').value?$('qArea').value+"\n"+u.join('\n'):u.join('\n'); $('status').innerHTML=`<span style='color:var(--primary)'>📦 Added ${u.length} URLs.</span>`; }
+        function selAll() { let c=document.querySelectorAll('.yt-row[style!="display: none;"] .yt-chk'); if(!c.length) return; let a=Array.from(c).every(b=>b.checked); c.forEach(b=>b.checked=!a); }
+        function addQ() { let u=Array.from(document.querySelectorAll('.yt-chk:checked')).map(b=>b.value).filter(v=>v); if(!u.length) return; $('qArea').value=$('qArea').value?$('qArea').value+"\n"+u.join('\n'):u.join('\n'); $('status').innerHTML=`<span style='color:var(--primary)'>📦 Added ${u.length} URLs.</span>`; }
     </script>
 </body>
 </html>
