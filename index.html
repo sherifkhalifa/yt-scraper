@@ -59,7 +59,7 @@
         <div id="emDisp" style="font-size:13px;text-align:center;margin-bottom:10px"></div><button class="btn-pri" onclick="doAuth()" style="margin:0">👤 Log In (Expires in 1 Hour)</button>
     </div>
 
-    <div class="section" id="setupUI" style="margin-top:30px;border:1px dashed var(--border)">
+    <form class="section" id="setupUI" style="margin-top:30px;border:1px dashed var(--border)" onsubmit="event.preventDefault();">
         <h3 style="margin-top:0;font-size:16px">⚙️ App Setup</h3>
         
         <div class="box">
@@ -78,16 +78,20 @@
             <code class="dyn-url">...</code>
         </div>
 
-        <label>🔑 API Key:</label><input type="password" id="ak" oninput="saveK()">
-        <label>👤 Client ID:</label><input type="password" id="cid" oninput="saveK()">
+        <label>🔑 API Key (Bitwarden Username):</label>
+        <input type="text" id="ak" name="username" autocomplete="username" placeholder="AIzaSy..." oninput="saveK()">
+        
+        <label>👤 Client ID (Bitwarden Password):</label>
+        <input type="password" id="cid" name="password" autocomplete="current-password" placeholder="...apps.googleusercontent.com" oninput="saveK()">
         
         <div style="margin-top:25px;padding-top:15px;border-top:1px solid var(--border)">
             <h3 style="color:var(--purple);margin-top:0;font-size:15px">🛠️ Generate Clean App</h3>
             <div class="help">Fills in your keys invisibly and removes this entire setup section permanently.</div>
-            <label>📧 Reminder Email (Optional):</label><input type="email" id="uem" placeholder="Your Google email...">
+            <label>📧 Reminder Email (Ignored by Bitwarden):</label>
+            <input type="email" id="uem" placeholder="Your Google email..." autocomplete="off" data-bwignore="true">
             <button class="btn-pur" onclick="genApp()">📥 Download Clean App</button>
         </div>
-    </div>
+    </form>
 
     <script>
         let res=[], token=null;
@@ -103,7 +107,6 @@
             if($('ak')&&localStorage.getItem('y_ak')) $('ak').value=localStorage.getItem('y_ak');
             if($('cid')&&localStorage.getItem('y_ci')) $('cid').value=localStorage.getItem('y_ci');
             
-            // Auto-detect URL for instructions
             let loc = (window.location.origin !== "null" && window.location.origin !== "file://") ? window.location.origin : "Local File";
             document.querySelectorAll('.dyn-url').forEach(el => el.innerText = loc);
             checkL(); 
