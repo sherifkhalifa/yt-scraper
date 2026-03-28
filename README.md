@@ -9,7 +9,7 @@ A lightning-fast, client-side YouTube scraping tool that bypasses public rate li
 ## 🛠️ How this Tool Works
 Because public YouTube scrapers often hang or fail due to server blocks, this HTML app connects directly to Google's official backend. 
 
-The live link above acts as a **Generator**. You can use it to test searches, but its main purpose is to build a completely private, standalone web app for yourself. By entering your API keys and clicking "Download Clean App," the generator injects your keys invisibly into the code and strips away all setup menus, giving you a pure, zero-step scraping tool.
+The live link above acts as a **Generator**. You can use it to test searches, but its main purpose is to build a completely private, standalone web app for yourself. By entering your API keys and clicking "Download Clean App," the generator injects your keys invisibly into the code and strips away all setup menus, giving you a pure, zero-step scraping tool. *(Note: The generated app will always contain a link at the bottom to return to this generator if you ever need to rebuild it).*
 
 ---
 
@@ -40,28 +40,27 @@ Now that you have your keys, you can generate your clean, standalone HTML file.
 
 ---
 
-## 🌐 Step 3: Host Securely via Private GitHub & Netlify Sync
-To use your new app safely, you will store the code in a *Private* GitHub repository and use Netlify to host it. This gives you a completely anonymous link and automatically updates your app if you ever edit the code.
+## 🌐 Step 3: Host Your Private App Anonymously
+To use your new `YT_Clean_App.html` file safely, you should host it on Netlify. Choose one of the two methods below.
 
-### A. Create a Secret GitHub Repository
-1. Go to your GitHub account and click **+ New Repository**.
-2. Name it something random (e.g., `my-private-scraper`).
-3. **CRITICAL:** Select **Private** (so no one on the internet can see your keys).
-4. Click **Create repository**.
-5. Click **"uploading an existing file"** and upload the `YT_Clean_App.html` file you just generated.
-6. **Rename the file:** Once uploaded, edit the file name and change it from `YT_Clean_App.html` to `index.html`. Commit the changes.
+### Method A: The Quick Way (Netlify Drop - No GitHub Required)
+Use this method if you just want to drag and drop the file and be done in 10 seconds.
+1. Go to [Netlify Drop](https://app.netlify.com/drop) on your browser (you may need to create a free account).
+2. Upload or drag your downloaded `YT_Clean_App.html` file into the upload box.
+3. Netlify will instantly create a live, anonymous website (e.g., `https://happy-frog-1234.netlify.app`).
 
-### B. Sync to Netlify for an Anonymous Link
-1. Go to [Netlify.com](https://www.netlify.com/) and log in using your GitHub account.
-2. In the dashboard, click **Add new site** -> **Import an existing project**.
-3. Click the **GitHub** button to authorize the connection.
-4. Select your newly created private repository (`my-private-scraper`).
-5. Scroll to the bottom and click **Deploy site**.
-6. Netlify will instantly generate a live, anonymous link (e.g., `https://happy-frog-1234.netlify.app`). You can go to Site Settings to change this name to whatever you want.
+### Method B: The Automated Way (Private GitHub Repo + Netlify Sync)
+Use this method if you want to store your private code safely in the cloud and allow automatic updates.
+1. Go to your GitHub account and click **+ New Repository**. Name it something random.
+2. **CRITICAL:** Select **Private** (so no one on the internet can see your keys). Click Create.
+3. Upload the `YT_Clean_App.html` file you just generated to this new repository, and rename the file to `index.html`.
+4. Go to [Netlify.com](https://www.netlify.com/) and click **Add new site** -> **Import an existing project**.
+5. Click **GitHub**, select your private repository, and click **Deploy site**.
+6. Netlify will instantly generate a live, anonymous link. (Any future edits you make to the GitHub file will automatically sync).
 
-### C. Final Security Check
-Now that you have your permanent Netlify link, go back to your [Google Cloud Credentials](https://console.cloud.google.com/apis/credentials):
+---
+
+### 🔒 Final Security Check
+Now that you have your permanent Netlify link (from Method A or B), go back to your [Google Cloud Credentials](https://console.cloud.google.com/apis/credentials):
 * Add the Netlify link to your **OAuth Client ID** "Authorized JavaScript origins" so the login button works.
 * Add the Netlify link to your **API Key** "Website restrictions" so no one else can steal your quota.
-
-You can now bookmark your Netlify link on your phone. It is 100% private, anonymous, and requires zero setup to use!
