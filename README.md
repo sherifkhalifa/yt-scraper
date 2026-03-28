@@ -19,12 +19,12 @@ To prevent errors and throttling, you need your own free Google credentials.
 **1. The API Key (Required for Searching):**
 * Go to the [Google Cloud API Library](https://console.cloud.google.com/apis/library/youtube.googleapis.com) and click **Enable**.
 * Go to the [Credentials Page](https://console.cloud.google.com/apis/credentials), click **+ CREATE CREDENTIALS**, and select **API Key**.
-* *Security Tip:* Click on your new key, select **Websites** under Application restrictions, and add `*sherifkhalifa.github.io/*` so no one else can use it.
+* *Security Tip:* Once you generate your final private Netlify link in Step 3, come back here, click your key, select **Websites**, and add your Netlify link to protect your quota.
 
 **2. The OAuth Client ID (Optional, for Private Playlists):**
 * On the [Credentials Page](https://console.cloud.google.com/apis/credentials), click **+ CREATE CREDENTIALS** -> **OAuth client ID**.
 * Select **Web application**. 
-* Under **Authorized JavaScript origins**, click **+ ADD URI** and paste `https://sherifkhalifa.github.io`.
+* Under **Authorized JavaScript origins**, click **+ ADD URI**. You will paste your final Netlify link here in Step 3.
 
 ---
 
@@ -36,17 +36,32 @@ Now that you have your keys, you can generate your clean, standalone HTML file.
 3. Paste your API Key and Client ID into the boxes.
 4. *(Optional)* Type your email in the Reminder Box so the app reminds you which Google account to log in with later.
 5. Click **Download Clean App**.
-6. A file named `YT_Clean_App.html` will download to your device. **This file contains your private keys. Do not upload this specific file back to a public GitHub.**
+6. A file named `YT_Clean_App.html` will download to your device. **This file contains your private keys. Do not upload this specific file back to your public GitHub.**
 
 ---
 
-## 🌐 Step 3: Host Your Private App Anonymously (Netlify)
-To use your new `YT_Clean_App.html` file like a real mobile app without exposing your code or real name to the public, host it for free on Netlify.
+## 🌐 Step 3: Host Securely via Private GitHub & Netlify Sync
+To use your new app safely, you will store the code in a *Private* GitHub repository and use Netlify to host it. This gives you a completely anonymous link and automatically updates your app if you ever edit the code.
 
-1. Go to [Netlify Drop](https://app.netlify.com/drop) on your browser (you may need to create a free account).
-2. Simply upload/drop your downloaded `YT_Clean_App.html` file into the upload box.
-3. Netlify will instantly create a live, anonymous website (e.g., `https://happy-frog-1234.netlify.app`). 
-4. **Important:** If you used an OAuth Client ID for logins, you must go back to your Google Cloud Credentials page and add your new Netlify link to the "Authorized JavaScript origins" list, just like you did for the GitHub link.
+### A. Create a Secret GitHub Repository
+1. Go to your GitHub account and click **+ New Repository**.
+2. Name it something random (e.g., `my-private-scraper`).
+3. **CRITICAL:** Select **Private** (so no one on the internet can see your keys).
+4. Click **Create repository**.
+5. Click **"uploading an existing file"** and upload the `YT_Clean_App.html` file you just generated.
+6. **Rename the file:** Once uploaded, edit the file name and change it from `YT_Clean_App.html` to `index.html`. Commit the changes.
 
-You can now bookmark your Netlify link on your phone's home screen. Whenever you open it, the app will instantly unlock using your hidden keys with zero setup required.
+### B. Sync to Netlify for an Anonymous Link
+1. Go to [Netlify.com](https://www.netlify.com/) and log in using your GitHub account.
+2. In the dashboard, click **Add new site** -> **Import an existing project**.
+3. Click the **GitHub** button to authorize the connection.
+4. Select your newly created private repository (`my-private-scraper`).
+5. Scroll to the bottom and click **Deploy site**.
+6. Netlify will instantly generate a live, anonymous link (e.g., `https://happy-frog-1234.netlify.app`). You can go to Site Settings to change this name to whatever you want.
 
+### C. Final Security Check
+Now that you have your permanent Netlify link, go back to your [Google Cloud Credentials](https://console.cloud.google.com/apis/credentials):
+* Add the Netlify link to your **OAuth Client ID** "Authorized JavaScript origins" so the login button works.
+* Add the Netlify link to your **API Key** "Website restrictions" so no one else can steal your quota.
+
+You can now bookmark your Netlify link on your phone. It is 100% private, anonymous, and requires zero setup to use!
