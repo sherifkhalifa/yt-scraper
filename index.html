@@ -9,66 +9,101 @@
         :root[data-theme="light"]{--bg:#f0f2f5;--card:#fff;--text:#333;--text-muted:#666;--border:#dadae0;--input-bg:#fafafa;--primary:#5c8bc0;--success:#5c9c6f;--warning:#c28c46;--danger:#c05c5c;--purple:#9074b3}
         :root[data-theme="dark"]{--bg:#121212;--card:#1e1e1e;--text:#e4e6eb;--text-muted:#aaa;--border:#333;--input-bg:#2a2a2a;--primary:#6b9fd4;--success:#6ba87e;--warning:#d9a05b;--danger:#d46b6b;--purple:#a689cc}
         body{font-family:-apple-system,sans-serif;padding:10px;max-width:800px;margin:auto;background:var(--bg);color:var(--text);transition:.3s}
-        h2{text-align:center;font-weight:600;margin-bottom:5px;font-size:20px}
+        
+        /* TOP BAR & AVATAR */
+        .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+        h2{font-weight:800;font-size:20px;margin:0;letter-spacing:-0.5px}
+        .top-actions{display:flex;gap:8px}
+        .btn-sm{background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 12px;border-radius:20px;font-size:12px;font-weight:bold;cursor:pointer}
+        .btn-auth{background:var(--primary);color:#fff;border:none}
+        .btn-auth.logged-in{background:var(--success)}
+
+        /* CONTAINERS */
         .section{background:var(--card);padding:15px;border-radius:12px;margin-bottom:15px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.05)}
-        label.input-label{display:block;margin-top:8px;font-size:14px;color:var(--text-muted);font-weight:600}
+        label.lbl{display:block;margin-top:8px;font-size:13px;color:var(--text-muted);font-weight:600}
         input,select,textarea{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px}
         input:focus,select:focus,textarea:focus{border-color:var(--primary);outline:none}
-        .big-search{font-size:18px!important;padding:16px!important;font-weight:bold;border:2px solid var(--primary)!important}
-        .help{font-size:13px;color:var(--text-muted);margin:6px 0 12px;line-height:1.5}
-        .row{display:flex;gap:10px;margin-top:10px;align-items:center} .row>div{flex:1}
-        button{width:100%;padding:14px;margin-top:10px;color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer;transition:.2s}
-        button:active{opacity:.8;transform:scale(0.98)} button:disabled{background:var(--border)!important;color:var(--text-muted)!important;cursor:not-allowed}
-        .btn-pri{background:var(--primary)} .btn-suc{background:var(--success)} .btn-gry{background:var(--text-muted)} .btn-pur{background:var(--purple)} .btn-blu{background:#4285F4}
-        #status{text-align:center;font-weight:bold;margin-bottom:15px;font-size:14px;padding:10px;border-radius:8px;background:var(--card);border:1px solid var(--border)}
+        .row{display:flex;gap:10px;align-items:center} .row>div{flex:1}
         
-        /* AD-BLOCKER SAFE & MOBILE OPTIMIZED SNAPTUBE UI */
-        #resDiv{max-height:550px;overflow-y:auto;background:var(--card);padding:0;border-radius:8px;overflow-x:hidden;}
-        .yt-row{display:flex;align-items:flex-start;gap:10px;padding:12px;border-bottom:1px solid var(--border);position:relative;cursor:pointer;width:100%;box-sizing:border-box;}
-        .yt-row:last-child{border-bottom:none}
-        .yt-chk{transform:scale(1.4);margin:24px 0 0 5px;accent-color:var(--primary);flex-shrink:0}
-        .yt-pic{width:120px;height:68px;object-fit:cover;border-radius:6px;background:#222;flex-shrink:0}
-        .yt-dat{flex:1;min-width:0;display:flex;flex-direction:column;padding-right:25px}
-        .yt-ttl{font-size:14px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word;color:var(--text);margin-bottom:4px}
-        .yt-chn{font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        
-        .menu-btn{position:absolute;top:5px;right:0;background:none;border:none;color:var(--text);font-size:22px;padding:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-        .badge{font-size:10px;padding:3px 5px;border-radius:4px;font-weight:bold;margin-right:4px;vertical-align:middle} 
-        .b-vid{background:var(--danger);color:#fff} .b-pl{background:var(--primary);color:#fff} .b-ch{background:var(--purple);color:#fff}
-        
-        .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
-        .theme-btn{background:transparent;color:var(--text);border:1px solid var(--border);padding:6px 12px;border-radius:15px;width:auto}
-        .box{background:var(--input-bg);border:1px solid var(--border);padding:12px;border-radius:8px;margin-bottom:15px;font-size:13px;line-height:1.6}
-        code{background:var(--border);padding:3px 6px;border-radius:4px;font-family:monospace;font-size:13px;color:var(--text);display:inline-block;margin-top:4px}
+        .big-search{font-size:16px!important;padding:14px!important;font-weight:bold;border:2px solid var(--primary)!important;margin-bottom:10px}
+        .btn-main{width:100%;padding:14px;margin-top:10px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer}
+        .btn-main:disabled{background:var(--border)!important;color:var(--text-muted)!important}
+        .btn-suc{background:var(--success);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;flex:1}
+        .btn-gry{background:var(--text-muted);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;flex:1}
 
-        /* BOTTOM SHEET MODAL */
+        /* COLLAPSIBLE FILTERS */
+        details.filters{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:10px}
+        details.filters summary{font-size:13px;font-weight:bold;color:var(--text);cursor:pointer;outline:none}
+        
+        /* ROCK-SOLID UI GRID (Via Browser Safe) */
+        #resDiv{max-height:550px;overflow-y:auto;background:var(--card);border-radius:8px;overflow-x:hidden}
+        .yt-item{display:table;width:100%;table-layout:fixed;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}
+        .yt-item:last-child{border-bottom:none}
+        .yt-col-chk{display:table-cell;vertical-align:middle;width:40px;text-align:center}
+        .yt-chk{transform:scale(1.4);accent-color:var(--primary);margin:0}
+        .yt-col-img{display:table-cell;vertical-align:top;width:130px}
+        .yt-pic{width:120px;height:68px;object-fit:cover;border-radius:6px;background:#222;display:block}
+        .yt-col-dat{display:table-cell;vertical-align:top;padding-left:10px;padding-right:10px}
+        .yt-ttl{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-wrap:break-word;white-space:normal}
+        .yt-chn{font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .yt-col-opt{display:table-cell;vertical-align:middle;width:40px;text-align:center}
+        .menu-btn{background:none;border:none;color:var(--text);font-size:20px;padding:10px;cursor:pointer}
+
+        .badge{font-size:10px;padding:2px 4px;border-radius:4px;font-weight:bold;margin-right:4px} 
+        .b-vid{background:var(--danger);color:#fff} .b-pl{background:var(--primary);color:#fff} .b-ch{background:var(--purple);color:#fff}
+
+        /* BOTTOM SHEET */
         #sheetOverlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:none;z-index:999}
-        #botSheet{position:fixed;bottom:-100%;left:0;right:0;background:var(--card);padding:20px;border-radius:20px 20px 0 0;box-shadow:0 -5px 15px rgba(0,0,0,0.3);transition:bottom 0.3s cubic-bezier(0.1, 0.8, 0.2, 1);z-index:1000}
+        #botSheet{position:fixed;bottom:-100%;left:0;right:0;background:var(--card);padding:20px;border-radius:20px 20px 0 0;box-shadow:0 -5px 15px rgba(0,0,0,0.3);transition:bottom 0.3s;z-index:1000}
         #sheetTitle{font-size:14px;font-weight:bold;color:var(--text);margin-top:0;margin-bottom:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .sheet-btn{width:100%;padding:14px;margin-bottom:10px;border:none;border-radius:8px;font-weight:bold;color:#fff;cursor:pointer}
     </style>
 </head>
 <body>
 
-    <div class="top-bar"><div></div><h2>YT Scraper</h2><button class="theme-btn" onclick="toggleTheme()">🌓 Theme</button></div>
-    <div id="status">Checking app status...</div>
+    <div class="top-bar">
+        <h2>YT Scraper</h2>
+        <div class="top-actions">
+            <button class="btn-sm" onclick="toggleTheme()">🌓 Theme</button>
+            <button class="btn-sm btn-auth" id="authBtn" onclick="toggleAuth()">👤 Sign In</button>
+        </div>
+    </div>
+
+    <div id="status" style="text-align:center;font-weight:bold;margin-bottom:15px;font-size:13px;padding:10px;border-radius:8px;background:var(--card);border:1px solid var(--border)">Checking app status...</div>
 
     <div class="section" id="appUI">
         <div id="lockMsg" onclick="document.getElementById('setupUI').scrollIntoView({behavior: 'smooth'})" style="text-align:center;color:var(--danger);font-weight:600;padding:12px;background:rgba(192,92,92,0.1);border-radius:8px;margin-bottom:15px;cursor:pointer;">🔒 App Locked. Tap here to setup keys.</div>
         <form action="javascript:void(0);" onsubmit="runSearch(); return false;">
-            <label class="input-label">🔍 Search Query or Target ID:</label>
-            <div class="help"><b>Keywords:</b> e.g., Python Tutorial | <b>Channels:</b> UC... | <b>Playlists:</b> PL...</div>
-            <input type="search" id="qBox" class="big-search" placeholder="Enter keyword or ID..." disabled required>
-            <div class="row">
-                <div><label class="input-label">Type:</label><select id="tBox" disabled><option value="all">All</option><option value="video" selected>Videos</option><option value="playlist">Playlists</option><option value="channel">Channels</option></select></div>
-                <div><label class="input-label">Limit:</label><select id="mBox" disabled><option value="25">25</option><option value="50" selected>50</option><option value="100">100</option><option value="250">250</option></select></div>
+            
+            <div class="row" style="align-items:flex-end;">
+                <div style="flex:3;">
+                    <label class="lbl">🔍 Search Query or Target ID:</label>
+                    <input type="search" id="qBox" class="big-search" placeholder="Keyword, UC..., or PL..." disabled required>
+                </div>
+                <div style="flex:1; margin-bottom:10px;">
+                    <label class="lbl">Limit:</label>
+                    <select id="mBox" disabled style="padding:14px; font-weight:bold; border:2px solid var(--border);">
+                        <option value="25">25</option><option value="50" selected>50</option><option value="100">100</option><option value="250">250</option>
+                    </select>
+                </div>
             </div>
-            <button type="submit" id="sBtn" class="btn-pri" disabled>🚀 RUN SEARCH</button>
+
+            <details class="filters">
+                <summary>⚙️ Advanced Filters (Type, Date, Local Filter)</summary>
+                <div class="row" style="margin-top:10px;">
+                    <div><label class="lbl">Type:</label><select id="tBox" disabled><option value="all" selected>All</option><option value="video">Videos</option><option value="playlist">Playlists</option><option value="channel">Channels</option></select></div>
+                    <div><label class="lbl">Date After:</label><input type="date" id="dAfter" disabled></div>
+                    <div><label class="lbl">Date Before:</label><input type="date" id="dBefore" disabled></div>
+                </div>
+                <label class="lbl" style="margin-top:10px;">🧹 Local Result Filter:</label>
+                <input type="text" id="filt" placeholder="Type a word to hide unwanted results..." onkeyup="filterRes()" disabled>
+            </details>
+
+            <button type="submit" id="sBtn" class="btn-main" disabled>🚀 RUN SEARCH</button>
         </form>
     </div>
-
-    <div class="section"><label class="input-label">🧹 Local Filter:</label><input type="text" id="filt" placeholder="Type a word to hide unwanted results..." onkeyup="filterRes()"></div>
     
-    <div class="section" style="padding:0; overflow:hidden;">
+    <div class="section" style="padding:0;">
         <div id="resDiv"><div style="padding:20px; text-align:center; color:var(--text-muted);">Results will appear here...</div></div>
         <div class="row" style="padding:10px 15px 15px;">
             <button class="btn-gry" onclick="selAll()">☑️ Select All</button>
@@ -76,46 +111,40 @@
         </div>
     </div>
     
-    <div class="section"><h3 style="color:var(--success);margin-top:0;font-size:16px">📦 Queue</h3>
+    <div class="section">
+        <h3 style="color:var(--success);margin-top:0;font-size:16px">📦 Download Queue</h3>
         <textarea id="qArea" rows="6"></textarea>
-        <div class="row">
+        <div class="row" style="margin-top:10px;">
             <button class="btn-gry" onclick="document.getElementById('qArea').value=''">Clear</button>
             <button class="btn-gry" onclick="navigator.clipboard.writeText(document.getElementById('qArea').value);alert('Copied!')">Copy</button>
-            <button class="btn-blu" onclick="shareQ()">Share</button>
+            <button class="btn-suc" style="background:#4285F4;" onclick="shareQ()">Share</button>
         </div>
     </div>
 
-    <div id="logWrap" style="display:none;margin-top:15px;padding:15px;background:var(--card);border-radius:10px;border:1px solid var(--primary)">
-        <div id="emDisp" style="font-size:13px;text-align:center;margin-bottom:10px"></div><button class="btn-pri" onclick="doAuth()" style="margin:0">👤 Log In (Expires in 1 Hour)</button>
-    </div>
-
     <form class="section" id="setupUI" style="margin-top:30px;border:1px dashed var(--border)" onsubmit="event.preventDefault();">
-        <h3 style="margin-top:0;font-size:16px">⚙️ App Setup</h3>
-        <div class="box"><b>1. API Key:</b> <span style="color:var(--text-muted)">Required for searching.</span></div>
-        <div class="box"><b>2. Client ID:</b> <span style="color:var(--text-muted)">Required for private logins. Ensure your web address is authorized in Google Console:</span><br><code class="dyn-url">...</code></div>
-
-        <label class="input-label">🔑 API Key:</label>
+        <h3 style="margin-top:0;font-size:16px">🔑 Core API Setup</h3>
+        <label class="lbl">API Key (Username Field):</label>
         <input type="text" id="ak" name="username" autocomplete="username" placeholder="AIzaSy..." oninput="saveK()">
         
-        <label class="input-label">👤 Client ID:</label>
+        <label class="lbl">Client ID (Password Field):</label>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Authorize this exact URL in Google Console: <b class="dyn-url">...</b></div>
         <input type="password" id="cid" name="password" autocomplete="current-password" placeholder="...apps.googleusercontent.com" oninput="saveK()">
     </form>
 
     <div class="section" id="genUI" style="margin-top:15px;border:1px solid var(--border)">
         <h3 style="color:var(--purple);margin-top:0;font-size:15px">🛠️ Generate Clean App</h3>
-        <div class="help">Removes this entire setup section permanently.</div>
-        <label class="input-label">📧 Reminder Email (Optional):</label>
-        <input type="text" id="uem" placeholder="Your Google email..." autocomplete="off">
-        <button class="btn-pur" onclick="genApp()">📥 Download Clean App</button>
+        <label class="lbl">Reminder Email (Optional):</label>
+        <input type="text" id="x_rem_z" placeholder="Your Google email..." autocomplete="off" data-bwignore="true">
+        <button class="btn-main" style="background:var(--purple);margin-top:15px;" onclick="genApp()">📥 Download Clean App</button>
     </div>
 
     <div id="sheetOverlay" onclick="closeMenu()"></div>
     <div id="botSheet">
         <div style="width:40px;height:5px;background:var(--border);border-radius:5px;margin:0 auto 15px;"></div>
         <h4 id="sheetTitle">Options</h4>
-        <button class="btn-pri" onclick="scrapeParentChannel()">📥 Scrape ALL Videos from this Channel</button>
-        <button class="btn-pur" onclick="findPlaylists()">📂 Find ALL Playlists by this Channel</button>
-        <button class="btn-gry" onclick="closeMenu()">Cancel</button>
+        <button class="sheet-btn" style="background:var(--primary);" onclick="scrapeParentChannel()">📥 Scrape ALL Videos from Channel</button>
+        <button class="sheet-btn" style="background:var(--purple);" onclick="findPlaylists()">📂 Find ALL Playlists by Channel</button>
+        <button class="sheet-btn" style="background:var(--text-muted);" onclick="closeMenu()">Cancel</button>
     </div>
 
     <script>
@@ -143,34 +172,51 @@
 
         function checkL() {
             let u = getK().length>10 || token;
-            ['qBox','tBox','mBox','sBtn'].forEach(id=>{if($(id)) $(id).disabled=!u;});
+            ['qBox','tBox','mBox','sBtn','dAfter','dBefore','filt'].forEach(id=>{if($(id)) $(id).disabled=!u;});
             if($('lockMsg')) $('lockMsg').style.display=u?'none':'block';
-            if($('logWrap')&&$('emDisp')){
-                if(getC()){ $('logWrap').style.display='block'; if(!window.H_CID) $('emDisp').innerHTML="<b>Login required for private data.</b>"; }
-                else $('logWrap').style.display='none';
+            
+            let authBtn = $('authBtn');
+            if(authBtn) {
+                if(!getC()) { authBtn.style.display = 'none'; }
+                else {
+                    authBtn.style.display = 'block';
+                    if(token) {
+                        authBtn.innerText = 'Log Out';
+                        authBtn.classList.add('logged-in');
+                    } else {
+                        authBtn.innerText = '👤 Sign In';
+                        authBtn.classList.remove('logged-in');
+                    }
+                }
             }
+
             if($('status')){
-                if(u&&!token) $('status').innerHTML="<span style='color:var(--success)'>✅ Ready to search.</span>";
-                else if(!u) $('status').innerHTML="<span style='color:var(--danger)'>🔒 App Locked.</span>";
+                if(u&&!token) $('status').innerHTML="<span style='color:var(--success)'>✅ Ready to search (API Key active).</span>";
+                else if(token) $('status').innerHTML="<span style='color:var(--success)'>✅ Logged In (Expires in 1 Hour).</span>";
+                else $('status').innerHTML="<span style='color:var(--danger)'>🔒 App Locked. Scroll down to setup keys.</span>";
             }
         }
 
-        function doAuth() {
-            if(!getC()) return alert("No Client ID.");
-            google.accounts.oauth2.initTokenClient({ client_id: getC(), scope: 'https://www.googleapis.com/auth/youtube.readonly', callback: (r)=>{ if(r&&r.access_token){ token=r.access_token; $('status').innerHTML="<span style='color:var(--success)'>✅ Logged In.</span>"; checkL(); } } }).requestAccessToken();
+        function toggleAuth() {
+            if(!getC()) return alert("No Client ID found.");
+            if(token) {
+                token = null; // Basic logout simulation
+                checkL();
+                $('status').innerHTML="<span style='color:var(--warning)'>Logged out. Reverting to API Key.</span>";
+            } else {
+                google.accounts.oauth2.initTokenClient({ client_id: getC(), scope: 'https://www.googleapis.com/auth/youtube.readonly', callback: (r)=>{ if(r&&r.access_token){ token=r.access_token; checkL(); } } }).requestAccessToken();
+            }
         }
 
         // --- ROW & MENU LOGIC ---
         function toggleRow(e, cbId) {
-            // Prevent toggling if user clicked the 3 dots or the checkbox itself directly
             if(e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
-            let cb = $(cbId);
-            cb.checked = !cb.checked;
+            let cb = $(cbId); cb.checked = !cb.checked;
         }
 
         function openMenu(e, channelId, titleText) {
-            e.stopPropagation(); // Stop row toggle
-            if(!channelId || channelId === 'undefined') return alert("Could not find the parent channel ID for this item.");
+            e.stopPropagation();
+            if(!channelId || channelId === 'undefined') return alert("Could not find the parent channel ID.");
             menuTargetChannel = channelId;
             $('sheetTitle').innerText = titleText;
             $('sheetOverlay').style.display = 'block';
@@ -186,32 +232,28 @@
         function shareQ() {
             let txt = $('qArea').value;
             if(!txt) return alert("Queue is empty!");
-            if(navigator.share) {
-                navigator.share({ title: 'YT Scraper Links', text: txt }).catch(err=>console.log("Share cancelled"));
-            } else {
-                navigator.clipboard.writeText(txt);
-                alert("Share not supported on this browser. Links copied to clipboard instead!");
-            }
+            if(navigator.share) { navigator.share({ title: 'YT Scraper Links', text: txt }).catch(e=>console.log(e)); } 
+            else { navigator.clipboard.writeText(txt); alert("Copied to clipboard!"); }
         }
 
         function genApp() {
             if(!getK()&&!getC()) return alert("Paste keys first.");
-            if(getC()) { if(!confirm("⚠️ IMPORTANT WARNING:\n\nWhen you host this new file on Netlify, your web link will change.\n\nYou MUST add your new Netlify link to Google Console Authorized URIs, or Login will fail.\n\nContinue?")) return; }
+            if(getC() && !confirm("⚠️ IMPORTANT:\n\nYou MUST add your new web link to Google Console Authorized URIs, or Login will fail.\n\nContinue?")) return;
             
             let hc = document.documentElement.cloneNode(true);
             if(hc.querySelector('#setupUI')) hc.querySelector('#setupUI').remove();
             if(hc.querySelector('#genUI')) hc.querySelector('#genUI').remove();
             if(hc.querySelector('#lockMsg')) hc.querySelector('#lockMsg').remove();
-            if(getC()&&hc.querySelector('#emDisp')) hc.querySelector('#emDisp').innerHTML=$('uem').value?`Account: <b>${$('uem').value}</b>`:"Private Login";
-            else if(hc.querySelector('#logWrap')) hc.querySelector('#logWrap').remove();
-
+            
+            let emStr = $('x_rem_z').value ? `Account: ${$('x_rem_z').value}` : "Private App generated.";
+            
             let genUrl = window.location.href;
             let f = document.createElement('div');
-            f.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:20px;padding:15px;border-top:1px solid var(--border)">Running on: <b class="dyn-url">...</b><br>Ensure this URL is authorized in Google Console.<br><br><a href="${genUrl}" style="color:var(--primary);text-decoration:none;font-weight:bold">🔄 Back to Generator</a></div>`;
+            f.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:20px;padding:15px;border-top:1px solid var(--border)">${emStr}<br><br><b class="dyn-url">...</b><br><br><a href="${genUrl}" style="color:var(--primary);text-decoration:none;font-weight:bold">🔄 Back to Generator</a></div>`;
             hc.querySelector('body').appendChild(f);
 
             let scr = document.createElement('script');
-            scr.textContent = `window.H_AK="${getK()}";window.H_CID="${getC()}";window.onload=function(){initTheme();checkL();document.querySelectorAll('.dyn-url').forEach(e=>e.innerText=window.location.origin);let w=$('logWrap'),u=$('appUI');if(w&&u)u.parentNode.insertBefore(w,u);};`;
+            scr.textContent = `window.H_AK="${getK()}";window.H_CID="${getC()}";window.onload=function(){initTheme();checkL();document.querySelectorAll('.dyn-url').forEach(e=>e.innerText=window.location.origin);};`;
             hc.querySelector('body').insertBefore(scr,hc.querySelector('body').firstChild);
             
             let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(["<!DOCTYPE html>\n<html lang='en'>\n"+hc.innerHTML+"\n</html>"], {type:'text/html'}));
@@ -227,28 +269,26 @@
 
         async function runSearch() {
             if(!getK()&&!token) return; if(!$('qBox').value) return;
-            $('resDiv').innerHTML="<div style='text-align:center;padding:30px;font-weight:bold;'>⏳ Searching Database...</div>"; res=[]; $('filt').value="";
+            $('resDiv').innerHTML="<div style='text-align:center;padding:30px;font-weight:bold;'>⏳ Searching...</div>"; res=[]; $('filt').value="";
             try {
                 let q=$('qBox').value.trim(), pt='', f=0, mx=parseInt($('mBox').value), hd=token?{'Authorization':`Bearer ${token}`}:{};
                 if(q.startsWith("PL")&&q.length>15) return scrape(q,'playlist');
+                
+                let aft=$('dAfter').value, bef=$('dBefore').value;
+
                 while(f<mx){
                     let u=`search?part=snippet&maxResults=50`; if(!token) u+=`&key=${getK()}`; if($('tBox').value!=='all') u+=`&type=${$('tBox').value}`;
-                    u+= (q.startsWith("UC")&&q.length===24) ? `&channelId=${q}` : `&q=${encodeURIComponent(q)}`; if(pt) u+=`&pageToken=${pt}`;
+                    u+= (q.startsWith("UC")&&q.length===24) ? `&channelId=${q}` : `&q=${encodeURIComponent(q)}`; 
+                    if(pt) u+=`&pageToken=${pt}`;
+                    if(aft) u+=`&publishedAfter=${new Date(aft).toISOString()}`;
+                    if(bef) u+=`&publishedBefore=${new Date(bef).toISOString()}`;
+
                     let d = await (await fetch(`https://www.googleapis.com/youtube/v3/${u}`,{headers:hd})).json();
                     if(d.error) throw new Error(d.error.message); if(!d.items) break;
                     
                     res.push(...d.items.map(i=>{
-                        let snip = i.snippet || {};
-                        let idObj = i.id || {};
-                        return {
-                            t: snip.title || 'Unknown Title', 
-                            k: (idObj.kind || '').replace('youtube#',''), 
-                            v: idObj.videoId || '', 
-                            p: idObj.playlistId || '', 
-                            c: snip.channelId || idObj.channelId || '',
-                            ct: snip.channelTitle || 'Unknown Channel',
-                            th: getThumb(snip)
-                        };
+                        let s=i.snippet||{}, o=i.id||{};
+                        return { t:s.title||'Unknown', k:(o.kind||'').replace('youtube#',''), v:o.videoId||'', p:o.playlistId||'', c:s.channelId||o.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s) };
                     }));
                     f+=d.items.length; pt=d.nextPageToken; if(!pt||f>=mx) break;
                 }
@@ -257,7 +297,7 @@
         }
 
         async function scrape(id, type) {
-            $('resDiv').innerHTML="<div style='text-align:center;padding:30px;color:var(--primary);font-weight:bold;'>⏳ Scraping Videos...</div>"; res=[]; $('filt').value="";
+            $('resDiv').innerHTML="<div style='text-align:center;padding:30px;color:var(--primary);font-weight:bold;'>⏳ Scraping Database...</div>"; res=[]; $('filt').value="";
             let hd=token?{'Authorization':`Bearer ${token}`}:{};
             try {
                 let tid = id;
@@ -265,7 +305,7 @@
                     $('status').innerHTML="⏳ Locating channel database...";
                     let u=`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${id}`; if(!token) u+=`&key=${getK()}`;
                     let d = await (await fetch(u,{headers:hd})).json(); if(d.error) throw new Error(d.error.message);
-                    if(!d.items || d.items.length === 0) throw new Error("Channel not found.");
+                    if(!d.items||!d.items.length) throw new Error("Channel not found.");
                     tid = d.items[0].contentDetails.relatedPlaylists.uploads;
                 }
                 let pt=''; let pages=0;
@@ -275,20 +315,12 @@
                     let d = await (await fetch(u,{headers:hd})).json(); if(d.error) throw new Error(d.error.message);
                     
                     if(d.items) res.push(...d.items.map(i=>{
-                        let snip = i.snippet || {};
-                        let resId = snip.resourceId || {};
-                        return {
-                            t: snip.title || 'Unknown Title', 
-                            k: 'video', 
-                            v: resId.videoId || '',
-                            c: snip.videoOwnerChannelId || snip.channelId || '',
-                            ct: snip.videoOwnerChannelTitle || snip.channelTitle || 'Unknown Channel',
-                            th: getThumb(snip)
-                        };
+                        let s=i.snippet||{}, r=s.resourceId||{};
+                        return { t:s.title||'Unknown', k:'video', v:r.videoId||'', c:s.videoOwnerChannelId||s.channelId||'', ct:s.videoOwnerChannelTitle||s.channelTitle||'Unknown', th:getThumb(s) };
                     }));
                     pt=d.nextPageToken||'';
                 } while(pt);
-                drawRes(); $('status').innerHTML=`<span style='color:var(--success)'>✅ Scraped ${res.length} videos.</span>`;
+                drawRes(); $('status').innerHTML=`<span style='color:var(--success)'>✅ Scraped ${res.length} videos. (Note: YouTube API excludes most Shorts).</span>`;
             } catch(e) { $('resDiv').innerHTML=`<div style='color:var(--danger);padding:20px'>${e.message}</div>`; $('status').innerHTML="<span style='color:var(--danger)'>❌ Scrape Failed.</span>"; }
         }
 
@@ -298,20 +330,13 @@
             try {
                 let pt=''; let pages=0;
                 do {
-                    pages++; $('status').innerHTML=`⏳ Scanning channel page ${pages}...`;
+                    pages++; $('status').innerHTML=`⏳ Scanning page ${pages}...`;
                     let u=`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${channelId}&maxResults=50`; if(!token) u+=`&key=${getK()}`; if(pt) u+=`&pageToken=${pt}`;
                     let d = await (await fetch(u,{headers:hd})).json(); if(d.error) throw new Error(d.error.message);
                     
                     if(d.items) res.push(...d.items.map(i=>{
-                        let snip = i.snippet || {};
-                        return {
-                            t: snip.title || 'Unknown Title', 
-                            k: 'playlist', 
-                            p: i.id || '', 
-                            c: snip.channelId || '',
-                            ct: snip.channelTitle || 'Unknown Channel',
-                            th: getThumb(snip)
-                        };
+                        let s=i.snippet||{};
+                        return { t:s.title||'Unknown', k:'playlist', p:i.id||'', c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s) };
                     }));
                     pt=d.nextPageToken||'';
                 } while(pt);
@@ -319,7 +344,7 @@
             } catch(e) { $('resDiv').innerHTML=`<div style='color:var(--danger);padding:20px'>${e.message}</div>`; $('status').innerHTML="<span style='color:var(--danger)'>❌ Search Failed.</span>"; }
         }
 
-        function filterRes() { let f=$('filt').value.toLowerCase(); document.querySelectorAll('.yt-row').forEach(i=>{ if(i.dataset.t.toLowerCase().includes(f)) i.style.display="flex"; else{i.style.display="none"; i.querySelector('.yt-chk').checked=false;} }); }
+        function filterRes() { let f=$('filt').value.toLowerCase(); document.querySelectorAll('.yt-item').forEach(i=>{ if(i.dataset.t.toLowerCase().includes(f)) i.style.display="table"; else{i.style.display="none"; i.querySelector('.yt-chk').checked=false;} }); }
         
         function drawRes() {
             if(!res.length) return $('resDiv').innerHTML="<div style='padding:20px;text-align:center;color:var(--text-muted);'>No items found.</div>";
@@ -332,21 +357,22 @@
                 let imgTag = i.th ? `<img src="${i.th}" class="yt-pic">` : `<div class="yt-pic" style="display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;">No Image</div>`;
                 let safeTitle = (i.t||"").replace(/'/g,"\\'").replace(/"/g,'&quot;');
                 
-                // NO MORE LABEL WRAPPER. The entire div is clickable via toggleRow(). Unchecked by default.
                 h+=`
-                <div class="yt-row" data-t="${safeTitle}" onclick="toggleRow(event, 'i${x}')">
-                    <input type="checkbox" class="yt-chk" value="${l}" id="i${x}">
-                    ${imgTag}
-                    <div class="yt-dat">
+                <div class="yt-item" data-t="${safeTitle}" onclick="toggleRow(event, 'i${x}')">
+                    <div class="yt-col-chk"><input type="checkbox" class="yt-chk" value="${l}" id="i${x}"></div>
+                    <div class="yt-col-img">${imgTag}</div>
+                    <div class="yt-col-dat">
                         <div class="yt-ttl">${b}${i.t}</div>
                         <div class="yt-chn">${i.ct}</div>
                     </div>
-                    <button class="menu-btn" onclick="openMenu(event, '${i.c}', '${safeTitle}')">⋮</button>
+                    <div class="yt-col-opt">
+                        <button class="menu-btn" onclick="openMenu(event, '${i.c}', '${safeTitle}')">⋮</button>
+                    </div>
                 </div>`;
             }); $('resDiv').innerHTML=h;
         }
 
-        function selAll() { let c=document.querySelectorAll('.yt-row[style!="display: none;"] .yt-chk'); if(!c.length) return; let a=Array.from(c).every(b=>b.checked); c.forEach(b=>b.checked=!a); }
+        function selAll() { let c=document.querySelectorAll('.yt-item[style!="display: none;"] .yt-chk'); if(!c.length) return; let a=Array.from(c).every(b=>b.checked); c.forEach(b=>b.checked=!a); }
         function addQ() { let u=Array.from(document.querySelectorAll('.yt-chk:checked')).map(b=>b.value).filter(v=>v); if(!u.length) return; $('qArea').value=$('qArea').value?$('qArea').value+"\n"+u.join('\n'):u.join('\n'); $('status').innerHTML=`<span style='color:var(--primary)'>📦 Added ${u.length} URLs.</span>`; }
     </script>
 </body>
