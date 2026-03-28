@@ -19,16 +19,16 @@
         .row{display:flex;gap:10px;margin-top:10px;align-items:center} .row>div{flex:1}
         button{width:100%;padding:14px;margin-top:10px;color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer;transition:.2s}
         button:active{opacity:.8;transform:scale(0.98)} button:disabled{background:var(--border)!important;color:var(--text-muted)!important;cursor:not-allowed}
-        .btn-pri{background:var(--primary)} .btn-suc{background:var(--success)} .btn-gry{background:var(--text-muted)} .btn-pur{background:var(--purple)}
+        .btn-pri{background:var(--primary)} .btn-suc{background:var(--success)} .btn-gry{background:var(--text-muted)} .btn-pur{background:var(--purple)} .btn-blu{background:#4285F4}
         #status{text-align:center;font-weight:bold;margin-bottom:15px;font-size:14px;padding:10px;border-radius:8px;background:var(--card);border:1px solid var(--border)}
         
-        /* AD-BLOCKER SAFE SNAPTUBE UI */
-        #resDiv{max-height:550px;overflow-y:auto;background:var(--card);padding:0;border-radius:8px}
-        .yt-row{display:flex;align-items:flex-start;gap:12px;padding:12px;border-bottom:1px solid var(--border);position:relative}
+        /* AD-BLOCKER SAFE & MOBILE OPTIMIZED SNAPTUBE UI */
+        #resDiv{max-height:550px;overflow-y:auto;background:var(--card);padding:0;border-radius:8px;overflow-x:hidden;}
+        .yt-row{display:flex;align-items:flex-start;gap:10px;padding:12px;border-bottom:1px solid var(--border);position:relative;cursor:pointer;width:100%;box-sizing:border-box;}
         .yt-row:last-child{border-bottom:none}
-        .yt-chk{transform:scale(1.4);margin:20px 0 0 5px;accent-color:var(--primary);flex-shrink:0}
-        .yt-pic{width:140px;height:78px;object-fit:cover;border-radius:8px;background:#222;flex-shrink:0}
-        .yt-dat{flex:1;display:flex;flex-direction:column;overflow:hidden;padding-right:25px}
+        .yt-chk{transform:scale(1.4);margin:24px 0 0 5px;accent-color:var(--primary);flex-shrink:0}
+        .yt-pic{width:120px;height:68px;object-fit:cover;border-radius:6px;background:#222;flex-shrink:0}
+        .yt-dat{flex:1;min-width:0;display:flex;flex-direction:column;padding-right:25px}
         .yt-ttl{font-size:14px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word;color:var(--text);margin-bottom:4px}
         .yt-chn{font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         
@@ -39,7 +39,6 @@
         .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
         .theme-btn{background:transparent;color:var(--text);border:1px solid var(--border);padding:6px 12px;border-radius:15px;width:auto}
         .box{background:var(--input-bg);border:1px solid var(--border);padding:12px;border-radius:8px;margin-bottom:15px;font-size:13px;line-height:1.6}
-        .box a{color:var(--primary);text-decoration:none;font-weight:600}
         code{background:var(--border);padding:3px 6px;border-radius:4px;font-family:monospace;font-size:13px;color:var(--text);display:inline-block;margin-top:4px}
 
         /* BOTTOM SHEET MODAL */
@@ -54,7 +53,7 @@
     <div id="status">Checking app status...</div>
 
     <div class="section" id="appUI">
-        <div id="lockMsg" style="text-align:center;color:var(--danger);font-weight:600;padding:10px;background:rgba(192,92,92,0.1);border-radius:8px;margin-bottom:15px">🔒 App Locked. Setup keys below.</div>
+        <div id="lockMsg" onclick="document.getElementById('setupUI').scrollIntoView({behavior: 'smooth'})" style="text-align:center;color:var(--danger);font-weight:600;padding:12px;background:rgba(192,92,92,0.1);border-radius:8px;margin-bottom:15px;cursor:pointer;">🔒 App Locked. Tap here to setup keys.</div>
         <form action="javascript:void(0);" onsubmit="runSearch(); return false;">
             <label class="input-label">🔍 Search Query or Target ID:</label>
             <div class="help"><b>Keywords:</b> e.g., Python Tutorial | <b>Channels:</b> UC... | <b>Playlists:</b> PL...</div>
@@ -77,7 +76,14 @@
         </div>
     </div>
     
-    <div class="section"><h3 style="color:var(--success);margin-top:0;font-size:16px">📦 Queue</h3><textarea id="qArea" rows="6"></textarea><div class="row"><button class="btn-gry" onclick="document.getElementById('qArea').value=''">Clear</button><button class="btn-gry" onclick="navigator.clipboard.writeText(document.getElementById('qArea').value);alert('Copied!')">Copy</button></div></div>
+    <div class="section"><h3 style="color:var(--success);margin-top:0;font-size:16px">📦 Queue</h3>
+        <textarea id="qArea" rows="6"></textarea>
+        <div class="row">
+            <button class="btn-gry" onclick="document.getElementById('qArea').value=''">Clear</button>
+            <button class="btn-gry" onclick="navigator.clipboard.writeText(document.getElementById('qArea').value);alert('Copied!')">Copy</button>
+            <button class="btn-blu" onclick="shareQ()">Share</button>
+        </div>
+    </div>
 
     <div id="logWrap" style="display:none;margin-top:15px;padding:15px;background:var(--card);border-radius:10px;border:1px solid var(--primary)">
         <div id="emDisp" style="font-size:13px;text-align:center;margin-bottom:10px"></div><button class="btn-pri" onclick="doAuth()" style="margin:0">👤 Log In (Expires in 1 Hour)</button>
@@ -85,33 +91,23 @@
 
     <form class="section" id="setupUI" style="margin-top:30px;border:1px dashed var(--border)" onsubmit="event.preventDefault();">
         <h3 style="margin-top:0;font-size:16px">⚙️ App Setup</h3>
-        
-        <div class="box">
-            <b>1. Get your API Key <span style="color:var(--warning)">(Restrictions Optional)</span>:</b><br>
-            • Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Credentials</a> -> <b>Create API Key</b>.<br>
-            • <i>Caution:</i> To protect your quota, restrict it to:<br><code class="dyn-url">...</code>
-        </div>
-        
-        <div class="box">
-            <b>2. Get your Client ID <span style="color:var(--danger)">(Restrictions MANDATORY)</span>:</b><br>
-            • Create an <b>OAuth client ID</b> (Web application).<br>
-            • Under <b>Authorized JavaScript origins</b>, add:<br><code class="dyn-url">...</code>
-        </div>
+        <div class="box"><b>1. API Key:</b> <span style="color:var(--text-muted)">Required for searching.</span></div>
+        <div class="box"><b>2. Client ID:</b> <span style="color:var(--text-muted)">Required for private logins. Ensure your web address is authorized in Google Console:</span><br><code class="dyn-url">...</code></div>
 
         <label class="input-label">🔑 API Key:</label>
         <input type="text" id="ak" name="username" autocomplete="username" placeholder="AIzaSy..." oninput="saveK()">
         
         <label class="input-label">👤 Client ID:</label>
         <input type="password" id="cid" name="password" autocomplete="current-password" placeholder="...apps.googleusercontent.com" oninput="saveK()">
-        
-        <div style="margin-top:25px;padding-top:15px;border-top:1px solid var(--border)">
-            <h3 style="color:var(--purple);margin-top:0;font-size:15px">🛠️ Generate Clean App</h3>
-            <div class="help">Removes this entire setup section permanently.</div>
-            <label class="input-label">📧 Reminder Email (Optional):</label>
-            <input type="email" id="uem" placeholder="Your Google email..." autocomplete="off" data-bwignore="true">
-            <button class="btn-pur" onclick="genApp()">📥 Download Clean App</button>
-        </div>
     </form>
+
+    <div class="section" id="genUI" style="margin-top:15px;border:1px solid var(--border)">
+        <h3 style="color:var(--purple);margin-top:0;font-size:15px">🛠️ Generate Clean App</h3>
+        <div class="help">Removes this entire setup section permanently.</div>
+        <label class="input-label">📧 Reminder Email (Optional):</label>
+        <input type="text" id="uem" placeholder="Your Google email..." autocomplete="off">
+        <button class="btn-pur" onclick="genApp()">📥 Download Clean App</button>
+    </div>
 
     <div id="sheetOverlay" onclick="closeMenu()"></div>
     <div id="botSheet">
@@ -130,7 +126,7 @@
         const getK=()=>window.H_AK || ($('ak')?$('ak').value.trim():"");
         const getC=()=>window.H_CID || ($('cid')?$('cid').value.trim():"");
         
-        function initTheme() { document.documentElement.setAttribute('data-theme', localStorage.getItem('t')||'dark'); }
+        function initTheme() { document.documentElement.setAttribute('data-theme', localStorage.getItem('t')||'light'); }
         function toggleTheme() { let t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',t); localStorage.setItem('t',t); }
         
         window.onload = function() {
@@ -164,7 +160,16 @@
             google.accounts.oauth2.initTokenClient({ client_id: getC(), scope: 'https://www.googleapis.com/auth/youtube.readonly', callback: (r)=>{ if(r&&r.access_token){ token=r.access_token; $('status').innerHTML="<span style='color:var(--success)'>✅ Logged In.</span>"; checkL(); } } }).requestAccessToken();
         }
 
-        function openMenu(channelId, titleText) {
+        // --- ROW & MENU LOGIC ---
+        function toggleRow(e, cbId) {
+            // Prevent toggling if user clicked the 3 dots or the checkbox itself directly
+            if(e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+            let cb = $(cbId);
+            cb.checked = !cb.checked;
+        }
+
+        function openMenu(e, channelId, titleText) {
+            e.stopPropagation(); // Stop row toggle
             if(!channelId || channelId === 'undefined') return alert("Could not find the parent channel ID for this item.");
             menuTargetChannel = channelId;
             $('sheetTitle').innerText = titleText;
@@ -178,12 +183,24 @@
         function scrapeParentChannel() { closeMenu(); scrape(menuTargetChannel, 'channel'); }
         function findPlaylists() { closeMenu(); fetchPlaylists(menuTargetChannel); }
 
+        function shareQ() {
+            let txt = $('qArea').value;
+            if(!txt) return alert("Queue is empty!");
+            if(navigator.share) {
+                navigator.share({ title: 'YT Scraper Links', text: txt }).catch(err=>console.log("Share cancelled"));
+            } else {
+                navigator.clipboard.writeText(txt);
+                alert("Share not supported on this browser. Links copied to clipboard instead!");
+            }
+        }
+
         function genApp() {
             if(!getK()&&!getC()) return alert("Paste keys first.");
             if(getC()) { if(!confirm("⚠️ IMPORTANT WARNING:\n\nWhen you host this new file on Netlify, your web link will change.\n\nYou MUST add your new Netlify link to Google Console Authorized URIs, or Login will fail.\n\nContinue?")) return; }
             
             let hc = document.documentElement.cloneNode(true);
             if(hc.querySelector('#setupUI')) hc.querySelector('#setupUI').remove();
+            if(hc.querySelector('#genUI')) hc.querySelector('#genUI').remove();
             if(hc.querySelector('#lockMsg')) hc.querySelector('#lockMsg').remove();
             if(getC()&&hc.querySelector('#emDisp')) hc.querySelector('#emDisp').innerHTML=$('uem').value?`Account: <b>${$('uem').value}</b>`:"Private Login";
             else if(hc.querySelector('#logWrap')) hc.querySelector('#logWrap').remove();
@@ -201,7 +218,6 @@
             a.download = 'YT_Clean.html'; a.click();
         }
 
-        // Helper to safely extract thumbnails without breaking older Android WebViews
         function getThumb(snip) {
             if(!snip || !snip.thumbnails) return '';
             if(snip.thumbnails.medium && snip.thumbnails.medium.url) return snip.thumbnails.medium.url;
@@ -316,19 +332,16 @@
                 let imgTag = i.th ? `<img src="${i.th}" class="yt-pic">` : `<div class="yt-pic" style="display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;">No Image</div>`;
                 let safeTitle = (i.t||"").replace(/'/g,"\\'").replace(/"/g,'&quot;');
                 
+                // NO MORE LABEL WRAPPER. The entire div is clickable via toggleRow(). Unchecked by default.
                 h+=`
-                <div class="yt-row" data-t="${safeTitle}">
-                    <input type="checkbox" class="yt-chk" value="${l}" id="i${x}" checked>
-                    <label for="i${x}" style="flex:1; display:block; cursor:pointer; min-width:0;">
-                        <div style="display:flex; gap:12px;">
-                            ${imgTag}
-                            <div class="yt-dat">
-                                <div class="yt-ttl">${b}${i.t}</div>
-                                <div class="yt-chn">${i.ct}</div>
-                            </div>
-                        </div>
-                    </label>
-                    <button class="menu-btn" onclick="openMenu('${i.c}', '${safeTitle}')">⋮</button>
+                <div class="yt-row" data-t="${safeTitle}" onclick="toggleRow(event, 'i${x}')">
+                    <input type="checkbox" class="yt-chk" value="${l}" id="i${x}">
+                    ${imgTag}
+                    <div class="yt-dat">
+                        <div class="yt-ttl">${b}${i.t}</div>
+                        <div class="yt-chn">${i.ct}</div>
+                    </div>
+                    <button class="menu-btn" onclick="openMenu(event, '${i.c}', '${safeTitle}')">⋮</button>
                 </div>`;
             }); $('resDiv').innerHTML=h;
         }
