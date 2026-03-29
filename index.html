@@ -28,7 +28,7 @@
         .toggle-header{font-size:15px;font-weight:bold;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:8px;padding:5px 0;}
         .toggle-header span{font-family:monospace;font-size:18px;}
 
-        .big-search{font-size:16px!important;padding:14px!important;font-weight:bold;border:2px solid var(--primary)!important;margin-bottom:0}
+        .big-search{font-size:16px!important;padding:14px!important;font-weight:bold;border:2px solid var(--primary)!important;margin-bottom:0;width:100%;box-sizing:border-box;}
         .btn-main{width:100%;padding:14px;margin-top:10px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer}
         .btn-main:disabled{background:var(--border)!important;color:var(--text-muted)!important}
         .btn-suc{background:var(--success);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;flex:1}
@@ -41,7 +41,6 @@
         .cat-btn{background:var(--input-bg);color:var(--text-muted);border:1px solid var(--border);padding:10px 5px;border-radius:6px;font-size:12px;font-weight:bold;cursor:pointer;text-align:center;transition:.2s;width:100%;box-sizing:border-box;}
         .cat-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-        /* Box expands naturally */
         #resDiv{background:var(--card);border-radius:8px;margin-top:10px;}
         .yt-item{display:table;width:100%;table-layout:fixed;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}
         .yt-item:last-child{border-bottom:none}
@@ -81,7 +80,6 @@
         .box-info a{color:var(--primary);text-decoration:none;font-weight:bold;}
         .box-info a:hover{text-decoration:underline;}
         
-        /* BOOKMARK CHIP STYLES */
         .bm-chip{display:flex; background:var(--border); border-radius:15px; overflow:hidden; max-width:100%;}
         .bm-text{background:transparent; border:none; padding:8px 12px; font-size:13px; color:var(--text); cursor:pointer; font-weight:bold; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;}
         .bm-text:active{background:rgba(0,0,0,0.05);}
@@ -106,9 +104,9 @@
             <div class="row" style="align-items:flex-end; margin-bottom:10px;">
                 <div style="flex:3;">
                     <label class="lbl">🔍 Search Query, URL, or Target ID:</label>
-                    <div style="display:flex; gap:6px;">
-                        <input type="search" id="qBox" class="big-search" placeholder="Type name, URL, or ID..." disabled required style="margin:0; flex:1;">
-                        <button type="button" id="bmBtn" class="btn-gry" style="margin:0; width:54px; padding:0; font-size:22px; background:var(--input-bg); border:2px solid var(--border); color:var(--text);" onclick="addBookmark()" disabled title="Save Search">⭐</button>
+                    <div style="position:relative;">
+                        <input type="search" id="qBox" class="big-search" placeholder="Type name, URL, or ID..." disabled required style="padding-right:45px;">
+                        <button type="button" id="bmBtn" onclick="addBookmark()" disabled title="Save Search" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none; font-size:22px; padding:4px; cursor:pointer;">⭐</button>
                     </div>
                 </div>
                 <div style="flex:1;">
@@ -430,7 +428,9 @@
             if(!txt) return alert("Queue is empty!");
             let intentUrl = `intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodeURIComponent(txt)};end`;
             try {
-                if(navigator.share) { navigator.share({ text: txt }).catch(e=>{ window.location.href = intentUrl; }); } 
+                if(navigator.share && window.isSecureContext) { 
+                    navigator.share({ text: txt }).catch(e=>{ window.location.href = intentUrl; }); 
+                } 
                 else { window.location.href = intentUrl; }
             } catch(e) { window.location.href = intentUrl; }
         }
@@ -488,13 +488,10 @@
                 if(errorMsg.includes('401') || errorMsg.includes('403') || errorMsg.includes('Unauthorized') || errorMsg.includes('insufficient')) {
                     $('plStatus').innerHTML = `
                         <div style="background:rgba(192,92,92,0.1); border:1px solid var(--danger); padding:12px; border-radius:8px; margin-top:5px; text-align:left;">
-                            <span style='color:var(--danger);font-weight:bold;'>❌ Permission Denied by Google</span><br><br>
-                            You did not grant the app permission to make playlists.<br><br>
+                            <span style='color:var(--danger);font-weight:bold;'>❌ No YouTube Channel Found</span><br><br>
+                            Since your email is already authorized, this error means your Google Account does not have an active YouTube Channel.<br><br>
                             <b>How to fix this:</b><br>
-                            1. <a href="https://myaccount.google.com/connections" target="_blank" style="color:var(--primary); text-decoration:underline; font-weight:bold;">Click here to open Google Connections</a><br>
-                            2. Find your app name and click <b>Delete all connections</b>.<br>
-                            3. Come back here, click <b>Log Out</b>, then <b>Sign In</b> again.<br>
-                            4. ⚠️ <b>CRITICAL:</b> When the Google popup appears, you MUST check the box that says "Manage your YouTube account" before clicking Continue!
+                            Open the YouTube app with this Google account, tap your profile, and click <b>Create Channel</b>. It takes 2 seconds. Once done, come back and click Create Playlist again!
                         </div>`;
                 } else {
                     $('plStatus').innerHTML = `<span style='color:var(--danger)'>❌ Error: ${errorMsg}</span>`; 
