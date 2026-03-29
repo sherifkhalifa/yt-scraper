@@ -28,7 +28,7 @@
         .toggle-header{font-size:15px;font-weight:bold;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:8px;padding:5px 0;}
         .toggle-header span{font-family:monospace;font-size:18px;}
 
-        .big-search{font-size:16px!important;padding:14px!important;font-weight:bold;border:2px solid var(--primary)!important;margin-bottom:10px}
+        .big-search{font-size:16px!important;padding:14px!important;font-weight:bold;border:2px solid var(--primary)!important;margin-bottom:0}
         .btn-main{width:100%;padding:14px;margin-top:10px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer}
         .btn-main:disabled{background:var(--border)!important;color:var(--text-muted)!important}
         .btn-suc{background:var(--success);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;flex:1}
@@ -41,6 +41,7 @@
         .cat-btn{background:var(--input-bg);color:var(--text-muted);border:1px solid var(--border);padding:10px 5px;border-radius:6px;font-size:12px;font-weight:bold;cursor:pointer;text-align:center;transition:.2s;width:100%;box-sizing:border-box;}
         .cat-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 
+        /* Box expands naturally */
         #resDiv{background:var(--card);border-radius:8px;margin-top:10px;}
         .yt-item{display:table;width:100%;table-layout:fixed;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}
         .yt-item:last-child{border-bottom:none}
@@ -79,6 +80,12 @@
         .box-info{background:var(--input-bg);border:1px solid var(--border);padding:12px;border-radius:8px;margin-bottom:15px;font-size:13px;line-height:1.6;}
         .box-info a{color:var(--primary);text-decoration:none;font-weight:bold;}
         .box-info a:hover{text-decoration:underline;}
+        
+        /* BOOKMARK CHIP STYLES */
+        .bm-chip{display:flex; background:var(--border); border-radius:15px; overflow:hidden; max-width:100%;}
+        .bm-text{background:transparent; border:none; padding:8px 12px; font-size:13px; color:var(--text); cursor:pointer; font-weight:bold; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;}
+        .bm-text:active{background:rgba(0,0,0,0.05);}
+        .bm-del{background:var(--danger); border:none; padding:8px 12px; font-size:12px; color:#fff; cursor:pointer;}
     </style>
 </head>
 <body>
@@ -99,7 +106,10 @@
             <div class="row" style="align-items:flex-end; margin-bottom:10px;">
                 <div style="flex:3;">
                     <label class="lbl">🔍 Search Query, URL, or Target ID:</label>
-                    <input type="search" id="qBox" class="big-search" placeholder="Type name, URL, or ID..." disabled required>
+                    <div style="display:flex; gap:6px;">
+                        <input type="search" id="qBox" class="big-search" placeholder="Type name, URL, or ID..." disabled required style="margin:0; flex:1;">
+                        <button type="button" id="bmBtn" class="btn-gry" style="margin:0; width:54px; padding:0; font-size:22px; background:var(--input-bg); border:2px solid var(--border); color:var(--text);" onclick="addBookmark()" disabled title="Save Search">⭐</button>
+                    </div>
                 </div>
                 <div style="flex:1;">
                     <label class="lbl">Limit:</label>
@@ -109,7 +119,12 @@
                 </div>
             </div>
 
-            <div class="row">
+            <details id="bmDetails" class="filters" style="display:none; border-color:var(--warning); background:rgba(194, 140, 70, 0.05);">
+                <summary>⭐ Saved Searches</summary>
+                <div id="bmList" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;"></div>
+            </details>
+
+            <div class="row" style="margin-top:10px;">
                 <button type="submit" id="sBtn" class="btn-main" style="flex:3; margin-top:0;" disabled>🚀 RUN SEARCH</button>
                 <button type="button" class="btn-gry" style="flex:1; margin-top:0; background:var(--danger);" onclick="res=[]; drawRes(); updateBanner('✅ Results Cleared.')">🗑️ Clear</button>
             </div>
@@ -136,7 +151,6 @@
     <div class="section" style="padding:15px;">
         <details class="filters" style="margin-top:0; margin-bottom:15px;" open>
             <summary>👁️ View Options & Toggles</summary>
-            
             <div class="btn-grid">
                 <button id="btn-cat-video" class="cat-btn active" onclick="toggleCat('video')">🎬 Videos</button>
                 <button id="btn-cat-playlist" class="cat-btn" onclick="toggleCat('playlist')">📂 Playlists</button>
@@ -161,7 +175,7 @@
         <div class="row" style="margin-top:10px;">
             <button class="btn-gry" onclick="document.getElementById('qArea').value='';updateBanner('✅ Queue Cleared.')">Clear</button>
             <button class="btn-gry" onclick="navigator.clipboard.writeText(document.getElementById('qArea').value);alert('Copied!')">Copy</button>
-            <button class="btn-suc" style="background:#4285F4;" onclick="shareQ()">Share Menu</button>
+            <button class="btn-suc" style="background:#4285F4;" onclick="shareQ()">Native Share</button>
         </div>
         <div class="row" style="margin-top:10px;">
             <button class="btn-main" id="plBtn" style="background:var(--purple); margin-top:0; display:none;" onclick="createSecretPlaylist()">🔒 Create Playlist</button>
@@ -216,6 +230,7 @@
     <script>
         let res=[], token=null;
         let showCat = { video: true, playlist: false, channel: false }; 
+        let bookmarks = JSON.parse(localStorage.getItem('yt_bms') || '[]');
         
         const $=(id)=>document.getElementById(id);
         const getK=()=>window.H_AK || ($('username_ak')?$('username_ak').value.trim():"");
@@ -232,10 +247,10 @@
             let loc = (window.location.origin !== "null" && window.location.origin !== "file://") ? window.location.origin : "Local File";
             document.querySelectorAll('.dyn-url').forEach(el => el.innerText = loc);
             
-            // Session Persistence Check
             let savedToken = sessionStorage.getItem('yt_session_token');
             if(savedToken) { token = savedToken; }
             
+            renderBM();
             checkL(); 
         };
 
@@ -263,7 +278,7 @@
 
         function checkL() {
             let u = getK().length>10 || token;
-            ['qBox','tBox','mBox','sBtn','dAfter','dBefore','filt'].forEach(id=>{if($(id)) $(id).disabled=!u;});
+            ['qBox','tBox','mBox','sBtn','dAfter','dBefore','filt','bmBtn'].forEach(id=>{if($(id)) $(id).disabled=!u;});
             
             let authBtn = $('authBtn');
             if(authBtn) {
@@ -318,6 +333,42 @@
                 }).requestAccessToken(); 
             }
         }
+
+        // --- BOOKMARK LOGIC ---
+        function renderBM() {
+            let d = $('bmDetails'), l = $('bmList');
+            if(!bookmarks.length) { d.style.display = 'none'; return; }
+            d.style.display = 'block';
+            l.innerHTML = bookmarks.map((b, i) => `
+                <div class="bm-chip">
+                    <button type="button" class="bm-text" onclick="loadBM(${i})">${b.replace(/'/g,"\\'").replace(/"/g,'&quot;')}</button>
+                    <button type="button" class="bm-del" onclick="delBM(${i})">✖</button>
+                </div>
+            `).join('');
+        }
+
+        function addBookmark() {
+            let q = $('qBox').value.trim();
+            if(!q) return;
+            if(!bookmarks.includes(q)) {
+                bookmarks.push(q);
+                localStorage.setItem('yt_bms', JSON.stringify(bookmarks));
+                renderBM();
+                $('bmDetails').open = true;
+            }
+        }
+
+        function loadBM(i) {
+            $('qBox').value = bookmarks[i];
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function delBM(i) {
+            bookmarks.splice(i, 1);
+            localStorage.setItem('yt_bms', JSON.stringify(bookmarks));
+            renderBM();
+        }
+        // ----------------------
 
         function toggleCat(cat) {
             showCat[cat] = !showCat[cat];
@@ -377,18 +428,11 @@
         function shareQ() {
             let txt = $('qArea').value;
             if(!txt) return alert("Queue is empty!");
-            
-            // This aggressively forces the native Android Intent share sheet and bypasses browser limitations
             let intentUrl = `intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodeURIComponent(txt)};end`;
             try {
-                if(navigator.share) {
-                    navigator.share({ text: txt }).catch(e => { window.location.href = intentUrl; });
-                } else {
-                    window.location.href = intentUrl;
-                }
-            } catch(e) {
-                window.location.href = intentUrl;
-            }
+                if(navigator.share) { navigator.share({ text: txt }).catch(e=>{ window.location.href = intentUrl; }); } 
+                else { window.location.href = intentUrl; }
+            } catch(e) { window.location.href = intentUrl; }
         }
 
         function addQ() { 
@@ -538,7 +582,10 @@
                     let u=`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${q}`; if(!token) u+=`&key=${getK()}`;
                     let d = await (await fetch(u,{headers:hd})).json();
                     if(d.error) throw new Error(d.error.message);
-                    if(d.items) res.push(...d.items.map(i=>{ let s=i.snippet||{}; return { t:s.title||'Unknown', k:'video', v:i.id, c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt }; }));
+                    if(d.items) {
+                        let mapped = d.items.map(i=>{ let s=i.snippet||{}; return { t:s.title||'Unknown', k:'video', v:i.id, c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt }; });
+                        res.push(...mapped);
+                    }
                 } 
                 else if (q.startsWith("PL")&&q.length>15&&!q.includes(' ')) {
                     return scrape(q,'playlist', true);
@@ -555,10 +602,12 @@
                         let d = await (await fetch(`https://www.googleapis.com/youtube/v3/${u}`,{headers:hd})).json();
                         if(d.error) throw new Error(d.error.message); if(!d.items) break;
                         
-                        res.push(...d.items.map(i=>{
+                        let mapped = d.items.map(i=>{
                             let s=i.snippet||{}, o=i.id||{};
                             return { t:s.title||'Unknown', k:(o.kind||'').replace('youtube#',''), v:o.videoId||'', p:o.playlistId||'', c:s.channelId||o.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
-                        }));
+                        });
+                        
+                        res.push(...mapped);
                         f+=d.items.length; pt=d.nextPageToken; if(!pt||f>=mx) break;
                     }
                 }
@@ -575,10 +624,11 @@
                 let d = await (await fetch(`https://www.googleapis.com/youtube/v3/activities?part=snippet,contentDetails&home=true&maxResults=50`,{headers:{'Authorization':`Bearer ${token}`}})).json();
                 if(d.error) throw new Error(d.error.message);
                 if(d.items) {
-                    res = d.items.filter(i=>i.contentDetails&&i.contentDetails.upload).map(i=>{
+                    let mapped = d.items.filter(i=>i.contentDetails&&i.contentDetails.upload).map(i=>{
                         let s=i.snippet||{}, v=i.contentDetails.upload.videoId;
                         return { t:s.title||'Unknown', k:'video', v:v, c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
                     });
+                    res = mapped;
                 }
                 if(!showCat.video) toggleCat('video'); drawRes(); fetchDurations();
                 updateBanner(`✅ Loaded Subscriptions.`);
@@ -606,10 +656,13 @@
                     let u=`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${tid}`; if(!token) u+=`&key=${getK()}`; if(pt) u+=`&pageToken=${pt}`;
                     let d = await (await fetch(u,{headers:hd})).json(); if(d.error) throw new Error(d.error.message);
                     
-                    if(d.items) tempRes.push(...d.items.map(i=>{
-                        let s=i.snippet||{}, r=s.resourceId||{};
-                        return { t:s.title||'Unknown', k:'video', v:r.videoId||'', c:s.videoOwnerChannelId||s.channelId||'', ct:s.videoOwnerChannelTitle||s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
-                    }));
+                    if(d.items) {
+                        let mapped = d.items.map(i=>{
+                            let s=i.snippet||{}, r=s.resourceId||{};
+                            return { t:s.title||'Unknown', k:'video', v:r.videoId||'', c:s.videoOwnerChannelId||s.channelId||'', ct:s.videoOwnerChannelTitle||s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
+                        });
+                        tempRes.push(...mapped);
+                    }
                     pt=d.nextPageToken||'';
                 } while(pt);
 
@@ -637,10 +690,13 @@
                     let u=`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${channelId}&maxResults=50`; if(!token) u+=`&key=${getK()}`; if(pt) u+=`&pageToken=${pt}`;
                     let d = await (await fetch(u,{headers:hd})).json(); if(d.error) throw new Error(d.error.message);
                     
-                    if(d.items) res.push(...d.items.map(i=>{
-                        let s=i.snippet||{};
-                        return { t:s.title||'Unknown', k:'playlist', p:i.id||'', c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
-                    }));
+                    if(d.items) {
+                        let mapped = d.items.map(i=>{
+                            let s=i.snippet||{};
+                            return { t:s.title||'Unknown', k:'playlist', p:i.id||'', c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
+                        });
+                        res.push(...mapped);
+                    }
                     pt=d.nextPageToken||'';
                 } while(pt);
                 if(!showCat.playlist) toggleCat('playlist'); 
