@@ -22,8 +22,13 @@
         input:focus,select:focus,textarea:focus{border-color:var(--primary);outline:none}
         .row{display:flex;gap:10px;align-items:center} .row>div{flex:1}
         
+        /* FAKE INPUTS & QUEUE BOX */
         .fake-input{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px;min-height:46px;outline:none;cursor:text;}
         .fake-input:empty:before{content:attr(data-placeholder);color:var(--text-muted);}
+        
+        #qArea{width:100%;min-height:130px;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;outline:none;}
+        #qArea:focus{border-color:var(--primary);}
+        #qArea:empty:before{content:attr(data-placeholder);color:var(--text-muted);}
 
         .toggle-header{font-size:15px;font-weight:bold;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:8px;padding:5px 0;}
         .toggle-header span{font-family:monospace;font-size:18px;}
@@ -169,10 +174,12 @@
     
     <div class="section">
         <h3 style="color:var(--success);margin-top:0;font-size:16px">📦 Download Queue (No Duplicates)</h3>
-        <textarea id="qArea" rows="6"></textarea>
+        
+        <div id="qArea" contenteditable="true" data-placeholder="Queued links will appear here..."></div>
+        
         <div class="row" style="margin-top:10px;">
-            <button class="btn-gry" onclick="document.getElementById('qArea').value='';updateBanner('✅ Queue Cleared.')">Clear</button>
-            <button class="btn-gry" onclick="navigator.clipboard.writeText(document.getElementById('qArea').value);alert('Copied!')">Copy</button>
+            <button class="btn-gry" onclick="document.getElementById('qArea').innerText='';updateBanner('✅ Queue Cleared.')">Clear</button>
+            <button class="btn-gry" onclick="navigator.clipboard.writeText(document.getElementById('qArea').innerText);alert('Copied!')">Copy</button>
             <button class="btn-suc" style="background:#4285F4;" onclick="shareQ()">Native Share</button>
         </div>
         <div class="row" style="margin-top:10px;">
@@ -424,7 +431,7 @@
         }
 
         function shareQ() {
-            let txt = $('qArea').value;
+            let txt = $('qArea').innerText;
             if(!txt) return alert("Queue is empty!");
             let intentUrl = `intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodeURIComponent(txt)};end`;
             try {
@@ -438,16 +445,16 @@
         function addQ() { 
             let u=Array.from(document.querySelectorAll('.yt-chk:checked')).map(b=>b.value).filter(v=>v); 
             if(!u.length) return; 
-            let exist = new Set($('qArea').value.split('\n').map(s=>s.trim()).filter(s=>s));
+            let exist = new Set($('qArea').innerText.split('\n').map(s=>s.trim()).filter(s=>s));
             u.forEach(link => exist.add(link));
-            $('qArea').value = Array.from(exist).join('\n'); 
+            $('qArea').innerText = Array.from(exist).join('\n'); 
             updateBanner(`<span style='color:var(--primary)'>📦 Added. Total: ${exist.size} unique URLs.</span>`); 
         }
 
         async function createSecretPlaylist() {
             $('plStatus').innerHTML = ""; 
             if(!token) return alert("You must sign in first.");
-            let txt = $('qArea').value.split('\n').map(s=>s.trim()).filter(s=>s);
+            let txt = $('qArea').innerText.split('\n').map(s=>s.trim()).filter(s=>s);
             if(!txt.length) { $('plStatus').innerHTML = "<span style='color:var(--danger)'>Queue is empty!</span>"; return; }
 
             let invalidUrls = txt.filter(url => !url.includes('watch?v='));
@@ -456,7 +463,7 @@
             if(invalidUrls.length > 0) {
                 if(confirm(`⚠️ Warning: Found ${invalidUrls.length} Channel/Playlist URLs in queue. Playlists can only contain Videos.\n\nClick OK to copy invalid URLs to clipboard and remove them, or Cancel to abort.`)) {
                     navigator.clipboard.writeText(invalidUrls.join('\n'));
-                    $('qArea').value = txt.filter(url => url.includes('watch?v=')).join('\n');
+                    $('qArea').innerText = txt.filter(url => url.includes('watch?v=')).join('\n');
                     alert("Invalid URLs removed from queue. Click 'Create Playlist' again to proceed with videos only.");
                 }
                 return;
@@ -668,9 +675,9 @@
                     if(!showCat.video) toggleCat('video'); 
                     drawRes(); fetchDurations();
                 } else {
-                    let exist = new Set($('qArea').value.split('\n').map(s=>s.trim()).filter(s=>s));
+                    let exist = new Set($('qArea').innerText.split('\n').map(s=>s.trim()).filter(s=>s));
                     tempRes.forEach(item => exist.add(`https://www.youtube.com/watch?v=${item.v}`));
-                    $('qArea').value = Array.from(exist).join('\n'); 
+                    $('qArea').innerText = Array.from(exist).join('\n'); 
                     $('resDiv').innerHTML="<div style='padding:20px;text-align:center;'>✅ Added directly to queue.</div>";
                 }
                 updateBanner(`✅ Processed ${tempRes.length} videos.`);
