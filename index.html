@@ -41,7 +41,6 @@
         .cat-btn{background:var(--input-bg);color:var(--text-muted);border:1px solid var(--border);padding:10px 5px;border-radius:6px;font-size:12px;font-weight:bold;cursor:pointer;text-align:center;transition:.2s;width:100%;box-sizing:border-box;}
         .cat-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-        /* SCROLL TRAP FIXED - Box expands naturally */
         #resDiv{background:var(--card);border-radius:8px;margin-top:10px;}
         .yt-item{display:table;width:100%;table-layout:fixed;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}
         .yt-item:last-child{border-bottom:none}
@@ -74,7 +73,7 @@
         .menu-divider{height:1px; background:var(--border); margin:15px 0;}
         .menu-subtitle{font-size:11px; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; font-weight:bold; letter-spacing:0.5px;}
         
-        #statusBanner{text-align:center;font-weight:bold;font-size:11px;padding:8px;border-radius:6px;background:var(--input-bg);border:1px solid var(--border);margin-top:10px;cursor:pointer;transition:0.2s;}
+        #statusBanner{text-align:center;font-weight:bold;font-size:13px;padding:10px;border-radius:6px;background:var(--input-bg);border:1px solid var(--border);margin-top:10px;cursor:pointer;transition:0.2s;}
         #statusBanner:active{transform:scale(0.98)}
     </style>
 </head>
@@ -92,14 +91,15 @@
         <div id="lockMsg" onclick="$('setupWrapper').style.display='block';$('setupWrapper').scrollIntoView({behavior: 'smooth'})" style="text-align:center;color:var(--danger);font-weight:600;padding:12px;background:rgba(192,92,92,0.1);border-radius:8px;margin-bottom:15px;cursor:pointer;">🔒 App Locked. Tap here to setup keys.</div>
         
         <form action="javascript:void(0);" onsubmit="runSearch(); return false;">
-            <div class="row" style="align-items:flex-end;">
+            
+            <div class="row" style="align-items:flex-end; margin-bottom:10px;">
                 <div style="flex:3;">
                     <label class="lbl">🔍 Search Query, URL, or Target ID:</label>
                     <input type="search" id="qBox" class="big-search" placeholder="Type name, URL, or ID..." disabled required>
                 </div>
-                <div style="flex:1; margin-bottom:10px;">
+                <div style="flex:1;">
                     <label class="lbl">Limit:</label>
-                    <select id="mBox" disabled style="padding:14px; font-weight:bold; border:2px solid var(--border);">
+                    <select id="mBox" disabled style="padding:14px; font-weight:bold; border:2px solid var(--border); margin-top:0;">
                         <option value="25">25</option><option value="50" selected>50</option><option value="100">100</option><option value="250">250</option>
                     </select>
                 </div>
@@ -107,6 +107,9 @@
 
             <details class="filters">
                 <summary>⚙️ Search Filters (Type & Date)</summary>
+                <label class="lbl" style="margin-top:10px;">🧹 Local Result Filter:</label>
+                <input type="text" id="filt" placeholder="Type a word to hide unwanted results..." onkeyup="filterRes()" disabled>
+                
                 <div class="row" style="margin-top:10px;">
                     <div><label class="lbl">Type:</label><select id="tBox" disabled><option value="all" selected>All</option><option value="video">Videos</option><option value="playlist">Playlists</option><option value="channel">Channels</option></select></div>
                     <div><label class="lbl">Date After:</label><input type="date" id="dAfter" disabled></div>
@@ -115,7 +118,7 @@
             </details>
 
             <button type="submit" id="sBtn" class="btn-main" disabled>🚀 RUN SEARCH</button>
-            <button type="button" id="subBtn" class="btn-main" style="background:var(--purple); display:none;" onclick="getSubs()">📥 Get Latest Subscriptions</button>
+            <button type="button" id="subBtn" class="btn-main" style="background:var(--purple); display:none; margin-top:10px;" onclick="getSubs()">📥 Get Latest Subscriptions</button>
             <div id="statusBanner" onclick="jumpToSetup()">Checking status...</div>
         </form>
     </div>
@@ -123,9 +126,6 @@
     <div class="section" style="padding:15px;">
         <details class="filters" style="margin-top:0; margin-bottom:15px;" open>
             <summary>👁️ View Options & Toggles</summary>
-            <label class="lbl" style="margin-top:10px;">🧹 Local Result Filter:</label>
-            <input type="text" id="filt" placeholder="Type a word to hide unwanted results..." onkeyup="filterRes()" disabled>
-            
             <div class="btn-grid">
                 <button id="btn-cat-video" class="cat-btn active" onclick="toggleCat('video')">🎬 Videos</button>
                 <button id="btn-cat-playlist" class="cat-btn" onclick="toggleCat('playlist')">📂 Playlists</button>
@@ -156,6 +156,8 @@
         <div class="row" style="margin-top:10px;">
             <button class="btn-main" id="plBtn" style="background:var(--purple); margin-top:0; display:none;" onclick="createSecretPlaylist()">🔒 Create Playlist</button>
         </div>
+        <div id="plStatus" style="text-align:center; margin-top:10px; font-size:13px; font-weight:bold;"></div>
+        
         <div style="text-align:center; margin-top:10px;">
             <a id="plLink" href="https://www.youtube.com/feed/playlists" target="_blank" style="display:none; font-size:13px; color:var(--primary); font-weight:bold; text-decoration:none;">🔗 Open my YouTube Playlists</a>
         </div>
@@ -193,6 +195,8 @@
     <script>
         let res=[], token=null;
         let showCat = { video: true, playlist: false, channel: false }; 
+        
+        // KILLSWITCH: Completely hidden to respect your request.
         
         const $=(id)=>document.getElementById(id);
         const getK=()=>window.H_AK || ($('username_ak')?$('username_ak').value.trim():"");
@@ -250,7 +254,7 @@
             }
 
             if(u&&!token) {
-                updateBanner("<span style='color:var(--success)'>✅ Ready.</span>");
+                updateBanner("<span style='color:var(--success)'>✅ Ready to Search.</span>");
                 if(!window.H_AK && $('setupWrapper').style.display === '') toggleSec('setupBody', 'setupIcon'); 
                 $('lockMsg').style.display = 'none';
             }
@@ -328,12 +332,25 @@
             setTimeout(() => $('sheetOverlay').style.display = 'none', 300);
         }
 
-        // Native Android Share Intent
+        // Cleaned up Share button that copies and alerts if native share is blocked
         function shareQ() {
             let txt = $('qArea').value;
             if(!txt) return alert("Queue is empty!");
-            let intentUrl = `intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodeURIComponent(txt)};end`;
-            window.location.href = intentUrl;
+            
+            try {
+                if(navigator.share && window.isSecureContext) { 
+                    navigator.share({ title: 'YT Scraper Links', text: txt }).catch(e => {
+                        navigator.clipboard.writeText(txt);
+                        alert("Share cancelled. Links copied to clipboard instead!");
+                    }); 
+                } else { 
+                    navigator.clipboard.writeText(txt);
+                    alert("Native Share requires HTTPS. Links copied to clipboard instead! Paste them into your downloader.");
+                }
+            } catch(e) {
+                navigator.clipboard.writeText(txt);
+                alert("Links copied to clipboard!");
+            }
         }
 
         function addQ() { 
@@ -346,9 +363,9 @@
         }
 
         async function createSecretPlaylist() {
-            if(!token) return alert("You must sign in first. Ensure you check the 'Manage YouTube' box in the Google popup.");
+            if(!token) return alert("You must sign in first.");
             let txt = $('qArea').value.split('\n').map(s=>s.trim()).filter(s=>s);
-            if(!txt.length) return alert("Queue is empty!");
+            if(!txt.length) { $('plStatus').innerHTML = ""; return alert("Queue is empty!"); }
 
             let invalidUrls = txt.filter(url => !url.includes('watch?v='));
             let validIds = txt.filter(url => url.includes('watch?v=')).map(url => url.split('v=')[1].split('&')[0]);
@@ -364,7 +381,7 @@
 
             if(!validIds.length) return alert("No valid videos to add.");
 
-            updateBanner("⏳ Creating Private Playlist...");
+            $('plStatus').innerHTML = "<span style='color:var(--primary)'>⏳ Creating Private Playlist...</span>";
             let hd = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
             try {
                 let pRes = await fetch('https://www.googleapis.com/youtube/v3/playlists?part=snippet,status', {
@@ -375,15 +392,22 @@
                 if(pData.error) throw new Error(pData.error.message);
                 let pid = pData.id;
 
-                updateBanner(`⏳ Injecting ${validIds.length} videos...`);
+                $('plStatus').innerHTML = `<span style='color:var(--primary)'>⏳ Injecting ${validIds.length} videos...</span>`;
                 for(let vid of validIds) {
                     await fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet', {
                         method: 'POST', headers: hd,
                         body: JSON.stringify({ snippet: { playlistId: pid, resourceId: { kind: "youtube#video", videoId: vid } } })
                     });
                 }
-                updateBanner(`<span style='color:var(--success)'>✅ Playlist Created Successfully!</span>`);
-            } catch(e) { updateBanner(`<span style='color:var(--danger)'>❌ Error: ${e.message}. Ensure you granted YouTube permissions.</span>`); }
+                $('plStatus').innerHTML = `<span style='color:var(--success)'>✅ Playlist Created Successfully!</span>`;
+            } catch(e) { 
+                let errorMsg = e.message;
+                if(errorMsg.includes('401') || errorMsg.includes('403') || errorMsg.includes('Unauthorized') || errorMsg.includes('insufficient')) {
+                    $('plStatus').innerHTML = `<span style='color:var(--danger)'>❌ Unauthorized to make playlists.</span> <a href="https://myaccount.google.com/connections" target="_blank" style="color:var(--primary);font-weight:bold;text-decoration:underline;margin-left:10px;">❓ How to fix</a>`;
+                } else {
+                    $('plStatus').innerHTML = `<span style='color:var(--danger)'>❌ Error: ${errorMsg}</span>`; 
+                }
+            }
         }
 
         function genApp() {
@@ -467,7 +491,7 @@
                     let d = await (await fetch(u,{headers:hd})).json();
                     if(d.error) throw new Error(d.error.message);
                     if(d.items) {
-                        let mapped = d.items.map(i=>{ let s=i.snippet||{}; return { t:s.title||'Unknown', k:'video', v:i.id, c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt }; });
+                        let mapped = d.items.map(i=>{ let s=i.snippet||{}; return { t:s.title||'Unknown', k:'video', v:i.id, c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt, desc:s.description||'' }; });
                         res.push(...mapped);
                     }
                 } 
@@ -488,7 +512,7 @@
                         
                         let mapped = d.items.map(i=>{
                             let s=i.snippet||{}, o=i.id||{};
-                            return { t:s.title||'Unknown', k:(o.kind||'').replace('youtube#',''), v:o.videoId||'', p:o.playlistId||'', c:s.channelId||o.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
+                            return { t:s.title||'Unknown', k:(o.kind||'').replace('youtube#',''), v:o.videoId||'', p:o.playlistId||'', c:s.channelId||o.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt, desc:s.description||'' };
                         });
                         
                         res.push(...mapped);
@@ -510,7 +534,7 @@
                 if(d.items) {
                     let mapped = d.items.filter(i=>i.contentDetails&&i.contentDetails.upload).map(i=>{
                         let s=i.snippet||{}, v=i.contentDetails.upload.videoId;
-                        return { t:s.title||'Unknown', k:'video', v:v, c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
+                        return { t:s.title||'Unknown', k:'video', v:v, c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt, desc:s.description||'' };
                     });
                     res = mapped;
                 }
@@ -543,7 +567,7 @@
                     if(d.items) {
                         let mapped = d.items.map(i=>{
                             let s=i.snippet||{}, r=s.resourceId||{};
-                            return { t:s.title||'Unknown', k:'video', v:r.videoId||'', c:s.videoOwnerChannelId||s.channelId||'', ct:s.videoOwnerChannelTitle||s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
+                            return { t:s.title||'Unknown', k:'video', v:r.videoId||'', c:s.videoOwnerChannelId||s.channelId||'', ct:s.videoOwnerChannelTitle||s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt, desc:s.description||'' };
                         });
                         tempRes.push(...mapped);
                     }
@@ -577,7 +601,7 @@
                     if(d.items) {
                         let mapped = d.items.map(i=>{
                             let s=i.snippet||{};
-                            return { t:s.title||'Unknown', k:'playlist', p:i.id||'', c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
+                            return { t:s.title||'Unknown', k:'playlist', p:i.id||'', c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt, desc:s.description||'' };
                         });
                         res.push(...mapped);
                     }
