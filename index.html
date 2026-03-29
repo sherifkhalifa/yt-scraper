@@ -30,7 +30,6 @@
         .fake-input{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px;min-height:46px;outline:none;cursor:text;}
         .fake-input:empty:before{content:attr(data-placeholder);color:var(--text-muted);}
 
-        /* STATIC QUEUE BOX */
         .queue-box{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px;min-height:130px;max-height:300px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;user-select:text;}
         .queue-box:empty:before{content:attr(data-placeholder);color:var(--text-muted);}
 
@@ -158,8 +157,8 @@
                     
                     <div id="catDiv" style="display:none;">
                         <label class="lbl">Category (Popular Only):</label>
-                        <select id="catBox" disabled onchange="checkCat()">
-                            <option value="">Trending in EG (All Categories)</option>
+                        <select id="catBox" disabled>
+                            <option value="">Trending in Region (All Categories)</option>
                             <option value="10">Music</option>
                             <option value="20">Gaming</option>
                             <option value="24">Entertainment</option>
@@ -173,8 +172,6 @@
                             <option value="2">Autos & Vehicles</option>
                             <option value="15">Pets & Animals</option>
                             <option value="26">Howto & Style</option>
-                            <option disabled>──────────</option>
-                            <option value="change_country">🌍 Change Country...</option>
                         </select>
                     </div>
                 </div>
@@ -269,8 +266,18 @@
         <div class="section" id="genUI" style="border:1px solid var(--border)">
             <div class="toggle-header" style="color:var(--purple);" onclick="toggleSec('genBody', 'genIcon')"><span id="genIcon">➕</span> Generate Clean App</div>
             <div id="genBody" style="display:none; margin-top:10px;">
-                <label class="lbl">Reminder Email (Optional):</label>
-                <div contenteditable="true" id="x_rem_z" class="fake-input" data-placeholder="Your Google email..."></div>
+                
+                <div class="row" style="align-items:center;">
+                    <div style="flex:2;">
+                        <label class="lbl">Reminder Email:</label>
+                        <div contenteditable="true" id="x_rem_z" class="fake-input" data-placeholder="Your Google email..."></div>
+                    </div>
+                    <div style="flex:1;">
+                        <label class="lbl">Default Region:</label>
+                        <button type="button" id="regBtn" class="btn-gry" style="margin-top:6px; background:var(--input-bg); border:1px solid var(--border); color:var(--text);" onclick="changeRegionUI()">🇪🇬 EG</button>
+                    </div>
+                </div>
+
                 <button class="btn-main" style="background:var(--purple);margin-top:15px;" onclick="genApp()">📥 Download Clean App</button>
             </div>
         </div>
@@ -289,11 +296,11 @@
     </div>
 
     <script>
-        // GLOBALS & UTILITIES 
         let res=[], token=null;
         let showCat = { video: true, playlist: false, channel: false }; 
         let bookmarks = JSON.parse(localStorage.getItem('yt_bms') || '[]');
-        let currentRegion = localStorage.getItem('yt_reg') || 'EG';
+        
+        let currentRegion = window.H_REG || localStorage.getItem('yt_reg') || 'EG';
         let globalPT = '', currentMode = '', scrapeArgs = {};
         
         const catNames = {"1":"Film","2":"Autos","10":"Music","15":"Pets","17":"Sports","20":"Gaming","22":"People","23":"Comedy","24":"Entertainment","25":"News","26":"Style","27":"Education","28":"Science"};
@@ -302,6 +309,11 @@
         const getK=()=>window.H_AK || ($('username_ak')?$('username_ak').value.trim():"");
         const getC=()=>window.H_CID || ($('password_cid')?$('password_cid').value.trim():"");
         
+        function getFlagEmoji(code) {
+            if(!code || code.length !== 2) return '🌍';
+            return String.fromCodePoint(...[...code.toUpperCase()].map(c => c.charCodeAt() + 127397));
+        }
+
         function getThumb(snip) {
             if(!snip || !snip.thumbnails) return '';
             if(snip.thumbnails.medium && snip.thumbnails.medium.url) return snip.thumbnails.medium.url;
@@ -339,7 +351,6 @@
             $('qCount').innerText = count;
         }
 
-        // INITIALIZATION
         function initTheme() { document.documentElement.setAttribute('data-theme', localStorage.getItem('t')||'light'); }
         function toggleTheme() { let t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',t); localStorage.setItem('t',t); }
         
@@ -352,11 +363,26 @@
             let savedToken = sessionStorage.getItem('yt_session_token');
             if(savedToken) token = savedToken;
             
-            updateCatLabel();
+            updateRegBtn();
             renderBM(); checkL(); 
             $('qArea').addEventListener('click', function(e) { e.preventDefault(); });
             $('qArea').removeAttribute('contenteditable'); 
         };
+
+        function updateRegBtn() {
+            if($('regBtn')) $('regBtn').innerText = getFlagEmoji(currentRegion) + ' ' + currentRegion;
+            $('catBox').options[0].text = `Trending in ${currentRegion} (All Categories)`;
+        }
+
+        function changeRegionUI() {
+            let r = prompt("Enter a 2-letter Country Code (e.g., EG, US, GB, SA, AE):", currentRegion);
+            if(r && r.trim().length === 2) {
+                currentRegion = r.trim().toUpperCase();
+                localStorage.setItem('yt_reg', currentRegion);
+                updateRegBtn();
+                updateStatus('searchStatus', `✅ Global Region changed to ${currentRegion}`);
+            }
+        }
 
         function toggleSec(bodyId, iconId) {
             let b = $(bodyId), i = $(iconId);
@@ -382,23 +408,6 @@
             $('catDiv').style.display = isPop ? 'block' : 'none';
             if(isPop) $('qBox').removeAttribute('required');
             else $('qBox').setAttribute('required', 'true');
-        }
-
-        function checkCat() {
-            if($('catBox').value === 'change_country') {
-                let r = prompt("Enter a 2-letter Country Code (e.g., EG, US, GB, SA, AE):", currentRegion);
-                if(r && r.trim().length === 2) {
-                    currentRegion = r.trim().toUpperCase();
-                    localStorage.setItem('yt_reg', currentRegion);
-                    updateCatLabel();
-                    updateStatus('searchStatus', `✅ Region successfully changed to ${currentRegion}`);
-                }
-                $('catBox').value = ''; // Reset selection back to default top option
-            }
-        }
-
-        function updateCatLabel() {
-            $('catBox').options[0].text = `Trending in ${currentRegion} (All Categories)`;
         }
 
         function checkL() {
@@ -446,7 +455,6 @@
             }
         }
 
-        // --- STATE-AWARE BOOKMARK LOGIC ---
         function renderBM() {
             let d = $('bmDetails'), l = $('bmList');
             if(!bookmarks.length) { d.style.display = 'none'; return; }
@@ -545,7 +553,6 @@
             setTimeout(() => $('sheetOverlay').style.display = 'none', 300);
         }
 
-        // --- LOCAL QUEUE ACTIONS ---
         function clearQ() {
             $('qArea').innerText = ''; updateQCount();
             updateStatus('queueActionStatus', '✅ Queue Cleared.');
@@ -601,7 +608,6 @@
             updateStatus(targetId, `✅ Added ${u.length} items. Total queue: ${exist.size} URLs.`); 
         }
 
-        // --- PAGINATION & API LOGIC ---
         function loadMore() {
             if(currentMode === 'search') runSearch(true);
             else if(currentMode === 'subs') getSubs(true);
@@ -952,7 +958,7 @@
             f.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:20px;padding:15px;border-top:1px solid var(--border)">${emStr}</div>`;
             hc.querySelector('body').appendChild(f);
             let scr = document.createElement('script');
-            scr.textContent = `window.H_AK="${getK()}";window.H_CID="${getC()}";window.onload=function(){initTheme();checkL();document.querySelectorAll('.dyn-url').forEach(e=>e.innerText=window.location.origin);};`;
+            scr.textContent = `window.H_AK="${getK()}";window.H_CID="${getC()}";window.H_REG="${currentRegion}";window.onload=function(){initTheme();checkL();document.querySelectorAll('.dyn-url').forEach(e=>e.innerText=window.location.origin);};`;
             hc.querySelector('body').insertBefore(scr,hc.querySelector('body').firstChild);
             let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(["<!DOCTYPE html>\n<html lang='en'>\n"+hc.innerHTML+"\n</html>"], {type:'text/html'}));
             a.download = 'YT_Clean.html'; a.click();
