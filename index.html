@@ -3,136 +3,1076 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitwarden Test V7</title>
+    <title>YT Fast Scraper</title>
     <style>
-        body { font-family: -apple-system, sans-serif; padding: 20px; background: #f0f2f5; max-width: 400px; margin: auto; }
-        .box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 15px;}
-        input { width: 100%; padding: 12px; margin: 8px 0 15px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; }
-        button { width: 100%; padding: 12px; background: #5c8bc0; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        #status { font-size: 18px; font-weight: bold; text-align: center; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: white; transition: 0.3s; }
-        .locked { background: #c05c5c; }
-        .unlocked { background: #5c9c6f; }
-        .err { color: #c05c5c; font-size: 13px; font-weight: bold; background: rgba(192,92,92,0.1); padding: 10px; border-radius: 6px; display: none; margin-top: 10px; }
+        :root[data-theme="light"]{--bg:#f0f2f5;--card:#fff;--text:#333;--text-muted:#666;--border:#dadae0;--input-bg:#fafafa;--primary:#5c8bc0;--success:#5c9c6f;--warning:#c28c46;--danger:#c05c5c;--purple:#9074b3}
+        :root[data-theme="dark"]{--bg:#121212;--card:#1e1e1e;--text:#e4e6eb;--text-muted:#aaa;--border:#333;--input-bg:#2a2a2a;--primary:#6b9fd4;--success:#6ba87e;--warning:#d9a05b;--danger:#d46b6b;--purple:#a689cc}
+        body{font-family:-apple-system,sans-serif;padding:15px;max-width:900px;margin:auto;background:var(--bg);color:var(--text);transition:.3s}
         
-        .vault-item { display:flex; justify-content:space-between; align-items:center; background:#fafafa; border:1px solid #ccc; padding:10px; border-radius:8px; margin-top:8px; cursor:pointer;}
-        .btn-sm { width:auto; background:#c05c5c; padding:6px 12px; font-size:12px; border-radius:6px; }
+        .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+        h2{font-weight:800;font-size:22px;margin:0;letter-spacing:-0.5px}
+        .top-actions{display:flex;gap:8px}
+        
+        button{transition:.2s; font-family:inherit;}
+        button:hover{filter:brightness(1.05);}
+        button:active{transform:scale(0.98);}
+        
+        .btn-sm{background:var(--card);color:var(--text);border:1px solid var(--border);padding:6px 12px;border-radius:20px;font-size:13px;font-weight:bold;cursor:pointer}
+        .btn-auth{background:var(--primary);color:#fff;border:none} .btn-auth.logged-in{background:var(--success)}
+
+        .section{background:var(--card);padding:18px;border-radius:12px;margin-bottom:15px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+        label.lbl{display:block;margin-top:8px;font-size:13px;color:var(--text-muted);font-weight:600}
+        input,select{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px}
+        input:focus,select:focus{border-color:var(--primary);outline:none}
+        .row{display:flex;gap:10px;align-items:center} 
+        
+        .fake-input{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px;min-height:46px;outline:none;cursor:text;}
+        .fake-input:empty:before{content:attr(data-placeholder);color:var(--text-muted);}
+
+        /* SINGLE LINE CART */
+        .cart-box{background:var(--input-bg); border:2px dashed var(--primary); padding:10px 15px; border-radius:8px; text-align:center; cursor:pointer; user-select:none; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:10px;}
+        .cart-box:active{transform:scale(0.98); background:var(--border);}
+        .cart-text{font-size:15px; font-weight:bold; color:var(--primary); margin:0;}
+
+        /* EXPORT QUEUE & PIN */
+        .queue-box{width:100%;padding:12px;margin-top:5px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:13px;min-height:100px;max-height:250px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;user-select:text;}
+        #pinBtn{background:var(--card); border:1px solid var(--border); color:var(--text); border-radius:6px; cursor:pointer; font-size:14px; padding:6px 10px; font-weight:bold; margin-bottom:5px; transition:0.2s;}
+        #pinBtn.active{background:var(--primary); color:#fff; border-color:var(--primary);}
+
+        .toggle-header{font-size:15px;font-weight:bold;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:8px;padding:5px 0;}
+        .toggle-header span{font-family:monospace;font-size:18px;}
+
+        .big-search{font-size:16px!important;padding:14px!important;font-weight:bold;border:2px solid var(--primary)!important;margin-bottom:0;width:100%;box-sizing:border-box;}
+        .btn-main{width:100%;padding:14px;margin-top:10px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer}
+        .btn-main:disabled{background:var(--border)!important;color:var(--text-muted)!important;cursor:not-allowed;}
+        .btn-suc{background:var(--success);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;flex:1}
+        .btn-gry{background:var(--text-muted);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;flex:1}
+
+        details.filters{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:10px}
+        details.filters summary{font-size:14px;font-weight:bold;color:var(--text);cursor:pointer;outline:none}
+        
+        .btn-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;margin-top:10px}
+        .cat-btn{background:var(--input-bg);color:var(--text);border:1px solid var(--border);padding:10px 5px;border-radius:20px;font-size:13px;font-weight:bold;cursor:pointer;text-align:center;width:100%;box-sizing:border-box; transition:0.2s;}
+        .cat-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+        #resDiv{background:var(--card);border-radius:8px;margin-top:10px;}
+        .yt-item{display:table;width:100%;table-layout:fixed;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}
+        .yt-item:last-child{border-bottom:none}
+        .yt-col-chk{display:table-cell;vertical-align:middle;width:40px;text-align:center}
+        .yt-chk{transform:scale(1.4);accent-color:var(--primary);margin:0;cursor:pointer;}
+        
+        .yt-col-img{display:table-cell;vertical-align:top;width:110px}
+        .yt-pic{width:100px;height:56px;object-fit:cover;border-radius:6px;background:#222;display:block}
+        
+        .yt-col-dat{display:table-cell;vertical-align:top;padding-left:10px;padding-right:10px}
+        
+        .yt-ttl{font-size:14px;font-weight:600;line-height:1.4;margin-bottom:4px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-wrap:break-word;white-space:normal}
+        .expanded-text .yt-ttl {display:block; -webkit-line-clamp:unset; overflow:visible}
+        
+        .yt-chn{font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        
+        .yt-meta{display:none;font-size:11px;color:var(--text-muted);margin-top:5px;gap:6px;flex-wrap:wrap;}
+        .show-date .meta-date, .show-dur .meta-dur{display:inline-block}
+        .show-date .yt-meta, .show-dur .yt-meta{display:flex}
+        .meta-date, .meta-dur{display:none;background:var(--input-bg);padding:3px 6px;border-radius:4px;border:1px solid var(--border);font-weight:bold;}
+        
+        .yt-col-opt{display:table-cell;vertical-align:middle;width:40px;text-align:center}
+        .menu-btn{background:none;border:none;color:var(--text);font-size:22px;padding:10px;cursor:pointer}
+        
+        .badge{font-size:10px;padding:2px 4px;border-radius:4px;font-weight:bold;margin-right:6px;display:inline-block;vertical-align:middle;} 
+        .b-vid{background:var(--danger);color:#fff} .b-pl{background:var(--primary);color:#fff} .b-ch{background:var(--purple);color:#fff}
+
+        #sheetOverlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:none;z-index:999}
+        #botSheet{position:fixed;bottom:-100%;left:0;right:0;background:var(--card);padding:20px;border-radius:20px 20px 0 0;box-shadow:0 -5px 15px rgba(0,0,0,0.3);transition:bottom 0.3s;z-index:1000;max-height:85vh;overflow-y:auto;max-width:900px;margin:auto;}
+        #sheetTitle{font-size:15px;font-weight:bold;color:var(--text);margin-top:0;margin-bottom:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .sheet-btn{width:100%;padding:14px;margin-bottom:10px;border:none;border-radius:8px;font-weight:bold;color:#fff;cursor:pointer;font-size:14px;}
+        .menu-divider{height:1px; background:var(--border); margin:15px 0;}
+        .menu-subtitle{font-size:11px; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; font-weight:bold; letter-spacing:0.5px;}
+        
+        .status-msg{text-align:center; font-weight:bold; font-size:13px; padding:10px; border-radius:6px; margin-top:10px; transition:0.2s; display:none;}
+        .status-msg.active{display:block; background:var(--input-bg); border:1px solid var(--border);}
+        
+        .bm-chip{display:flex; background:var(--border); border-radius:15px; overflow:hidden; max-width:100%;}
+        .bm-text{background:transparent; border:none; padding:8px 12px; font-size:13px; color:var(--text); cursor:pointer; font-weight:bold; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;}
+        .bm-del{background:var(--danger); border:none; padding:8px 12px; font-size:12px; color:#fff; cursor:pointer;}
+
+        /* VAULT ACCOUNTS */
+        .vault-item{display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:10px; border-radius:8px; margin-top:8px;}
+        .vault-item.active-key{border-color:var(--success); background:rgba(92, 156, 111, 0.1);}
+        .vault-info{flex:1; cursor:pointer;}
+        .vault-name{font-weight:bold; font-size:14px; color:var(--text);}
+        .vault-key{font-size:11px; color:var(--text-muted); font-family:monospace; margin-top:3px;}
+
+        .float-nav{position:fixed; right:15px; bottom:20px; display:flex; flex-direction:column; gap:10px; z-index:900;}
+        .float-btn{width:42px; height:42px; border-radius:50%; border:none; background:var(--primary); color:#fff; font-size:18px; box-shadow:0 2px 8px rgba(0,0,0,0.3); cursor:pointer; opacity:0.6; display:flex; align-items:center; justify-content:center; transition:0.3s;}
+        .float-btn:hover{opacity:1; transform:scale(1.05);}
     </style>
 </head>
 <body>
 
-    <div id="status" class="locked">🔒 APP LOCKED</div>
-
-    <div class="box">
-        <h3 style="margin-top:0;">API Account Setup</h3>
-        
-        <label style="font-size:13px; font-weight:bold; color:#666;">Account Nickname (Optional):</label>
-        <input type="text" id="nickname" placeholder="e.g. Primary Gmail">
-
-        <form onsubmit="event.preventDefault();">
-            <label style="font-size:13px; font-weight:bold; color:#666;">API Key:</label>
-            <input type="password" id="username_ak" name="username" autocomplete="username" placeholder="AIzaSy...">
-            
-            <label style="font-size:13px; font-weight:bold; color:#666;">Client ID:</label>
-            <input type="password" id="password_cid" name="password" autocomplete="current-password" placeholder="...apps.googleusercontent.com">
-        </form>
-        
-        <button onclick="saveToVault()">💾 Save to Vault</button>
-        <div id="keyError" class="err"></div>
-
-        <div style="margin-top:20px; border-top:1px solid #ccc; padding-top:15px;">
-            <label style="font-size:13px; font-weight:bold; color:#666;">Saved Vault Accounts:</label>
-            <div id="vaultList"></div>
+    <div class="top-bar">
+        <h2>YT Scraper</h2>
+        <div class="top-actions">
+            <button class="btn-sm" onclick="toggleTheme()">🌓 Theme</button>
+            <button class="btn-sm btn-auth" id="authBtn" onclick="toggleAuth()">👤 Sign In</button>
         </div>
     </div>
 
-    <script>
-        const $ = (id) => document.getElementById(id);
-        let vault = JSON.parse(localStorage.getItem('test_vault') || '[]');
-
-        // 1. MEMORY SAVE (Triggered only by typing, never by heartbeat)
-        function saveToMemory() {
-            localStorage.setItem('test_ak', $('username_ak').value.trim());
-            localStorage.setItem('test_cid', $('password_cid').value.trim());
-            checkStatus();
-        }
+    <div class="section" id="appUI">
+        <div id="lockMsg" onclick="$('setupWrapper').style.display='block';$('setupWrapper').scrollIntoView({behavior: 'smooth'})" style="text-align:center;color:var(--danger);font-weight:600;padding:12px;background:rgba(192,92,92,0.1);border-radius:8px;margin-bottom:15px;cursor:pointer;">🔒 App Locked. Enter an API Key below to unlock.</div>
         
-        $('username_ak').addEventListener('input', saveToMemory);
-        $('password_cid').addEventListener('input', saveToMemory);
+        <form action="javascript:void(0);" onsubmit="runSearch(); return false;">
+            <div style="margin-bottom:10px;">
+                <label class="lbl">🔍 Search Query, URL, or Target ID:</label>
+                <div style="position:relative;">
+                    <input type="search" id="qBox" class="big-search" placeholder="Type name, URL, or ID..." disabled required style="padding-right:45px;">
+                    <button type="button" id="bmBtn" onclick="addBookmark()" disabled title="Save Search" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none; font-size:22px; padding:4px; cursor:pointer;">⭐</button>
+                </div>
+            </div>
 
-        // 2. STATUS ENGINE (Read-only, powers the lock/unlock UI)
-        function checkStatus() {
-            let ak = $('username_ak').value.trim();
-            let cid = $('password_cid').value.trim();
+            <div class="row" id="sortLimitRow" style="margin-bottom:10px;">
+                <div style="flex:3;">
+                    <label class="lbl">Sort By:</label>
+                    <select id="sortBox" disabled style="padding:14px; font-size:14px; font-weight:bold; border:2px solid var(--border); margin-top:0; cursor:pointer;">
+                        <option value="relevance" selected>Relevance (Default)</option>
+                        <option value="date">Upload Date (Newest First)</option>
+                        <option value="viewCount">View Count (Highest First)</option>
+                        <option value="rating">Rating (Highest Rated)</option>
+                    </select>
+                </div>
+                <div style="flex:1;">
+                    <label class="lbl">Limit:</label>
+                    <select id="mBox" disabled onchange="syncLimit(this.value)" style="padding:14px; font-weight:bold; border:2px solid var(--border); margin-top:0; cursor:pointer;">
+                        <option value="25">25</option><option value="50" selected>50</option><option value="100">100</option><option value="250">250</option>
+                    </select>
+                </div>
+            </div>
 
-            let errBox = $('keyError');
-            let statusBox = $('status');
-            let errors = [];
+            <details id="bmDetails" class="filters" style="display:none; border-color:var(--warning); background:rgba(194, 140, 70, 0.05);">
+                <summary>⭐ Saved Searches</summary>
+                <div id="bmList" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;"></div>
+            </details>
 
-            if(ak && (!ak.startsWith('AIza') || ak.length < 30)) errors.push("⚠️ API Key format warning.");
-            if(cid && (!cid.includes('apps.googleusercontent.com') || cid.length < 40)) errors.push("⚠️ Client ID format warning.");
+            <div class="row" style="margin-top:10px;">
+                <button type="submit" id="sBtn" class="btn-main" style="flex:3; margin-top:0;" disabled>🚀 RUN SEARCH</button>
+                <button type="button" class="btn-gry" style="flex:1; margin-top:0; background:var(--danger);" onclick="res=[]; drawRes(); updateStatus('searchStatus', '✅ Results Cleared.')">🗑️ Clear</button>
+            </div>
+            
+            <div id="searchStatus" class="status-msg"></div>
 
-            if(errors.length > 0) { errBox.innerHTML = errors.join('<br>'); errBox.style.display = 'block'; } 
-            else { errBox.style.display = 'none'; }
+            <details class="filters">
+                <summary>⚙️ API Options & Search Filters</summary>
+                
+                <div class="row" style="margin-top:10px;">
+                    <div style="flex:2;">
+                        <label class="lbl">API Type:</label>
+                        <select id="tBox" disabled onchange="checkType()">
+                            <option value="all" selected>All</option>
+                            <option value="video">Videos</option>
+                            <option value="playlist">Playlists</option>
+                            <option value="channel">Channels</option>
+                            <option value="popular">Popular (Most Viewed)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="limitMenuDiv" style="flex:1; display:none;">
+                        <label class="lbl">Limit:</label>
+                        <select id="mBoxMenu" disabled onchange="syncLimit(this.value)">
+                            <option value="25">25</option><option value="50" selected>50</option><option value="100">100</option><option value="250">250</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="catDiv" style="display:none; margin-top:10px;">
+                    <label class="lbl">Category (Popular Only):</label>
+                    <select id="catBox" disabled onchange="checkCat()">
+                        <option value="">Trending in Region (All Categories)</option>
+                        <option value="10">Music</option>
+                        <option value="20">Gaming</option>
+                        <option value="24">Entertainment</option>
+                        <option value="25">News & Politics</option>
+                        <option value="17">Sports</option>
+                        <option value="23">Comedy</option>
+                        <option value="1">Film & Animation</option>
+                        <option value="22">People & Blogs</option>
+                        <option value="28">Science & Tech</option>
+                        <option value="27">Education</option>
+                        <option value="2">Autos & Vehicles</option>
+                        <option value="15">Pets & Animals</option>
+                        <option value="26">Howto & Style</option>
+                        <option disabled>──────────</option>
+                        <option value="change_country">🌍 Change Country...</option>
+                    </select>
+                </div>
+                
+                <div class="row" style="margin-top:10px;">
+                    <div style="flex:1;"><label class="lbl">Date After:</label><input type="date" id="dAfter" disabled></div>
+                    <div style="flex:1;"><label class="lbl">Date Before:</label><input type="date" id="dBefore" disabled></div>
+                </div>
+                
+                <label class="lbl" style="margin-top:10px;">🧹 Local Result Filter:</label>
+                <input type="text" id="filt" placeholder="Type a word to hide unwanted results..." onkeyup="filterRes()" disabled>
+            </details>
 
-            if(ak.length > 0 || cid.length > 0) {
-                statusBox.className = 'unlocked'; statusBox.innerText = '✅ APP UNLOCKED';
-            } else {
-                statusBox.className = 'locked'; statusBox.innerText = '🔒 APP LOCKED';
-            }
+            <button type="button" id="subBtn" class="btn-main" style="background:var(--purple); display:none; margin-top:10px;" onclick="getSubs()">📥 Get Latest Subscriptions</button>
+        </form>
+    </div>
+    
+    <div class="section" style="padding:15px;">
+        <details class="filters" style="margin-top:0; margin-bottom:15px;" open>
+            <summary>👁️ View Options & Toggles</summary>
+            <div class="btn-grid">
+                <button id="btn-cat-video" class="cat-btn active" onclick="toggleCat('video')">🎬 Videos</button>
+                <button id="btn-cat-playlist" class="cat-btn" onclick="toggleCat('playlist')">📂 Playlists</button>
+                <button id="btn-cat-channel" class="cat-btn" onclick="toggleCat('channel')">📺 Channels</button>
+                <button class="cat-btn" style="background:var(--border);color:var(--text);" onclick="document.getElementById('resDiv').classList.toggle('show-date')">📅 Date</button>
+                <button class="cat-btn" style="background:var(--border);color:var(--text);" onclick="document.getElementById('resDiv').classList.toggle('show-dur')">⏱️ Duration</button>
+                <button class="cat-btn" style="background:var(--border);color:var(--text);" onclick="document.getElementById('resDiv').classList.toggle('expanded-text')">↕️ Expand Text</button>
+            </div>
+            
+            <div class="row" style="margin-top:10px;">
+                <button class="btn-gry" style="font-size:12px; padding:8px;" onclick="selAll('resTopStatus')">☑️ Select All</button>
+                <button class="btn-suc" style="font-size:12px; padding:8px;" onclick="addQ('resTopStatus')">⬇️ Add to Queue</button>
+            </div>
+            <div id="resTopStatus" class="status-msg" style="margin-top:5px; padding:6px;"></div>
+        </details>
+        
+        <div id="resDiv"><div style="padding:20px; text-align:center; color:var(--text-muted);">Results will appear here...</div></div>
+        
+        <div class="row" style="margin-top:15px;">
+            <button class="btn-gry" onclick="selAll('resBotStatus')">☑️ Select All</button>
+            <button class="btn-suc" onclick="addQ('resBotStatus')">⬇️ Add to Queue</button>
+        </div>
+        
+        <button id="loadMoreBtn" class="btn-main" style="display:none; background:var(--warning); color:#000; margin-top:10px;" onclick="loadMore()">🔄 Load More Results</button>
+        <div id="resBotStatus" class="status-msg"></div>
+    </div>
+    
+    <div class="section" id="cartSectionWrapper">
+        <h3 style="color:var(--success);margin-top:0;font-size:16px">📦 Download Queue</h3>
+        
+        <div id="cartSummary" class="cart-box" onclick="toggleCart()">
+            <div style="font-size:18px; margin:0;">🛒</div>
+            <div class="cart-text"><span id="qCount">0</span> URLs in Cart <span style="font-size:12px; font-weight:normal; color:var(--text-muted);">(Tap to view)</span></div>
+        </div>
+        
+        <div id="qRevealBox" style="display:none; text-align:right;">
+            <button id="pinBtn" onclick="togglePin()" title="Pin Cart Open">📌 Pin Cart</button>
+            <div id="qArea" class="queue-box" style="text-align:left;"></div>
+        </div>
+        
+        <details class="filters" style="margin-top:10px;">
+            <summary>⚙️ Export Formatting (Lazy Load)</summary>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.4;">Tap to format instantly. Duration requires a separate API call.</div>
+            <div class="btn-grid" style="grid-template-columns: 1fr 1fr;">
+                <button id="btn_q_title" class="cat-btn" onclick="toggleQFormat('title')">Show Video Name</button>
+                <button id="btn_q_date" class="cat-btn" onclick="toggleQFormat('date')">Show Date</button>
+                <button id="btn_q_chan" class="cat-btn" onclick="toggleQFormat('chan')">Show Channel</button>
+                <button id="btn_q_dur" class="cat-btn" onclick="toggleQFormat('dur')" style="border-color:var(--warning); color:var(--warning);">⏱️ Show Duration</button>
+            </div>
+            <div style="margin-top:10px;">
+                <button id="btn_q_sep" class="cat-btn" onclick="toggleQFormat('sep')">Separate by Source (Channel/Playlist)</button>
+            </div>
+            
+            <button id="btn_apply_dur" class="btn-main" style="background:var(--warning); color:#000; display:none; margin-top:15px;" onclick="fetchCartDurations()">🚀 Fetch Missing Durations</button>
+            <div id="durStatus" class="status-msg"></div>
+        </details>
+
+        <div class="row" style="margin-top:15px;">
+            <button class="btn-gry" onclick="clearQ()">Clear</button>
+            <button class="btn-gry" onclick="copyQ()">Copy</button>
+            <button class="btn-suc" style="background:#4285F4;" onclick="smartShareCart()">Share</button>
+        </div>
+        
+        <div id="queueActionStatus" class="status-msg"></div>
+        
+        <div class="row" style="margin-top:10px;">
+            <button class="btn-main" id="plBtn" style="background:var(--purple); margin-top:0; display:none;" onclick="createSecretPlaylist()">🔒 Create Playlist</button>
+        </div>
+        
+        <div id="plStatus" class="status-msg"></div>
+    </div>
+
+    <div id="setupWrapper">
+        <div class="section" style="border:2px dashed var(--primary)">
+            <div class="toggle-header" onclick="toggleSec('setupBody', 'setupIcon')"><span id="setupIcon">➖</span> API Account Vault</div>
+            <div id="setupBody">
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.4;">Paste your keys here. The app unlocks instantly. Bitwarden Autofill is supported.</div>
+                
+                <form onsubmit="event.preventDefault();">
+                    <label class="lbl">API Key:</label>
+                    <input type="password" id="username_ak" name="username" autocomplete="username" placeholder="AIzaSy..." oninput="saveK()">
+                    
+                    <label class="lbl">Client ID:</label>
+                    <input type="password" id="password_cid" name="password" autocomplete="current-password" placeholder="...apps.googleusercontent.com" oninput="saveK()">
+                </form>
+                
+                <div id="keyError" style="color:var(--danger); font-size:12px; font-weight:bold; display:none; margin-top:8px; padding:8px; background:rgba(192,92,92,0.1); border-radius:6px;"></div>
+                
+                <label class="lbl" style="margin-top:15px;">Account Nickname (Optional):</label>
+                <div class="row" style="align-items:center;">
+                    <div style="flex:2;">
+                        <input type="text" id="v_nick" placeholder="e.g. Primary Gmail" style="margin-top:0;">
+                    </div>
+                    <div style="flex:1;">
+                        <button type="button" class="btn-main" style="margin-top:0;" onclick="saveVaultAccount()">💾 Save</button>
+                    </div>
+                </div>
+                
+                <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:10px;">
+                    <label class="lbl" style="color:var(--primary);">Saved Vault Accounts (Tap to activate):</label>
+                    <div id="vaultList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="genUI" style="border:1px solid var(--border)">
+            <div class="toggle-header" style="color:var(--purple);" onclick="toggleSec('genBody', 'genIcon')"><span id="genIcon">➕</span> Generate Clean App</div>
+            <div id="genBody" style="display:none; margin-top:10px;">
+                <div class="row" style="align-items:center;">
+                    <div style="flex:2;">
+                        <label class="lbl">Reminder Email:</label>
+                        <div contenteditable="true" id="x_rem_z" class="fake-input" data-placeholder="Your Google email..."></div>
+                    </div>
+                    <div style="flex:1;">
+                        <label class="lbl">Default Region:</label>
+                        <button type="button" id="regBtn" class="btn-gry" style="margin-top:6px; background:var(--input-bg); border:1px solid var(--border); color:var(--text);" onclick="changeRegionUI()">🇪🇬 EG</button>
+                    </div>
+                </div>
+                <button class="btn-main" style="background:var(--purple);margin-top:15px;" onclick="genApp()">📥 Download Clean App</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sheetOverlay" onclick="closeMenu()"></div>
+    <div id="botSheet">
+        <div style="width:40px;height:5px;background:var(--border);border-radius:5px;margin:0 auto 15px;"></div>
+        <h4 id="sheetTitle">Options</h4>
+        <div id="sheetOptions"></div>
+    </div>
+    
+    <div class="float-nav">
+        <button class="float-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})">▲</button>
+        <button class="float-btn" onclick="window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'})">▼</button>
+    </div>
+
+    <script>
+        let res=[], token=null;
+        let showCat = { video: true, playlist: false, channel: false }; 
+        let bookmarks = JSON.parse(localStorage.getItem('yt_bms') || '[]');
+        let apiVault = JSON.parse(localStorage.getItem('yt_vault') || '[]');
+        let activeVaultIdx = parseInt(localStorage.getItem('yt_vault_idx') || '-1');
+        
+        let currentRegion = window.H_REG || localStorage.getItem('yt_reg') || 'EG';
+        let globalPT = '', currentMode = '', scrapeArgs = {};
+        
+        let queueData = []; 
+        let isCartPinned = false;
+        let qFormat = { title: false, date: false, dur: false, chan: false, sep: false };
+
+        const catNames = {"1":"Film","2":"Autos","10":"Music","15":"Pets","17":"Sports","20":"Gaming","22":"People","23":"Comedy","24":"Entertainment","25":"News","26":"Style","27":"Education","28":"Science"};
+        
+        const $=(id)=>document.getElementById(id);
+        
+        // READ DIRECTLY FROM LIVE TEXT BOXES
+        const getK=()=>window.H_AK || ($('username_ak')?$('username_ak').value.trim():"");
+        const getC=()=>window.H_CID || ($('password_cid')?$('password_cid').value.trim():"");
+        
+        function getFlagEmoji(code) {
+            if(!code || code.length !== 2) return '🌍';
+            return String.fromCodePoint(...[...code.toUpperCase()].map(c => c.charCodeAt() + 127397));
+        }
+        function getThumb(snip) {
+            if(!snip || !snip.thumbnails) return '';
+            if(snip.thumbnails.medium && snip.thumbnails.medium.url) return snip.thumbnails.medium.url;
+            if(snip.thumbnails.default && snip.thumbnails.default.url) return snip.thumbnails.default.url;
+            return '';
+        }
+        function parsePT(pt) {
+            if(!pt) return ''; let m = pt.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/); if(!m) return '';
+            let h = m[1]||0, min = m[2]||0, s = m[3]||0;
+            if(h>0) return `${h}:${min.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            return `${min}:${s.toString().padStart(2,'0')}`;
+        }
+        function timeAgo(dateStr) {
+            if(!dateStr) return ''; let d = new Date(dateStr); let diffMs = new Date() - d; let diffDay = Math.floor(diffMs / 86400000);
+            if (diffDay >= 30) return dateStr.split('T')[0];
+            if (diffDay > 0) return diffDay + (diffDay===1?" day":" days") + " ago";
+            let diffHr = Math.floor(diffMs / 3600000); if (diffHr > 0) return diffHr + (diffHr===1?" hour":" hours") + " ago";
+            let diffMin = Math.floor(diffMs / 60000); if (diffMin > 0) return diffMin + (diffMin===1?" min":" mins") + " ago";
+            return "Just now";
+        }
+        function updateStatus(id, msg) {
+            let el = $(id); if(!el) return;
+            el.innerHTML = msg; if(msg) el.classList.add('active'); else el.classList.remove('active');
         }
 
-        // 3. VAULT LOGIC
-        function saveToVault() {
+        function initTheme() { document.documentElement.setAttribute('data-theme', localStorage.getItem('t')||'light'); }
+        function toggleTheme() { let t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',t); localStorage.setItem('t',t); }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            initTheme();
+            if(activeVaultIdx >= 0 && apiVault[activeVaultIdx]) {
+                if($('username_ak')) $('username_ak').value = apiVault[activeVaultIdx].ak || '';
+                if($('password_cid')) $('password_cid').value = apiVault[activeVaultIdx].cid || '';
+            } else {
+                if($('username_ak')&&localStorage.getItem('y_ak')) $('username_ak').value=localStorage.getItem('y_ak');
+                if($('password_cid')&&localStorage.getItem('y_ci')) $('password_cid').value=localStorage.getItem('y_ci');
+            }
+            renderVault();
+            let loc = (window.location.origin !== "null" && window.location.origin !== "file://") ? window.location.origin : "Local File";
+            document.querySelectorAll('.dyn-url').forEach(el => el.innerText = loc);
+            let savedToken = sessionStorage.getItem('yt_session_token');
+            if(savedToken) token = savedToken;
+            updateRegBtn(); renderBM(); checkL(); 
+        });
+
+        // --- NEW VAULT & LIVE INPUT LOGIC ---
+        function saveK() { 
+            let ak = $('username_ak') ? $('username_ak').value.trim() : '';
+            let cid = $('password_cid') ? $('password_cid').value.trim() : '';
+            if($('username_ak')) localStorage.setItem('y_ak', ak); 
+            if($('password_cid')) localStorage.setItem('y_ci', cid); 
+            
+            let err = [];
+            if(ak && (!ak.startsWith('AIza') || ak.length < 30)) err.push("⚠️ API Key format looks incorrect.");
+            if(cid && (!cid.includes('apps.googleusercontent.com') || cid.length < 40)) err.push("⚠️ Client ID format looks incorrect.");
+            
+            let errEl = $('keyError');
+            if(errEl) {
+                if(err.length) { errEl.innerHTML = err.join('<br><br>'); errEl.style.display = 'block'; }
+                else { errEl.style.display = 'none'; }
+            }
+            checkL(); 
+        }
+
+        function saveVaultAccount() {
             let ak = $('username_ak').value.trim();
             let cid = $('password_cid').value.trim();
-            let nick = $('nickname').value.trim();
+            let nick = $('v_nick').value.trim();
+            
+            if(!ak && !cid) return alert("Please enter an API Key or Client ID first.");
+            
+            let errEl = $('keyError');
+            if(errEl && errEl.style.display === 'block') return alert("Please fix formatting errors before saving.");
 
-            if(!ak && !cid) return alert("Enter an API key first!");
             if(!nick) nick = ak ? `Key ...${ak.slice(-4)}` : `ID ...${cid.slice(-4)}`;
 
-            vault.push({ n: nick, ak: ak, cid: cid });
-            localStorage.setItem('test_vault', JSON.stringify(vault));
-            $('nickname').value = '';
-            renderVault();
+            let existing = apiVault.findIndex(v => v.ak === ak && ak !== '');
+            if(existing >= 0) { apiVault[existing] = {n: nick, ak: ak, cid: cid}; activeVaultIdx = existing; } 
+            else { apiVault.push({n: nick, ak: ak, cid: cid}); activeVaultIdx = apiVault.length - 1; }
+
+            localStorage.setItem('yt_vault', JSON.stringify(apiVault));
+            localStorage.setItem('yt_vault_idx', activeVaultIdx.toString());
+            
+            $('v_nick').value = ''; 
+            renderVault(); checkL();
+            updateStatus('searchStatus', "✅ Account saved to Vault.");
         }
 
         function renderVault() {
             let html = '';
-            if(vault.length === 0) html = '<div style="font-size:12px; color:#666;">No keys saved yet.</div>';
-            vault.forEach((v, i) => {
+            if(!apiVault.length) html = '<div style="font-size:12px; color:var(--text-muted);">No accounts saved yet.</div>';
+            apiVault.forEach((v, i) => {
+                let isActive = i === activeVaultIdx;
                 html += `
-                <div class="vault-item" onclick="loadVault(${i})">
-                    <div>
-                        <div style="font-weight:bold; font-size:14px; color:#5c8bc0;">${v.n}</div>
-                        <div style="font-size:11px; color:#666; font-family:monospace;">...${v.ak.slice(-8)}</div>
+                <div class="vault-item ${isActive ? 'active-key' : ''}" onclick="setActiveVault(${i})">
+                    <div class="vault-info">
+                        <div class="vault-name">${isActive ? '✅ ' : ''}${v.n}</div>
+                        <div class="vault-key">...${v.ak.slice(-8)}</div>
                     </div>
-                    <button class="btn-sm" onclick="event.stopPropagation(); deleteVault(${i})">✖</button>
+                    <button type="button" class="btn-sm" style="background:var(--danger); color:#fff; border:none; padding:4px 8px;" onclick="event.stopPropagation(); deleteVault(${i})">✖</button>
                 </div>`;
             });
             $('vaultList').innerHTML = html;
         }
 
-        function loadVault(i) {
-            $('username_ak').value = vault[i].ak;
-            $('password_cid').value = vault[i].cid;
-            saveToMemory(); 
+        function setActiveVault(i) {
+            activeVaultIdx = i;
+            localStorage.setItem('yt_vault_idx', activeVaultIdx.toString());
+            
+            if($('username_ak')) $('username_ak').value = apiVault[i].ak || '';
+            if($('password_cid')) $('password_cid').value = apiVault[i].cid || '';
+            
+            renderVault(); saveK(); checkL();
+            token = null; sessionStorage.removeItem('yt_session_token'); 
+            updateStatus('searchStatus', "✅ Switched API Account.");
         }
 
         function deleteVault(i) {
-            vault.splice(i, 1);
-            localStorage.setItem('test_vault', JSON.stringify(vault));
-            renderVault();
+            apiVault.splice(i, 1);
+            if(activeVaultIdx === i) activeVaultIdx = apiVault.length > 0 ? 0 : -1;
+            else if(activeVaultIdx > i) activeVaultIdx--;
+            
+            localStorage.setItem('yt_vault', JSON.stringify(apiVault));
+            localStorage.setItem('yt_vault_idx', activeVaultIdx.toString());
+            renderVault(); checkL();
         }
 
-        // 4. BOOT & HEARTBEAT
-        window.addEventListener('DOMContentLoaded', () => {
-            if(localStorage.getItem('test_ak')) $('username_ak').value = localStorage.getItem('test_ak');
-            if(localStorage.getItem('test_cid')) $('password_cid').value = localStorage.getItem('test_cid');
-            renderVault();
-            checkStatus();
-        });
+        function checkQuotaError(d) {
+            if(d.error) {
+                let isQuota = d.error.errors && d.error.errors[0].reason === 'quotaExceeded';
+                if(isQuota || d.error.message.toLowerCase().includes('quota')) {
+                    alert("⚠️ Quota Exceeded for this Account!\n\nPlease select a backup account from your API Vault to continue.");
+                    $('setupWrapper').style.display = 'block';
+                    $('setupBody').style.display = 'block';
+                    $('setupIcon').innerText = '➖';
+                    $('setupWrapper').scrollIntoView({behavior: 'smooth'});
+                    throw new Error("QUOTA_EXCEEDED");
+                }
+                throw new Error(d.error.message);
+            }
+        }
 
-        setInterval(checkStatus, 500); 
-    </script>
-</body>
-</html>
+        function toggleCart() {
+            let q = $('qRevealBox');
+            q.style.display = (q.style.display === 'none' || q.style.display === '') ? 'block' : 'none';
+        }
+
+        function togglePin() {
+            isCartPinned = !isCartPinned;
+            let pBtn = $('pinBtn');
+            if(isCartPinned) { pBtn.classList.add('active'); pBtn.innerText = '📌 Pinned'; }
+            else { pBtn.classList.remove('active'); pBtn.innerText = '📌 Pin Cart'; }
+        }
+        
+        window.addEventListener('scroll', function() {
+            if(isCartPinned) return; 
+            let cartSection = $('cartSummary'); if (!cartSection) return;
+            let rect = cartSection.getBoundingClientRect();
+            if (rect.bottom < 0 || rect.top > window.innerHeight) {
+                let q = $('qRevealBox');
+                if(q.style.display === 'block') q.style.display = 'none';
+            }
+        }, {passive: true});
+
+        function updateRegBtn() { $('regBtn').innerText = getFlagEmoji(currentRegion) + ' ' + currentRegion; $('catBox').options[0].text = `Trending in ${currentRegion} (All Categories)`; }
+        function changeRegionUI() {
+            let r = prompt("Enter a 2-letter Country Code (e.g., EG, US, GB, SA, AE):", currentRegion);
+            if(r && r.trim().length === 2) {
+                currentRegion = r.trim().toUpperCase(); localStorage.setItem('yt_reg', currentRegion);
+                updateRegBtn(); updateStatus('searchStatus', `✅ Global Region changed to ${currentRegion}`);
+            }
+        }
+        function toggleSec(bodyId, iconId) {
+            let b = $(bodyId), i = $(iconId);
+            if(b.style.display === 'none') { b.style.display = 'block'; i.innerText = '➖'; }
+            else { b.style.display = 'none'; i.innerText = '➕'; }
+        }
+
+        function syncLimit(val) { $('mBox').value = val; $('mBoxMenu').value = val; }
+
+        function checkType() {
+            let isPop = $('tBox').value === 'popular';
+            $('catDiv').style.display = isPop ? 'block' : 'none';
+            if(isPop) {
+                $('qBox').removeAttribute('required'); $('sortLimitRow').style.display = 'none'; $('limitMenuDiv').style.display = 'block'; 
+            } else {
+                $('qBox').setAttribute('required', 'true'); $('sortLimitRow').style.display = 'flex'; $('limitMenuDiv').style.display = 'none'; 
+            }
+        }
+
+        function checkCat() { if($('catBox').value === 'change_country') { changeRegionUI(); $('catBox').value = ''; } }
+
+        // BACKGROUND HEARTBEAT & UNLOCK ENGINE
+        function checkL() {
+            let u = getK().length > 0 || getC().length > 0 || token;
+            ['qBox','tBox','sortBox','catBox','mBox','mBoxMenu','sBtn','dAfter','dBefore','filt','bmBtn'].forEach(id=>{if($(id)) $(id).disabled=!u;});
+            let authBtn = $('authBtn');
+            if(authBtn) {
+                if(!getC()) { authBtn.style.display = 'none'; }
+                else {
+                    authBtn.style.display = 'block';
+                    if(token) { 
+                        authBtn.innerText = 'Log Out'; authBtn.classList.add('logged-in'); 
+                        $('subBtn').style.display = 'block'; $('plBtn').style.display = 'block'; $('plLink').style.display = 'block';
+                    } else { 
+                        authBtn.innerText = '👤 Sign In'; authBtn.classList.remove('logged-in'); 
+                        $('subBtn').style.display = 'none'; $('plBtn').style.display = 'none'; $('plLink').style.display = 'none';
+                    }
+                }
+            }
+            if(u&&!token) {
+                updateStatus('searchStatus', "<span style='color:var(--success)'>✅ Ready to Search.</span>");
+                if(!window.H_AK && $('setupWrapper').style.display === '') toggleSec('setupBody', 'setupIcon'); 
+                $('lockMsg').style.display = 'none';
+            }
+            else if(token) {
+                updateStatus('searchStatus', "<span style='color:var(--success)'>✅ Logged In.</span>");
+                $('lockMsg').style.display = 'none';
+            }
+            else { 
+                updateStatus('searchStatus', ""); 
+                $('setupWrapper').style.display = 'block'; $('lockMsg').style.display = 'block';
+            }
+        }
+        
+        // Quiet 500ms heartbeat to catch ghost autofill safely
+        setInterval(checkL, 500);
+
+        function toggleAuth() {
+            if(!getC()) return alert("No Client ID found. Paste one or select a Vault account that has one.");
+            if(token) { 
+                token = null; sessionStorage.removeItem('yt_session_token');
+                checkL(); updateStatus('searchStatus', "<span style='color:var(--warning)'>Logged out.</span>"); 
+            } else { 
+                google.accounts.oauth2.initTokenClient({ 
+                    client_id: getC(), scope: 'https://www.googleapis.com/auth/youtube', 
+                    callback: (r)=>{ if(r&&r.access_token){ token=r.access_token; sessionStorage.setItem('yt_session_token', token); checkL(); } } 
+                }).requestAccessToken(); 
+            }
+        }
+
+        function renderBM() {
+            let d = $('bmDetails'), l = $('bmList');
+            if(!bookmarks.length) { d.style.display = 'none'; return; }
+            d.style.display = 'block';
+            bookmarks = bookmarks.map(b => typeof b === 'string' ? {q: b, t: 'all', c: '', s: 'relevance'} : {s: 'relevance', ...b});
+            l.innerHTML = bookmarks.map((b, i) => {
+                let lbl = b.q;
+                if(b.t === 'popular') {
+                    let catStr = b.c ? catNames[b.c] : `Trending (${currentRegion})`; lbl = b.q ? `[${catStr}] ${b.q}` : `${catStr}`;
+                }
+                return `
+                <div class="bm-chip">
+                    <button type="button" class="bm-text" onclick="loadBM(${i})">${lbl.replace(/'/g,"\\'").replace(/"/g,'&quot;')}</button>
+                    <button type="button" class="bm-del" onclick="delBM(${i})">✖</button>
+                </div>`;
+            }).join('');
+        }
+
+        function addBookmark() {
+            let q = $('qBox').value.trim(), t = $('tBox').value, c = $('catBox').value, s = $('sortBox').value;
+            if(!q && t !== 'popular') return; 
+            let exists = bookmarks.find(b => b.q === q && b.t === t && b.c === c && b.s === s);
+            if(!exists) { bookmarks.push({q, t, c, s}); localStorage.setItem('yt_bms', JSON.stringify(bookmarks)); renderBM(); $('bmDetails').open = true; }
+        }
+
+        function loadBM(i) { 
+            let b = bookmarks[i]; $('qBox').value = b.q; $('tBox').value = b.t; $('sortBox').value = b.s || 'relevance'; checkType(); $('catBox').value = b.c || '';
+            window.scrollTo({top: 0, behavior: 'smooth'}); 
+        }
+        function delBM(i) { bookmarks.splice(i, 1); localStorage.setItem('yt_bms', JSON.stringify(bookmarks)); renderBM(); }
+
+        function toggleCat(cat) {
+            showCat[cat] = !showCat[cat];
+            let btn = $('btn-cat-'+cat);
+            if(showCat[cat]) btn.classList.add('active'); else btn.classList.remove('active'); drawRes();
+        }
+        function toggleRow(e, cbId) { if(e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return; let cb = $(cbId); cb.checked = !cb.checked; }
+
+        function shareSingle(url) {
+            let ua = navigator.userAgent.toLowerCase();
+            let isLiteBrowser = ua.includes('via') || ua.includes('xbrowser') || ua.includes('aloha') || !navigator.share;
+            if(!isLiteBrowser && window.isSecureContext) {
+                navigator.share({url: url}).catch(e => openShareSheet(url));
+            } else { openShareSheet(url); }
+        }
+
+        function openMenu(e, type, id, channelId, titleText, url) {
+            e.stopPropagation();
+            $('sheetTitle').innerText = titleText;
+            let cleanUrl = url.replace(/^https?:\/\//, ''); let intentUrl = `intent://${cleanUrl}#Intent;action=android.intent.action.VIEW;scheme=https;end`;
+
+            let html = `
+                <div class="row" style="margin-bottom:10px;">
+                    <button class="sheet-btn" style="background:var(--input-bg);color:var(--text);border:1px solid var(--border);margin:0;font-size:12px;padding:12px;" onclick="closeMenu();window.location.href='${intentUrl}'">📱 Open App</button>
+                    <button class="sheet-btn" style="background:var(--input-bg);color:var(--text);border:1px solid var(--border);margin:0;font-size:12px;padding:12px;" onclick="closeMenu();window.open('${url}', '_blank')">🌐 Browser</button>
+                </div>
+                <div class="row" style="margin-bottom:10px;">
+                    <button class="sheet-btn" style="background:var(--input-bg);color:var(--text);border:1px solid var(--border);margin:0;" onclick="navigator.clipboard.writeText('${url}');updateStatus('sheetStatus', '✅ Link Copied!');">📋 Copy</button>
+                    <button class="sheet-btn" style="background:var(--primary);color:#fff;border:none;margin:0;" onclick="shareSingle('${url}')">🚀 Share</button>
+                </div>
+                <div class="menu-divider"></div>`;
+
+            if(type === 'playlist') {
+                html += `<div class="menu-subtitle">Playlist Actions</div>
+                         <button class="sheet-btn" style="background:var(--success);" onclick="closeMenu();scrape('${id}', 'playlist', true)">👁️ View Playlist Contents</button>
+                         <button class="sheet-btn" style="background:var(--primary);" onclick="scrape('${id}', 'playlist', false)">📥 Scrape Playlist to Cart</button>
+                         <div class="menu-divider"></div>`;
+            }
+            if(channelId && channelId !== 'undefined') {
+                html += `<div class="menu-subtitle">Parent Channel Actions</div>
+                         <button class="sheet-btn" style="background:var(--danger);" onclick="closeMenu();scrape('${channelId}', 'channel', true)">👁️ View Channel Content</button>
+                         <button class="sheet-btn" style="background:var(--purple);" onclick="scrape('${channelId}', 'channel', false)">📥 Scrape Channel to Cart</button>
+                         <button class="sheet-btn" style="background:var(--warning);color:#000;" onclick="closeMenu();fetchPlaylists('${channelId}')">📂 Find Channel Playlists</button>
+                         <div class="menu-divider"></div>`;
+            }
+            html += `<div id="sheetStatus" class="status-msg" style="margin-bottom:10px;"></div><button class="sheet-btn" style="background:var(--text-muted);" onclick="closeMenu()">Close</button>`;
+            
+            $('sheetOptions').innerHTML = html; $('sheetOverlay').style.display = 'block'; setTimeout(() => $('botSheet').style.bottom = '0', 10);
+        }
+        function closeMenu() { $('botSheet').style.bottom = '-100%'; setTimeout(() => $('sheetOverlay').style.display = 'none', 300); }
+
+        function toggleQFormat(key) {
+            qFormat[key] = !qFormat[key];
+            let btn = $('btn_q_'+key);
+            if(qFormat[key]) btn.classList.add('active'); else btn.classList.remove('active');
+
+            if(key === 'dur') {
+                $('btn_apply_dur').style.display = qFormat.dur ? 'block' : 'none';
+            }
+            renderQueue();
+        }
+
+        async function fetchCartDurations() {
+            let vids = queueData.filter(i => i.k === 'video' && !i.dur).map(i => i.u.split('v=')[1]);
+            if(!vids.length) { updateStatus('durStatus', "✅ All durations already fetched."); return; }
+            if(!getK() && !token) return alert("Please enter an API Key first.");
+            
+            updateStatus('durStatus', `⏳ Fetching durations for ${vids.length} videos...`);
+            let hd=token?{'Authorization':`Bearer ${token}`}:{};
+            
+            try {
+                for(let i=0; i<vids.length; i+=50) {
+                    let chunk = vids.slice(i, i+50).join(',');
+                    let u = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${chunk}`;
+                    if(!token) u += `&key=${getK()}`;
+                    
+                    let d = await (await fetch(u, {headers:hd})).json();
+                    checkQuotaError(d); 
+                    
+                    if(d.items) {
+                        let durMap = {}; d.items.forEach(v => { if(v.contentDetails) durMap[v.id] = parsePT(v.contentDetails.duration); });
+                        queueData.forEach(r => { if(r.k==='video' && durMap[r.u.split('v=')[1]]) r.dur = durMap[r.u.split('v=')[1]]; });
+                    }
+                }
+                updateStatus('durStatus', "✅ Durations Applied!");
+                $('btn_apply_dur').style.display = 'none'; 
+                renderQueue();
+            } catch(e) {
+                if(e.message !== "QUOTA_EXCEEDED") updateStatus('durStatus', `❌ Error: ${e.message}`);
+            }
+        }
+
+        function renderQueue() {
+            let out = "";
+            let showT = qFormat.title, showD = qFormat.date, showDu = qFormat.dur, showC = qFormat.chan, showSep = qFormat.sep;
+
+            if(showSep) {
+                let groups = {}; queueData.forEach(i => { if(!groups[i.src]) groups[i.src] = []; groups[i.src].push(i); });
+                for(let src in groups) {
+                    out += `--- ${src} ---\n\n`; groups[src].forEach(i => out += formatQueueItem(i, showT, showD, showDu, showC) + '\n\n');
+                }
+                out = out.trim();
+            } else { 
+                out = queueData.map(i => formatQueueItem(i, showT, showD, showDu, showC)).join('\n\n'); 
+            }
+            
+            $('qArea').innerText = out; $('qCount').innerText = queueData.length;
+        }
+
+        // NEW STACKED FORMAT GENERATOR
+        function formatQueueItem(i, t, d, du, c) {
+            let out = "";
+            if(t && i.t) out += `${i.t}\n`;
+            out += `${i.u}\n`;
+            
+            let meta = [];
+            if(c && i.ct) meta.push(`Channel: ${i.ct}`);
+            if(d && i.dt) meta.push(`Date: ${timeAgo(i.dt)}`);
+            if(du && i.dur) meta.push(`Duration: ${i.dur}`);
+            
+            if(meta.length > 0) out += meta.join(' | ');
+            return out.trim();
+        }
+
+        function clearQ() { queueData = []; renderQueue(); updateStatus('queueActionStatus', '✅ Cart Cleared.'); $('qRevealBox').style.display = 'none'; }
+        function copyQ() { let txt = $('qArea').innerText.trim(); if(!txt) return updateStatus('queueActionStatus', '❌ Nothing to copy.'); navigator.clipboard.writeText(txt); updateStatus('queueActionStatus', `✅ Copied ${queueData.length} items to clipboard!`); }
+
+        function smartShareCart() {
+            let txt = $('qArea').innerText.trim(); if(!txt) return updateStatus('queueActionStatus', "❌ Cart is empty!");
+            let ua = navigator.userAgent.toLowerCase(); let isLiteBrowser = ua.includes('via') || ua.includes('xbrowser') || ua.includes('aloha') || !navigator.share;
+
+            if (!isLiteBrowser && window.isSecureContext) {
+                navigator.share({ text: txt }).then(() => updateStatus('queueActionStatus', "✅ Shared!")).catch(e => { $('qRevealBox').style.display = 'block'; openShareSheet(txt); });
+            } else { $('qRevealBox').style.display = 'block'; openShareSheet(txt); }
+        }
+
+        function openShareSheet(txt) {
+            $('sheetTitle').innerText = "Share / Copy Links";
+            let html = `<div style="font-size:13px; color:var(--text-muted); margin-bottom:12px; text-align:center;">The formatted text below has been auto-highlighted.<br><br><b>Tap the blue text to trigger your native Share menu.</b></div>
+                <div id="shareRawTxt" style="width:100%; height:180px; overflow-y:auto; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; padding:12px; font-size:14px; color:var(--text); word-break:break-word; white-space:pre-wrap; user-select:text;">${txt}</div>
+                <div class="menu-divider"></div><button class="sheet-btn" style="background:var(--text-muted);" onclick="closeMenu()">Close Window</button>`;
+            $('sheetOptions').innerHTML = html; $('sheetOverlay').style.display = 'block'; setTimeout(() => $('botSheet').style.bottom = '0', 10);
+            setTimeout(() => {
+                let shareEl = $('shareRawTxt'); let range = document.createRange(); range.selectNodeContents(shareEl);
+                let sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+                updateStatus('queueActionStatus', "✅ Formatted text ready! Tap the highlighted text in the popup.");
+            }, 350);
+        }
+
+        function selAll(targetId) { 
+            let c=document.querySelectorAll('.yt-chk'); let visibleCbs = Array.from(c).filter(cb => cb.closest('.yt-item').style.display !== 'none');
+            if(!visibleCbs.length) return updateStatus(targetId, "❌ Nothing to select!"); 
+            let all = visibleCbs.every(b=>b.checked); visibleCbs.forEach(b=>b.checked=!all); 
+            updateStatus(targetId, `✅ Selected ${visibleCbs.filter(b=>b.checked).length} items.`);
+        }
+
+        function addQ(targetId) { 
+            let cbs = Array.from(document.querySelectorAll('.yt-chk:checked'));
+            if(!cbs.length) return updateStatus(targetId, "❌ Nothing selected!"); 
+            let added = 0;
+            cbs.forEach(cb => {
+                let url = cb.value;
+                if(!queueData.find(item => item.u === url)) {
+                    let idx = parseInt(cb.id.replace('i', '')); let item = res[idx];
+                    if(item) {
+                        let src = currentMode === 'scrape' ? `Scraped: ${scrapeArgs.title || 'Channel/Playlist'}` : `Search: ${$('qBox').value || 'Popular'}`;
+                        queueData.push({u: url, t: item.t, dt: item.dt, dur: item.dur, c: item.c, ct: item.ct, src: src, k: item.k}); added++;
+                    }
+                }
+            });
+            renderQueue(); updateStatus(targetId, `✅ Added ${added} items. Cart now has ${queueData.length} items.`); 
+        }
+
+        function loadMore() {
+            if(currentMode === 'search') runSearch(true); else if(currentMode === 'subs') getSubs(true);
+            else if(currentMode === 'scrape') scrape(scrapeArgs.id, scrapeArgs.type, scrapeArgs.viewOnly, true);
+            else if(currentMode === 'playlists') fetchPlaylists(scrapeArgs.channelId, true);
+        }
+
+        async function runSearch(isLoadMore = false) {
+            $('qRevealBox').style.display = 'none'; isCartPinned = false; $('pinBtn').classList.remove('active'); $('pinBtn').innerText = '📌 Pin Cart';
+            if(!getK()&&!token) return alert("Please enter an API Key to search.");
+            
+            let q=$('qBox').value.trim(), apiType = $('tBox').value, cat = $('catBox').value, sortType = $('sortBox').value;
+            if(!q && apiType !== 'popular') return; 
+            
+            let plMatch = q.match(/[&?]list=([^&]+)/i); if(plMatch) return scrape(plMatch[1], 'playlist', true, isLoadMore);
+            let vMatch = q.match(/(?:youtu\.be\/|v=)([\w-]{11})/i); if(vMatch) q = vMatch[1]; 
+            
+            if(!isLoadMore) { updateStatus('searchStatus', "⏳ Searching..."); res=[]; $('filt').value=""; globalPT=''; currentMode='search'; } 
+            else { updateStatus('resBotStatus', "⏳ Loading more..."); }
+
+            try {
+                let pt=globalPT, f=0, mx=parseInt($('mBox').value), hd=token?{'Authorization':`Bearer ${token}`}:{};
+                let aft=$('dAfter').value, bef=$('dBefore').value;
+                
+                if(q.startsWith('@') && apiType === 'all') { apiType = 'channel'; $('tBox').value = 'channel'; updateStatus('searchStatus', "⏳ Auto-switching to Channel Search..."); }
+
+                if(q.length === 11 && !q.includes(' ') && !q.startsWith('@') && apiType !== 'popular') {
+                    if(!isLoadMore) {
+                        let u=`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${q}`; if(!token) u+=`&key=${getK()}`;
+                        let d = await (await fetch(u,{headers:hd})).json(); checkQuotaError(d);
+                        if(d.items) res.push(...d.items.map(i=>{ let s=i.snippet||{}; return { t:s.title||'Unknown', k:'video', v:i.id, c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt }; }));
+                    }
+                } 
+                else if (apiType === 'popular' && !q) {
+                    while(f<mx) {
+                        let u=`videos?part=snippet,contentDetails&chart=mostPopular&regionCode=${currentRegion}&maxResults=50`; if(!token) u+=`&key=${getK()}`;
+                        if(cat) u+=`&videoCategoryId=${cat}`; if(pt) u+=`&pageToken=${pt}`;
+                        let d = await (await fetch(`https://www.googleapis.com/youtube/v3/${u}`,{headers:hd})).json(); checkQuotaError(d); if(!d.items) break;
+                        
+                        d.items = d.items.filter(v => !(v.contentDetails && v.contentDetails.contentRating && v.contentDetails.contentRating.ytRating === 'ytAgeRestricted'));
+                        
+                        res.push(...d.items.map(i=>{
+                            let s=i.snippet||{}; return { t:s.title||'Unknown', k:'video', v:i.id||'', c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
+                        }));
+                        f+=d.items.length; pt=d.nextPageToken||''; if(!pt||f>=mx) break;
+                    }
+                }
+                else {
+                    while(f<mx){
+                        let u=`search?part=snippet&maxResults=50&safeSearch=strict`; if(!token) u+=`&key=${getK()}`; 
+                        if(apiType === 'popular') { u+=`&order=viewCount&type=video`; if(cat) u+=`&videoCategoryId=${cat}`; } 
+                        else { if(apiType !== 'all') u+=`&type=${apiType}`; if(sortType !== 'relevance') u+=`&order=${sortType}`; }
+                        u+= (q.startsWith("UC")&&q.length===24) ? `&channelId=${q}` : `&q=${encodeURIComponent(q)}`; 
+                        if(pt) u+=`&pageToken=${pt}`; if(aft) u+=`&publishedAfter=${new Date(aft).toISOString()}`; if(bef) u+=`&publishedBefore=${new Date(bef).toISOString()}`;
+
+                        let d = await (await fetch(`https://www.googleapis.com/youtube/v3/${u}`,{headers:hd})).json(); checkQuotaError(d); if(!d.items) break;
+                        res.push(...d.items.map(i=>{
+                            let s=i.snippet||{}, o=i.id||{}, vID = typeof o === 'string' ? o : (o.videoId||''), kind = typeof o === 'string' ? 'video' : (o.kind||'').replace('youtube#','');
+                            return { t:s.title||'Unknown', k:kind, v:vID, p:o.playlistId||'', c:s.channelId||o.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
+                        }));
+                        f+=d.items.length; pt=d.nextPageToken||''; if(!pt||f>=mx) break;
+                    }
+                }
+                globalPT = pt; $('loadMoreBtn').style.display = globalPT ? 'block' : 'none'; drawRes();
+                if(isLoadMore) updateStatus('resBotStatus', `✅ Showing ${res.length} items.`); else updateStatus('searchStatus', `✅ Showing ${res.length} items.`);
+            } catch(e) { 
+                if(e.message !== "QUOTA_EXCEEDED") {
+                    if(isLoadMore) updateStatus('resBotStatus', `❌ Error: ${e.message}`); else updateStatus('searchStatus', `❌ Error: ${e.message}`); 
+                }
+            }
+        }
+
+        async function getSubs(isLoadMore=false) {
+            $('qRevealBox').style.display = 'none'; isCartPinned = false; $('pinBtn').classList.remove('active'); $('pinBtn').innerText = '📌 Pin Cart';
+            if(!token) return alert("Must be signed in.");
+            if(!isLoadMore) { updateStatus('searchStatus', "⏳ Loading Subscriptions..."); res=[]; $('filt').value=""; globalPT=''; currentMode='subs'; }
+            else { updateStatus('resBotStatus', "⏳ Loading more..."); }
+            try {
+                let pt=globalPT, f=0, mx=parseInt($('mBox').value);
+                while(f<mx) {
+                    let u=`https://www.googleapis.com/youtube/v3/activities?part=snippet,contentDetails&home=true&maxResults=50`; if(pt) u+=`&pageToken=${pt}`;
+                    let d = await (await fetch(u,{headers:{'Authorization':`Bearer ${token}`}})).json(); checkQuotaError(d); if(!d.items) break;
+                    let mapped = d.items.filter(i=>i.contentDetails&&i.contentDetails.upload).map(i=>{
+                        let s=i.snippet||{}, v=i.contentDetails.upload.videoId;
+                        return { t:s.title||'Unknown', k:'video', v:v, c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
+                    });
+                    res.push(...mapped); f+=d.items.length; pt=d.nextPageToken||''; if(!pt||f>=mx) break;
+                }
+                globalPT = pt; $('loadMoreBtn').style.display = globalPT ? 'block' : 'none'; if(!showCat.video) toggleCat('video'); drawRes();
+                if(isLoadMore) updateStatus('resBotStatus', `✅ Showing ${res.length} Subscriptions.`); else updateStatus('searchStatus', `✅ Showing ${res.length} Subscriptions.`);
+            } catch(e) { 
+                if(e.message !== "QUOTA_EXCEEDED") {
+                    if(isLoadMore) updateStatus('resBotStatus', `❌ Error: ${e.message}`); else updateStatus('searchStatus', `❌ Error: ${e.message}`); 
+                }
+            }
+        }
+
+        async function scrape(id, type, viewOnly, isLoadMore=false) {
+            $('qRevealBox').style.display = 'none'; isCartPinned = false; $('pinBtn').classList.remove('active'); $('pinBtn').innerText = '📌 Pin Cart';
+            let targetStatus = viewOnly && isLoadMore ? 'resBotStatus' : (viewOnly ? 'searchStatus' : 'sheetStatus');
+            
+            if(!isLoadMore) { updateStatus(targetStatus, "⏳ Preparing..."); if(viewOnly) { res=[]; $('filt').value=""; globalPT=''; currentMode='scrape'; scrapeArgs={id, type, viewOnly, title: id}; } } 
+            else { updateStatus(targetStatus, "⏳ Loading more..."); }
+            
+            let hd=token?{'Authorization':`Bearer ${token}`}:{}; let tempRes = [];
+            try {
+                let tid = id;
+                if(type==='channel'){
+                    if(!scrapeArgs.tid) {
+                        updateStatus(targetStatus, "⏳ Locating channel database...");
+                        let u=`https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet&id=${id}`; if(!token) u+=`&key=${getK()}`;
+                        let d = await (await fetch(u,{headers:hd})).json(); checkQuotaError(d);
+                        if(!d.items||!d.items.length) throw new Error("Channel not found.");
+                        scrapeArgs.tid = d.items[0].contentDetails.relatedPlaylists.uploads; scrapeArgs.title = d.items[0].snippet.title;
+                    }
+                    tid = scrapeArgs.tid;
+                }
+                
+                let pt = viewOnly ? globalPT : '', f=0, mx = viewOnly ? parseInt($('mBox').value) : Infinity, pages=0;
+                
+                do {
+                    pages++;
+                    if(!viewOnly) updateStatus(targetStatus, `⏳ Scraping page ${pages} (No Limits)... Found ${f} active URLs.`);
+                    else updateStatus(targetStatus, `⏳ Scraping UI page...`);
+                    
+                    let u=`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${tid}`; if(!token) u+=`&key=${getK()}`; if(pt) u+=`&pageToken=${pt}`;
+                    let d = await (await fetch(u,{headers:hd})).json(); checkQuotaError(d);
+                    
+                    if(!scrapeArgs.title && d.items && d.items.length) scrapeArgs.title = d.items[0].snippet.channelTitle;
+
+                    if(d.items) tempRes.push(...d.items.map(i=>{
+                        let s=i.snippet||{}, r=s.resourceId||{}; return { t:s.title||'Unknown', k:'video', v:r.videoId||'', c:s.videoOwnerChannelId||s.channelId||'', ct:s.videoOwnerChannelTitle||s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt };
+                    }));
+                    pt=d.nextPageToken||''; f+= (d.items ? d.items.length : 0);
+                } while(pt && f<mx);
+
+                if(viewOnly) {
+                    globalPT = pt; $('loadMoreBtn').style.display = globalPT ? 'block' : 'none'; res.push(...tempRes); if(!showCat.video) toggleCat('video'); drawRes();
+                    updateStatus(targetStatus, `✅ Showing ${res.length} videos.`);
+                } else {
+                    let added = 0;
+                    tempRes.forEach(item => {
+                        let url = `https://www.youtube.com/watch?v=${item.v}`;
+                        if(!queueData.find(q => q.u === url)) { queueData.push({u: url, t: item.t, dt: item.dt, dur: item.dur, c: item.c, ct: item.ct, src: `Scraped: ${scrapeArgs.title || 'Channel/Playlist'}`, k: item.k}); added++; }
+                    });
+                    renderQueue(); updateStatus(targetStatus, `✅ Dumped ${added} URLs to Cart! Total: ${queueData.length}`);
+                }
+            } catch(e) { 
+                if(e.message !== "QUOTA_EXCEEDED") updateStatus(targetStatus, `❌ Scrape Failed: ${e.message}`); 
+            }
+        }
+
+        async function fetchPlaylists(channelId, isLoadMore=false) {
+            $('qRevealBox').style.display = 'none'; isCartPinned = false; $('pinBtn').classList.remove('active'); $('pinBtn').innerText = '📌 Pin Cart';
+            if(!isLoadMore) { updateStatus('sheetStatus', "⏳ Finding Playlists..."); res=[]; $('filt').value=""; globalPT=''; currentMode='playlists'; scrapeArgs={channelId}; } 
+            else { updateStatus('resBotStatus', "⏳ Loading more..."); }
+            
+            let hd=token?{'Authorization':`Bearer ${token}`}:{};
+            try {
+                let pt=globalPT, f=0, mx=parseInt($('mBox').value);
+                do {
+                    let u=`https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${channelId}&maxResults=50`; if(!token) u+=`&key=${getK()}`; if(pt) u+=`&pageToken=${pt}`;
+                    let d = await (await fetch(u,{headers:hd})).json(); checkQuotaError(d);
+                    if(d.items) res.push(...d.items.map(i=>{ let s=i.snippet||{}; return { t:s.title||'Unknown', k:'playlist', p:i.id||'', c:s.channelId||'', ct:s.channelTitle||'Unknown', th:getThumb(s), dt:s.publishedAt }; }));
+                    pt=d.nextPageToken||''; f+= (d.items ? d.items.length : 0);
+                } while(pt && f<mx);
+                
+                globalPT = pt; $('loadMoreBtn').style.display = globalPT ? 'block' : 'none'; if(!showCat.playlist) toggleCat('playlist'); drawRes(); 
+                if(isLoadMore) updateStatus('resBotStatus', `✅ Showing ${res.length} playlists.`); else { closeMenu(); updateStatus('searchStatus', `✅ Found ${res.length} playlists.`); }
+            } catch(e) { 
+                if(e.message !== "QUOTA_EXCEEDED") {
+                    if(isLoadMore) updateStatus('resBotStatus', `❌ Search Failed: ${e.message}`); else updateStatus('sheetStatus', `❌ Search Failed: ${e.message}`); 
+                }
+            }
+        }
+
+        function filterRes() { drawRes(); }
+        
+        function drawRes() {
+            let f=$('filt').value.toLowerCase(); let h=''; let visibleCount = 0;
+            res.forEach((i,x)=>{
+                if(!showCat[i.k]) return; if(f && !(i.t||'').toLowerCase().includes(f)) return;
+                visibleCount++;
+                let l="", b="";
+                if(i.k==="video"){l=`https://www.youtube.com/watch?v=${i.v}`; b=`<span class="badge b-vid">VID</span>`;}
+                else if(i.k==="playlist"){l=`https://www.youtube.com/playlist?list=${i.p}`; b=`<span class="badge b-pl">PL</span>`;}
+                else if(i.k==="channel"){l=`https://www.youtube.com/channel/${i.c}`; b=`<span class="badge b-ch">CH</span>`;}
+                
+                let imgTag = i.th ? `<img src="${i.th}" class="yt-pic" loading="lazy">` : `<div class="yt-pic" style="display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;">No Image</div>`;
+                let safeTitle = (i.t||"").replace(/'/g,"\\'").replace(/"/g,'&quot;');
+                let metaHTML = `<div class="yt-meta">`; if(i.dt) metaHTML += `<span class="meta-date">📅 ${timeAgo(i.dt)}</span>`; if(i.dur) metaHTML += `<span class="meta-dur">⏱️ ${i.dur}</span>`; metaHTML += `</div>`;
+                
+                h+=`<div class="yt-item" onclick="toggleRow(event, 'i${x}')">
+                    <div class="yt-col-chk"><input type="checkbox" class="yt-chk" value="${l}" id="i${x}"></div>
+                    <div class="yt-col-img">${imgTag}</div>
+                    <div class="yt-col-dat"><div class="yt-ttl">${b} ${i.t}</div><div class="yt-chn">${i.ct}</div>${metaHTML}</div>
+                    <div class="yt-col-opt"><button class="menu-btn" onclick="openMenu(event, '${i.k}', '${i.v||i.p||i.c}', '${i.c}', '${safeTitle}', '${l}')">⋮</button></div>
+                </div>`;
+            }); 
+            if(visibleCount === 0) $('resDiv').innerHTML="<div style='padding:20px;text-align:center;color:var(--text-muted);'>No items match filters.</div>"; else $('resDiv').innerHTML=h;
+        }
+
+        async function createSecretPlaylist() {
+            updateStatus('plStatus', ""); 
+            if(!token) return alert("You must sign in first.");
+            let txt = queueData.map(i=>i.u); if(!txt.length) { updateStatus('plStatus', "<span style='color:var(--danger)'>Cart is empty!</span>"); return; }
+
+            let invalidUrls = txt.filter(url => !url.includes('watch?v=')); let validIds = txt.filter(url => url.includes('watch?v=')).map(url => url.split('v=')[1].split('&')[0]);
+
+            if(invalidUrls.length > 0) {
+                if(confirm(`⚠️ Warning: Found ${invalidUrls.length} Channel/Playlist URLs in cart. Playlists can only contain Videos.\n\nClick OK to copy invalid URLs to clipboard and remove them, or Cancel to abort.`)) {
+                    navigator.clipboard.writeText(invalidUrls.join('\n')); queueData = queueData.filter(i => i.u.includes('watch?v=')); renderQueue();
+                    alert("Invalid URLs removed from cart. Click 'Create Playlist' again to proceed with videos only.");
+                }
+                return;
+            }
+
+            if(!validIds.length) return alert("No valid videos to add.");
+
+            updateStatus('plStatus', "<span style='color:var(--primary)'>⏳ Creating Private Playlist...</span>"); let hd = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+            try {
+                let pRes = await fetch('https://www.googleapis.com/youtube/v3/playlists?part=snippet,status', {
+                    method: 'POST', headers: hd, body: JSON.stringify({ snippet: { title: `Scraped List ${new Date().toLocaleDateString()}` }, status: { privacyStatus: "private" } })
+                });
+                let pData = await pRes.json(); checkQuotaError(pData); let pid = pData.id;
+
+                updateStatus('plStatus', `<span style='color:var(--primary)'>⏳ Injecting ${validIds.length} videos...</span>`);
+                for(let vid of validIds) {
+                    let d = await (await fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet', {
+                        method: 'POST', headers: hd, body: JSON.stringify({ snippet: { playlistId: pid, resourceId: { kind: "youtube#video", videoId: vid } } })
+                    })).json();
+                    checkQuotaError(d);
+                }
+                updateStatus('plStatus', `<span style='color:var(--success)'>✅ Playlist Created Successfully!</span>`);
+            } catch(e) { 
+                if(e.message === "QUOTA_EXCEEDED") return;
+                if(e.message.includes('401') || e.message.includes('403') || e.message.includes('Unauthorized') || e.message.includes('insufficient')) {
+                    updateStatus('plStatus', `<div style="background:rgba(192,92,92,0.1); border:1px solid var(--danger); padding:12px; border-radius:8px; margin-top:5px; text-align:left;"><span style='color:var(--danger);font-weight:bold;'>❌ No YouTube Channel Found</span><br><br>Your Google Account does not have an active YouTube Channel. The API cannot create a playlist without one.</div>`);
+                } else { updateStatus('plStatus', `<span style='color:var(--danger)'>❌ Error: ${e.message}</span>`); }
+            }
+        }
+
+        function genApp() {
+            if(!getK()&&!getC()) return alert("Enter an API Key first.");
+            let hc = document.documentElement.cloneNode(true);
+            
+            hc.querySelector('#qArea').innerText = ''; hc.querySelector('#qCount').innerText = '0';
+            
+            if(hc.querySelector('#setupWrapper')) hc.querySelector('#setupWrapper').remove();
+            let remVal = $('x_rem_z').innerText.trim(), emStr = remVal ? `Account: ${remVal}` : "Private App generated.";
+            let f = document.createElement('div'); f.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--text
