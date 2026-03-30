@@ -29,13 +29,11 @@
         .fake-input{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px;min-height:46px;outline:none;cursor:text;}
         .fake-input:empty:before{content:attr(data-placeholder);color:var(--text-muted);}
 
-        /* SINGLE LINE CART */
         .cart-box{background:var(--input-bg); border:2px dashed var(--primary); padding:10px 15px; border-radius:8px; text-align:center; cursor:pointer; user-select:none; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:10px;}
         .cart-box:active{transform:scale(0.98); background:var(--border);}
         .cart-text{font-size:15px; font-weight:bold; color:var(--primary); margin:0;}
 
-        /* EXPORT QUEUE & PIN */
-        .queue-box{width:100%;padding:12px;margin-top:5px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:13px;min-height:100px;max-height:250px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;user-select:text;}
+        .queue-box{width:100%;padding:12px;margin-top:5px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:13px;min-height:100px;max-height:350px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;user-select:text;}
         #pinBtn{background:var(--card); border:1px solid var(--border); color:var(--text); border-radius:6px; cursor:pointer; font-size:14px; padding:6px 10px; font-weight:bold; margin-bottom:5px; transition:0.2s;}
         #pinBtn.active{background:var(--primary); color:#fff; border-color:var(--primary);}
 
@@ -96,7 +94,6 @@
         .bm-text{background:transparent; border:none; padding:8px 12px; font-size:13px; color:var(--text); cursor:pointer; font-weight:bold; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;}
         .bm-del{background:var(--danger); border:none; padding:8px 12px; font-size:12px; color:#fff; cursor:pointer;}
 
-        /* VAULT ACCOUNTS */
         .vault-item{display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:10px; border-radius:8px; margin-top:8px;}
         .vault-item.active-key{border-color:var(--success); background:rgba(92, 156, 111, 0.1);}
         .vault-info{flex:1; cursor:pointer;}
@@ -119,7 +116,7 @@
     </div>
 
     <div class="section" id="appUI">
-        <div id="lockMsg" onclick="$('setupWrapper').style.display='block';$('setupWrapper').scrollIntoView({behavior: 'smooth'})" style="text-align:center;color:var(--danger);font-weight:600;padding:12px;background:rgba(192,92,92,0.1);border-radius:8px;margin-bottom:15px;cursor:pointer;">🔒 App Locked. Enter an API Key below to unlock.</div>
+        <div id="lockMsg" onclick="$('setupWrapper').scrollIntoView({behavior: 'smooth'})" style="text-align:center;color:var(--danger);font-weight:600;padding:12px;background:rgba(192,92,92,0.1);border-radius:8px;margin-bottom:15px;cursor:pointer;display:none;">🔒 App Locked. Select an API Account below.</div>
         
         <form action="javascript:void(0);" onsubmit="runSearch(); return false;">
             <div style="margin-bottom:10px;">
@@ -297,7 +294,7 @@
         <div class="section" style="border:2px dashed var(--primary)">
             <div class="toggle-header" onclick="toggleSec('setupBody', 'setupIcon')"><span id="setupIcon">➖</span> API Account Vault</div>
             <div id="setupBody">
-                <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.4;">Paste your keys here. The app unlocks instantly. Bitwarden Autofill is supported.</div>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.4;">Paste your keys here. The app unlocks instantly. Bitwarden Autofill is fully supported.</div>
                 
                 <form onsubmit="event.preventDefault();">
                     <label class="lbl">API Key:</label>
@@ -574,51 +571,62 @@
 
         function checkCat() { if($('catBox').value === 'change_country') { changeRegionUI(); $('catBox').value = ''; } }
 
-        // BACKGROUND HEARTBEAT & UNLOCK ENGINE
+        // PERFORMANCE FIX: DYNAMIC STATUS BANNER
+        let lastUnlockState = null;
+
         function checkL() {
-            let u = getK().length > 0 || getC().length > 0 || token;
-            ['qBox','tBox','sortBox','catBox','mBox','mBoxMenu','sBtn','dAfter','dBefore','filt','bmBtn'].forEach(id=>{if($(id)) $(id).disabled=!u;});
-            let authBtn = $('authBtn');
-            if(authBtn) {
-                if(!getC()) { authBtn.style.display = 'none'; }
-                else {
-                    authBtn.style.display = 'block';
-                    if(token) { 
-                        authBtn.innerText = 'Log Out'; authBtn.classList.add('logged-in'); 
-                        $('subBtn').style.display = 'block'; $('plBtn').style.display = 'block'; $('plLink').style.display = 'block';
-                    } else { 
-                        authBtn.innerText = '👤 Sign In'; authBtn.classList.remove('logged-in'); 
-                        $('subBtn').style.display = 'none'; $('plBtn').style.display = 'none'; $('plLink').style.display = 'none';
+            let u = getK().length > 5 || getC().length > 5 || token;
+            
+            if(u !== lastUnlockState) {
+                lastUnlockState = u;
+                
+                ['qBox','tBox','sortBox','catBox','mBox','mBoxMenu','sBtn','dAfter','dBefore','filt','bmBtn'].forEach(id=>{if($(id)) $(id).disabled=!u;});
+                
+                let authBtn = $('authBtn');
+                let lockEl = $('lockMsg');
+                
+                // RESTORED DYNAMIC STATUS BANNER
+                if (lockEl) {
+                    lockEl.style.display = 'block';
+                    if (u) {
+                        lockEl.style.backgroundColor = 'rgba(92, 156, 111, 0.1)';
+                        lockEl.style.color = 'var(--success)';
+                        lockEl.innerHTML = '✅ App Unlocked & Ready.';
+                    } else {
+                        lockEl.style.backgroundColor = 'rgba(192,92,92,0.1)';
+                        lockEl.style.color = 'var(--danger)';
+                        lockEl.innerHTML = '🔒 App Locked. Select an API Account below.';
+                    }
+                }
+                
+                if(authBtn) {
+                    if(!getC()) { authBtn.style.display = 'none'; }
+                    else {
+                        authBtn.style.display = 'block';
+                        if(token) { 
+                            authBtn.innerText = 'Log Out'; authBtn.classList.add('logged-in'); 
+                            $('subBtn').style.display = 'block'; $('plBtn').style.display = 'block'; $('plLink').style.display = 'block';
+                        } else { 
+                            authBtn.innerText = '👤 Sign In'; authBtn.classList.remove('logged-in'); 
+                            $('subBtn').style.display = 'none'; $('plBtn').style.display = 'none'; $('plLink').style.display = 'none';
+                        }
                     }
                 }
             }
-            if(u&&!token) {
-                updateStatus('searchStatus', "<span style='color:var(--success)'>✅ Ready to Search.</span>");
-                if(!window.H_AK && $('setupWrapper').style.display === '') toggleSec('setupBody', 'setupIcon'); 
-                $('lockMsg').style.display = 'none';
-            }
-            else if(token) {
-                updateStatus('searchStatus', "<span style='color:var(--success)'>✅ Logged In.</span>");
-                $('lockMsg').style.display = 'none';
-            }
-            else { 
-                updateStatus('searchStatus', ""); 
-                $('setupWrapper').style.display = 'block'; $('lockMsg').style.display = 'block';
-            }
         }
         
-        // Quiet 500ms heartbeat to catch ghost autofill safely
+        // Quiet 500ms heartbeat safely catches Bitwarden autofills
         setInterval(checkL, 500);
 
         function toggleAuth() {
             if(!getC()) return alert("No Client ID found. Paste one or select a Vault account that has one.");
             if(token) { 
                 token = null; sessionStorage.removeItem('yt_session_token');
-                checkL(); updateStatus('searchStatus', "<span style='color:var(--warning)'>Logged out.</span>"); 
+                lastUnlockState = null; checkL(); updateStatus('searchStatus', "<span style='color:var(--warning)'>Logged out.</span>"); 
             } else { 
                 google.accounts.oauth2.initTokenClient({ 
                     client_id: getC(), scope: 'https://www.googleapis.com/auth/youtube', 
-                    callback: (r)=>{ if(r&&r.access_token){ token=r.access_token; sessionStorage.setItem('yt_session_token', token); checkL(); } } 
+                    callback: (r)=>{ if(r&&r.access_token){ token=r.access_token; sessionStorage.setItem('yt_session_token', token); lastUnlockState = null; checkL(); } } 
                 }).requestAccessToken(); 
             }
         }
@@ -746,35 +754,43 @@
         }
 
         function renderQueue() {
-            let out = "";
             let showT = qFormat.title, showD = qFormat.date, showDu = qFormat.dur, showC = qFormat.chan, showSep = qFormat.sep;
+            let anyMeta = showT || showD || showDu || showC;
+            let out = "";
 
             if(showSep) {
                 let groups = {}; queueData.forEach(i => { if(!groups[i.src]) groups[i.src] = []; groups[i.src].push(i); });
                 for(let src in groups) {
-                    out += `--- ${src} ---\n\n`; groups[src].forEach(i => out += formatQueueItem(i, showT, showD, showDu, showC) + '\n\n');
+                    out += `--- ${src} ---\n`; 
+                    groups[src].forEach(i => { 
+                        out += formatQueueItem(i, showT, showD, showDu, showC) + (anyMeta ? '\n\n' : '\n'); 
+                    }); 
                 }
-                out = out.trim();
             } else { 
-                out = queueData.map(i => formatQueueItem(i, showT, showD, showDu, showC)).join('\n\n'); 
+                out = queueData.map(i => formatQueueItem(i, showT, showD, showDu, showC)).join(anyMeta ? '\n\n' : '\n'); 
             }
             
-            $('qArea').innerText = out; $('qCount').innerText = queueData.length;
+            $('qArea').innerText = out.trim(); $('qCount').innerText = queueData.length;
         }
 
-        // NEW STACKED FORMAT GENERATOR
+        // SMART SEPARATOR FORMATTER
         function formatQueueItem(i, t, d, du, c) {
+            // If nothing is checked, return purely the bare URL.
+            if (!t && !d && !du && !c) return i.u;
+
             let out = "";
             if(t && i.t) out += `${i.t}\n`;
-            out += `${i.u}\n`;
+            out += `${i.u}`;
             
             let meta = [];
-            if(c && i.ct) meta.push(`Channel: ${i.ct}`);
-            if(d && i.dt) meta.push(`Date: ${timeAgo(i.dt)}`);
-            if(du && i.dur) meta.push(`Duration: ${i.dur}`);
+            if(c && i.ct) meta.push(`📺 Channel: ${i.ct}`);
+            if(d && i.dt) meta.push(`📅 Date: ${timeAgo(i.dt)}`);
+            if(du && i.dur) meta.push(`⏱️ Duration: ${i.dur}`);
             
-            if(meta.length > 0) out += meta.join(' | ');
-            return out.trim();
+            if(meta.length > 0) out += `\n${meta.join('\n')}`;
+            // Appends separator only when metadata is requested
+            out += `\n-------------------------`;
+            return out;
         }
 
         function clearQ() { queueData = []; renderQueue(); updateStatus('queueActionStatus', '✅ Cart Cleared.'); $('qRevealBox').style.display = 'none'; }
