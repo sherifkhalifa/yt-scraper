@@ -1075,4 +1075,14 @@
             
             if(hc.querySelector('#setupWrapper')) hc.querySelector('#setupWrapper').remove();
             let remVal = $('x_rem_z').innerText.trim(), emStr = remVal ? `Account: ${remVal}` : "Private App generated.";
-            let f = document.createElement('div'); f.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--text
+            let f = document.createElement('div'); f.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:20px;padding:15px;border-top:1px solid var(--border)">${emStr}</div>`;
+            hc.querySelector('body').appendChild(f);
+            
+            let scr = document.createElement('script'); scr.textContent = `window.H_AK="${getK()}";window.H_CID="${getC()}";window.H_REG="${currentRegion}";`; hc.querySelector('body').insertBefore(scr,hc.querySelector('body').firstChild);
+            
+            let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(["<!DOCTYPE html>\n<html lang='en'>\n"+hc.innerHTML+"\n</html>"], {type:'text/html'})); a.download = 'YT_Clean.html'; a.click();
+        }
+    </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</body>
+</html>
