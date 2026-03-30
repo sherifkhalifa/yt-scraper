@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YT Fast Scraper</title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root[data-theme="light"]{--bg:#f0f2f5;--card:#fff;--text:#333;--text-muted:#666;--border:#dadae0;--input-bg:#fafafa;--primary:#5c8bc0;--success:#5c9c6f;--warning:#c28c46;--danger:#c05c5c;--purple:#9074b3}
         :root[data-theme="dark"]{--bg:#121212;--card:#1e1e1e;--text:#e4e6eb;--text-muted:#aaa;--border:#333;--input-bg:#2a2a2a;--primary:#6b9fd4;--success:#6ba87e;--warning:#d9a05b;--danger:#d46b6b;--purple:#a689cc}
@@ -25,14 +24,21 @@
         label.lbl{display:block;margin-top:8px;font-size:13px;color:var(--text-muted);font-weight:600}
         input,select{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px}
         input:focus,select:focus{border-color:var(--primary);outline:none}
-        .row{display:flex;gap:10px;align-items:center} .row>div{flex:1}
+        .row{display:flex;gap:10px;align-items:center} 
         
         .fake-input{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px;min-height:46px;outline:none;cursor:text;}
         .fake-input:empty:before{content:attr(data-placeholder);color:var(--text-muted);}
 
-        .queue-box{width:100%;padding:12px;margin-top:6px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:15px;min-height:130px;max-height:300px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;user-select:text;}
-        .queue-box:empty:before{content:attr(data-placeholder);color:var(--text-muted);}
+        /* SMART CART UI */
+        .cart-box{background:var(--input-bg); border:2px dashed var(--primary); padding:15px; border-radius:12px; text-align:center; cursor:pointer; user-select:none; transition:0.2s;}
+        .cart-box:active{transform:scale(0.98); background:var(--border);}
+        .cart-icon{font-size:26px; margin-bottom:5px;}
+        .cart-text{font-size:16px; font-weight:bold; color:var(--primary);}
+        .cart-sub{font-size:12px; color:var(--text-muted); margin-top:4px;}
 
+        /* HIDDEN STATIC QUEUE BOX */
+        .queue-box{width:100%;padding:12px;margin-top:10px;box-sizing:border-box;background:var(--input-bg);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:14px;min-height:100px;max-height:250px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;user-select:text;display:none;}
+        
         .toggle-header{font-size:15px;font-weight:bold;color:var(--primary);cursor:pointer;display:flex;align-items:center;gap:8px;padding:5px 0;}
         .toggle-header span{font-family:monospace;font-size:18px;}
 
@@ -112,17 +118,28 @@
         <div id="lockMsg" onclick="$('setupWrapper').style.display='block';$('setupWrapper').scrollIntoView({behavior: 'smooth'})" style="text-align:center;color:var(--danger);font-weight:600;padding:12px;background:rgba(192,92,92,0.1);border-radius:8px;margin-bottom:15px;cursor:pointer;">🔒 App Locked. Tap here to setup keys.</div>
         
         <form action="javascript:void(0);" onsubmit="runSearch(); return false;">
-            <div class="row" style="align-items:flex-end; margin-bottom:10px;">
+            
+            <div style="margin-bottom:10px;">
+                <label class="lbl">🔍 Search Query, URL, or Target ID:</label>
+                <div style="position:relative;">
+                    <input type="search" id="qBox" class="big-search" placeholder="Type name, URL, or ID..." disabled required style="padding-right:45px;">
+                    <button type="button" id="bmBtn" onclick="addBookmark()" disabled title="Save Search" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none; font-size:22px; padding:4px; cursor:pointer;">⭐</button>
+                </div>
+            </div>
+
+            <div class="row" id="sortLimitRow" style="margin-bottom:10px;">
                 <div style="flex:3;">
-                    <label class="lbl">🔍 Search Query, URL, or Target ID:</label>
-                    <div style="position:relative;">
-                        <input type="search" id="qBox" class="big-search" placeholder="Type name, URL, or ID..." disabled required style="padding-right:45px;">
-                        <button type="button" id="bmBtn" onclick="addBookmark()" disabled title="Save Search" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none; font-size:22px; padding:4px; cursor:pointer;">⭐</button>
-                    </div>
+                    <label class="lbl">Sort By:</label>
+                    <select id="sortBox" disabled style="padding:14px; font-size:14px; font-weight:bold; border:2px solid var(--border); margin-top:0; cursor:pointer;">
+                        <option value="relevance" selected>Relevance (Default)</option>
+                        <option value="date">Upload Date (Newest First)</option>
+                        <option value="viewCount">View Count (Highest First)</option>
+                        <option value="rating">Rating (Highest Rated)</option>
+                    </select>
                 </div>
                 <div style="flex:1;">
-                    <label class="lbl">Limit (UI Results):</label>
-                    <select id="mBox" disabled style="padding:14px; font-weight:bold; border:2px solid var(--border); margin-top:0; cursor:pointer;">
+                    <label class="lbl">Limit:</label>
+                    <select id="mBox" disabled onchange="syncLimit(this.value)" style="padding:14px; font-weight:bold; border:2px solid var(--border); margin-top:0; cursor:pointer;">
                         <option value="25">25</option><option value="50" selected>50</option><option value="100">100</option><option value="250">250</option>
                     </select>
                 </div>
@@ -144,7 +161,7 @@
                 <summary>⚙️ API Options & Search Filters</summary>
                 
                 <div class="row" style="margin-top:10px;">
-                    <div>
+                    <div style="flex:2;">
                         <label class="lbl">API Type:</label>
                         <select id="tBox" disabled onchange="checkType()">
                             <option value="all" selected>All</option>
@@ -155,30 +172,39 @@
                         </select>
                     </div>
                     
-                    <div id="catDiv" style="display:none;">
-                        <label class="lbl">Category (Popular Only):</label>
-                        <select id="catBox" disabled>
-                            <option value="">Trending in Region (All Categories)</option>
-                            <option value="10">Music</option>
-                            <option value="20">Gaming</option>
-                            <option value="24">Entertainment</option>
-                            <option value="25">News & Politics</option>
-                            <option value="17">Sports</option>
-                            <option value="23">Comedy</option>
-                            <option value="1">Film & Animation</option>
-                            <option value="22">People & Blogs</option>
-                            <option value="28">Science & Tech</option>
-                            <option value="27">Education</option>
-                            <option value="2">Autos & Vehicles</option>
-                            <option value="15">Pets & Animals</option>
-                            <option value="26">Howto & Style</option>
+                    <div id="limitMenuDiv" style="flex:1; display:none;">
+                        <label class="lbl">Limit:</label>
+                        <select id="mBoxMenu" disabled onchange="syncLimit(this.value)">
+                            <option value="25">25</option><option value="50" selected>50</option><option value="100">100</option><option value="250">250</option>
                         </select>
                     </div>
                 </div>
                 
+                <div id="catDiv" style="display:none; margin-top:10px;">
+                    <label class="lbl">Category (Popular Only):</label>
+                    <select id="catBox" disabled onchange="checkCat()">
+                        <option value="">Trending in Region (All Categories)</option>
+                        <option value="10">Music</option>
+                        <option value="20">Gaming</option>
+                        <option value="24">Entertainment</option>
+                        <option value="25">News & Politics</option>
+                        <option value="17">Sports</option>
+                        <option value="23">Comedy</option>
+                        <option value="1">Film & Animation</option>
+                        <option value="22">People & Blogs</option>
+                        <option value="28">Science & Tech</option>
+                        <option value="27">Education</option>
+                        <option value="2">Autos & Vehicles</option>
+                        <option value="15">Pets & Animals</option>
+                        <option value="26">Howto & Style</option>
+                        <option disabled>──────────</option>
+                        <option value="change_country">🌍 Change Country...</option>
+                    </select>
+                </div>
+                
                 <div class="row" style="margin-top:10px;">
-                    <div><label class="lbl">Date After:</label><input type="date" id="dAfter" disabled></div>
-                    <div><label class="lbl">Date Before:</label><input type="date" id="dBefore" disabled></div>
+                    <div style="flex:1;"><label class="lbl">Date After:</label><input type="date" id="dAfter" disabled></div>
+                    <div style="flex:1;"><label class="lbl">Date Before:</label><input type="date" id="dBefore" disabled></div>
                 </div>
                 
                 <label class="lbl" style="margin-top:10px;">🧹 Local Result Filter:</label>
@@ -219,12 +245,18 @@
         <div id="resBotStatus" class="status-msg"></div>
     </div>
     
-    <div class="section">
-        <h3 style="color:var(--success);margin-top:0;font-size:16px">📦 Download Queue (<span id="qCount">0</span> URLs)</h3>
+    <div class="section" id="cartSectionWrapper">
+        <h3 style="color:var(--success);margin-top:0;font-size:16px">📦 Download Queue</h3>
         
-        <div id="qArea" class="queue-box" data-placeholder="Queued links will appear here..."></div>
+        <div id="cartSummary" class="cart-box" onclick="toggleCart()">
+            <div class="cart-icon">🛒</div>
+            <div class="cart-text"><span id="qCount">0</span> URLs in Cart</div>
+            <div class="cart-sub">Tap here to view or hide raw links.</div>
+        </div>
         
-        <div class="row" style="margin-top:10px;">
+        <div id="qArea" class="queue-box"></div>
+        
+        <div class="row" style="margin-top:15px;">
             <button class="btn-gry" onclick="clearQ()">Clear</button>
             <button class="btn-gry" onclick="copyQ()">Copy</button>
             <button class="btn-suc" style="background:#4285F4;" onclick="smartShare()">Share</button>
@@ -346,15 +378,16 @@
         }
 
         function updateQCount() {
-            let txt = $('qArea').innerText.trim();
-            let count = txt ? txt.split('\n').filter(s=>s).length : 0;
+            let txt = $('qArea').textContent.trim();
+            let count = txt ? txt.split('\n').filter(s=>s.trim()).length : 0;
             $('qCount').innerText = count;
         }
 
+        // 1. INSTANT DOM INITIALIZATION
         function initTheme() { document.documentElement.setAttribute('data-theme', localStorage.getItem('t')||'light'); }
         function toggleTheme() { let t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',t); localStorage.setItem('t',t); }
         
-        window.onload = function() {
+        document.addEventListener("DOMContentLoaded", function() {
             initTheme();
             if($('username_ak')&&localStorage.getItem('y_ak')) $('username_ak').value=localStorage.getItem('y_ak');
             if($('password_cid')&&localStorage.getItem('y_ci')) $('password_cid').value=localStorage.getItem('y_ci');
@@ -365,9 +398,26 @@
             
             updateRegBtn();
             renderBM(); checkL(); 
-            $('qArea').addEventListener('click', function(e) { e.preventDefault(); });
-            $('qArea').removeAttribute('contenteditable'); 
-        };
+        });
+
+        // 2. CART UI & SCROLL BOUNDARY COLLISION
+        function toggleCart() {
+            let q = $('qArea');
+            if(q.style.display === 'none' || q.style.display === '') {
+                q.style.display = 'block';
+            } else {
+                q.style.display = 'none';
+            }
+        }
+        
+        window.addEventListener('scroll', function() {
+            let cartSection = $('cartSummary');
+            if (!cartSection) return;
+            let rect = cartSection.getBoundingClientRect();
+            if (rect.bottom < 0 || rect.top > window.innerHeight) {
+                if($('qArea').style.display === 'block') $('qArea').style.display = 'none';
+            }
+        }, {passive: true});
 
         function updateRegBtn() {
             if($('regBtn')) $('regBtn').innerText = getFlagEmoji(currentRegion) + ' ' + currentRegion;
@@ -390,29 +440,54 @@
             else { b.style.display = 'none'; i.innerText = '➕'; }
         }
 
+        // 3. SHAPE-SHIFTING LAYOUT LOGIC
+        function syncLimit(val) {
+            $('mBox').value = val;
+            $('mBoxMenu').value = val;
+        }
+
+        function checkType() {
+            let isPop = $('tBox').value === 'popular';
+            
+            $('catDiv').style.display = isPop ? 'block' : 'none';
+            
+            if(isPop) {
+                $('qBox').removeAttribute('required');
+                $('sortLimitRow').style.display = 'none'; 
+                $('limitMenuDiv').style.display = 'block'; 
+            } else {
+                $('qBox').setAttribute('required', 'true');
+                $('sortLimitRow').style.display = 'flex'; 
+                $('limitMenuDiv').style.display = 'none'; 
+            }
+        }
+
+        function checkCat() {
+            if($('catBox').value === 'change_country') {
+                let r = prompt("Enter a 2-letter Country Code (e.g., EG, US, GB, SA, AE):", currentRegion);
+                if(r && r.trim().length === 2) {
+                    currentRegion = r.trim().toUpperCase();
+                    localStorage.setItem('yt_reg', currentRegion);
+                    updateCatLabel();
+                    updateStatus('searchStatus', `✅ Region successfully changed to ${currentRegion}`);
+                }
+                $('catBox').value = ''; 
+            }
+        }
+
+        function updateCatLabel() {
+            $('catBox').options[0].text = `Trending in ${currentRegion} (All Categories)`;
+        }
+
         function saveK() { 
             if($('username_ak')) localStorage.setItem('y_ak',$('username_ak').value.trim()); 
             if($('password_cid')) localStorage.setItem('y_ci',$('password_cid').value.trim()); 
             checkL(); 
         }
 
-        function jumpToSetup() {
-            let w = $('setupWrapper'); w.style.display = 'block';
-            let sb = $('setupBody'); let si = $('setupIcon');
-            if(sb.style.display === 'none') { sb.style.display = 'block'; si.innerText = '➖'; }
-            w.scrollIntoView({behavior: 'smooth', block: 'start'});
-        }
-
-        function checkType() {
-            let isPop = $('tBox').value === 'popular';
-            $('catDiv').style.display = isPop ? 'block' : 'none';
-            if(isPop) $('qBox').removeAttribute('required');
-            else $('qBox').setAttribute('required', 'true');
-        }
-
         function checkL() {
             let u = getK().length>10 || token;
-            ['qBox','tBox','catBox','mBox','sBtn','dAfter','dBefore','filt','bmBtn'].forEach(id=>{if($(id)) $(id).disabled=!u;});
+            ['qBox','tBox','sortBox','catBox','mBox','mBoxMenu','sBtn','dAfter','dBefore','filt','bmBtn'].forEach(id=>{if($(id)) $(id).disabled=!u;});
             let authBtn = $('authBtn');
             if(authBtn) {
                 if(!getC()) { authBtn.style.display = 'none'; }
@@ -455,12 +530,14 @@
             }
         }
 
+        // 4. SMART BOOKMARKS WITH SORT MEMORY
         function renderBM() {
             let d = $('bmDetails'), l = $('bmList');
             if(!bookmarks.length) { d.style.display = 'none'; return; }
             d.style.display = 'block';
             
-            bookmarks = bookmarks.map(b => typeof b === 'string' ? {q: b, t: 'all', c: ''} : b);
+            // Auto-upgrade legacy bookmarks to ensure they have the new 's' parameter
+            bookmarks = bookmarks.map(b => typeof b === 'string' ? {q: b, t: 'all', c: '', s: 'relevance'} : {s: 'relevance', ...b});
             
             l.innerHTML = bookmarks.map((b, i) => {
                 let lbl = b.q;
@@ -480,11 +557,12 @@
             let q = $('qBox').value.trim();
             let t = $('tBox').value;
             let c = $('catBox').value;
+            let s = $('sortBox').value;
             if(!q && t !== 'popular') return; 
 
-            let exists = bookmarks.find(b => b.q === q && b.t === t && b.c === c);
+            let exists = bookmarks.find(b => b.q === q && b.t === t && b.c === c && b.s === s);
             if(!exists) {
-                bookmarks.push({q, t, c}); localStorage.setItem('yt_bms', JSON.stringify(bookmarks));
+                bookmarks.push({q, t, c, s}); localStorage.setItem('yt_bms', JSON.stringify(bookmarks));
                 renderBM(); $('bmDetails').open = true;
             }
         }
@@ -493,6 +571,7 @@
             let b = bookmarks[i];
             $('qBox').value = b.q;
             $('tBox').value = b.t;
+            $('sortBox').value = b.s || 'relevance';
             checkType();
             $('catBox').value = b.c || '';
             window.scrollTo({top: 0, behavior: 'smooth'}); 
@@ -554,28 +633,36 @@
         }
 
         function clearQ() {
-            $('qArea').innerText = ''; updateQCount();
-            updateStatus('queueActionStatus', '✅ Queue Cleared.');
+            $('qArea').textContent = ''; 
+            updateQCount();
+            updateStatus('queueActionStatus', '✅ Cart Cleared.');
+            $('qArea').style.display = 'none';
         }
 
         function copyQ() {
-            let txt = $('qArea').innerText.trim();
+            let txt = $('qArea').textContent.trim();
             if(!txt) return updateStatus('queueActionStatus', '❌ Nothing to copy.');
             navigator.clipboard.writeText(txt);
-            let count = txt.split('\n').filter(s=>s).length;
+            let count = txt.split('\n').filter(s=>s.trim()).length;
             updateStatus('queueActionStatus', `✅ Copied ${count} URLs to clipboard!`);
         }
 
         function smartShare() {
-            let txt = $('qArea').innerText.trim();
-            if(!txt) return updateStatus('queueActionStatus', "❌ Queue is empty!");
+            let txt = $('qArea').textContent.trim();
+            if(!txt) return updateStatus('queueActionStatus', "❌ Cart is empty!");
             
             let ua = navigator.userAgent.toLowerCase();
             let isLiteBrowser = ua.includes('via') || ua.includes('xbrowser') || ua.includes('aloha') || !navigator.share;
 
             if (!isLiteBrowser && window.isSecureContext) {
-                navigator.share({ text: txt }).then(() => updateStatus('queueActionStatus', "✅ Shared!")).catch(e => highlightQueueText());
-            } else { highlightQueueText(); }
+                navigator.share({ text: txt }).then(() => updateStatus('queueActionStatus', "✅ Shared!")).catch(e => {
+                    $('qArea').style.display = 'block';
+                    highlightQueueText();
+                });
+            } else { 
+                $('qArea').style.display = 'block';
+                highlightQueueText(); 
+            }
         }
 
         function highlightQueueText() {
@@ -601,11 +688,11 @@
         function addQ(targetId) { 
             let u=Array.from(document.querySelectorAll('.yt-chk:checked')).map(b=>b.value).filter(v=>v); 
             if(!u.length) return updateStatus(targetId, "❌ Nothing selected!"); 
-            let exist = new Set($('qArea').innerText.split('\n').map(s=>s.trim()).filter(s=>s));
+            let exist = new Set($('qArea').textContent.split('\n').map(s=>s.trim()).filter(s=>s));
             u.forEach(link => exist.add(link));
-            $('qArea').innerText = Array.from(exist).join('\n'); 
+            $('qArea').textContent = Array.from(exist).join('\n'); 
             updateQCount();
-            updateStatus(targetId, `✅ Added ${u.length} items. Total queue: ${exist.size} URLs.`); 
+            updateStatus(targetId, `✅ Added ${u.length} items. Cart now has ${exist.size} URLs.`); 
         }
 
         function loadMore() {
@@ -634,12 +721,15 @@
             drawRes(); 
         }
 
+        // 5. API SEARCH LOGIC INCORPORATING CUSTOM SORTING
         async function runSearch(isLoadMore = false) {
+            $('qArea').style.display = 'none'; // Auto-hide cart text on new action
             if(!getK()&&!token) return; 
             
             let q=$('qBox').value.trim();
             let apiType = $('tBox').value;
             let cat = $('catBox').value;
+            let sortType = $('sortBox').value;
 
             if(!q && apiType !== 'popular') return; 
             
@@ -653,6 +743,7 @@
             } else { updateStatus('resBotStatus', "⏳ Loading more..."); }
 
             try {
+                // Ensure we read limit from synced mBox
                 let pt=globalPT, f=0, mx=parseInt($('mBox').value), hd=token?{'Authorization':`Bearer ${token}`}:{};
                 let aft=$('dAfter').value, bef=$('dBefore').value;
                 
@@ -687,11 +778,13 @@
                     while(f<mx){
                         let u=`search?part=snippet&maxResults=50&safeSearch=strict`; if(!token) u+=`&key=${getK()}`; 
                         
+                        // Apply specific overrides if popular, otherwise apply custom sort
                         if(apiType === 'popular') {
                             u+=`&order=viewCount&type=video`;
                             if(cat) u+=`&videoCategoryId=${cat}`;
-                        } else if(apiType !== 'all') {
-                            u+=`&type=${apiType}`;
+                        } else {
+                            if(apiType !== 'all') u+=`&type=${apiType}`;
+                            if(sortType !== 'relevance') u+=`&order=${sortType}`;
                         }
 
                         u+= (q.startsWith("UC")&&q.length===24) ? `&channelId=${q}` : `&q=${encodeURIComponent(q)}`; 
@@ -724,6 +817,7 @@
         }
 
         async function getSubs(isLoadMore=false) {
+            $('qArea').style.display = 'none'; 
             if(!token) return alert("Must be signed in.");
             if(!isLoadMore) { updateStatus('searchStatus', "⏳ Loading Subscriptions..."); res=[]; $('filt').value=""; globalPT=''; currentMode='subs'; }
             else { updateStatus('resBotStatus', "⏳ Loading more..."); }
@@ -757,6 +851,7 @@
         }
 
         async function scrape(id, type, viewOnly, isLoadMore=false) {
+            $('qArea').style.display = 'none'; 
             let targetStatus = viewOnly && isLoadMore ? 'resBotStatus' : (viewOnly ? 'searchStatus' : 'sheetStatus');
             
             if(!isLoadMore) {
@@ -807,16 +902,17 @@
                     drawRes(); fetchDurations();
                     updateStatus(targetStatus, `✅ Showing ${res.length} videos.`);
                 } else {
-                    let exist = new Set($('qArea').innerText.split('\n').map(s=>s.trim()).filter(s=>s));
+                    let exist = new Set($('qArea').textContent.split('\n').map(s=>s.trim()).filter(s=>s));
                     tempRes.forEach(item => exist.add(`https://www.youtube.com/watch?v=${item.v}`));
-                    $('qArea').innerText = Array.from(exist).join('\n'); 
+                    $('qArea').textContent = Array.from(exist).join('\n'); 
                     updateQCount();
-                    updateStatus(targetStatus, `✅ Dumped ${tempRes.length} URLs to queue! Total Queue: ${exist.size}`);
+                    updateStatus(targetStatus, `✅ Dumped ${tempRes.length} URLs to Cart! Total: ${exist.size}`);
                 }
             } catch(e) { updateStatus(targetStatus, `❌ Scrape Failed: ${e.message}`); }
         }
 
         async function fetchPlaylists(channelId, isLoadMore=false) {
+            $('qArea').style.display = 'none'; 
             if(!isLoadMore) {
                 updateStatus('sheetStatus', "⏳ Finding Playlists..."); res=[]; $('filt').value="";
                 globalPT=''; currentMode='playlists'; scrapeArgs={channelId};
@@ -865,7 +961,7 @@
                 else if(i.k==="playlist"){l=`https://www.youtube.com/playlist?list=${i.p}`; b=`<span class="badge b-pl">PL</span>`;}
                 else if(i.k==="channel"){l=`https://www.youtube.com/channel/${i.c}`; b=`<span class="badge b-ch">CH</span>`;}
                 
-                let imgTag = i.th ? `<img src="${i.th}" class="yt-pic">` : `<div class="yt-pic" style="display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;">No Image</div>`;
+                let imgTag = i.th ? `<img src="${i.th}" class="yt-pic" loading="lazy">` : `<div class="yt-pic" style="display:flex;align-items:center;justify-content:center;color:#888;font-size:12px;">No Image</div>`;
                 let safeTitle = (i.t||"").replace(/'/g,"\\'").replace(/"/g,'&quot;');
                 
                 let metaHTML = `<div class="yt-meta">`;
@@ -895,18 +991,18 @@
         async function createSecretPlaylist() {
             updateStatus('plStatus', ""); 
             if(!token) return alert("You must sign in first.");
-            let txt = $('qArea').innerText.split('\n').map(s=>s.trim()).filter(s=>s);
-            if(!txt.length) { updateStatus('plStatus', "<span style='color:var(--danger)'>Queue is empty!</span>"); return; }
+            let txt = $('qArea').textContent.split('\n').map(s=>s.trim()).filter(s=>s);
+            if(!txt.length) { updateStatus('plStatus', "<span style='color:var(--danger)'>Cart is empty!</span>"); return; }
 
             let invalidUrls = txt.filter(url => !url.includes('watch?v='));
             let validIds = txt.filter(url => url.includes('watch?v=')).map(url => url.split('v=')[1].split('&')[0]);
 
             if(invalidUrls.length > 0) {
-                if(confirm(`⚠️ Warning: Found ${invalidUrls.length} Channel/Playlist URLs in queue. Playlists can only contain Videos.\n\nClick OK to copy invalid URLs to clipboard and remove them, or Cancel to abort.`)) {
+                if(confirm(`⚠️ Warning: Found ${invalidUrls.length} Channel/Playlist URLs in cart. Playlists can only contain Videos.\n\nClick OK to copy invalid URLs to clipboard and remove them, or Cancel to abort.`)) {
                     navigator.clipboard.writeText(invalidUrls.join('\n'));
-                    $('qArea').innerText = txt.filter(url => url.includes('watch?v=')).join('\n');
+                    $('qArea').textContent = txt.filter(url => url.includes('watch?v=')).join('\n');
                     updateQCount();
-                    alert("Invalid URLs removed from queue. Click 'Create Playlist' again to proceed with videos only.");
+                    alert("Invalid URLs removed from cart. Click 'Create Playlist' again to proceed with videos only.");
                 }
                 return;
             }
@@ -951,18 +1047,26 @@
         function genApp() {
             if(!getK()&&!getC()) return alert("Paste keys first.");
             let hc = document.documentElement.cloneNode(true);
+            
+            hc.querySelector('#qArea').textContent = '';
+            hc.querySelector('#qCount').innerText = '0';
+            
             if(hc.querySelector('#setupWrapper')) hc.querySelector('#setupWrapper').remove();
             let remVal = $('x_rem_z').innerText.trim();
             let emStr = remVal ? `Account: ${remVal}` : "Private App generated.";
             let f = document.createElement('div');
             f.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:20px;padding:15px;border-top:1px solid var(--border)">${emStr}</div>`;
             hc.querySelector('body').appendChild(f);
+            
             let scr = document.createElement('script');
-            scr.textContent = `window.H_AK="${getK()}";window.H_CID="${getC()}";window.H_REG="${currentRegion}";window.onload=function(){initTheme();checkL();document.querySelectorAll('.dyn-url').forEach(e=>e.innerText=window.location.origin);};`;
+            scr.textContent = `window.H_AK="${getK()}";window.H_CID="${getC()}";window.H_REG="${currentRegion}";`;
             hc.querySelector('body').insertBefore(scr,hc.querySelector('body').firstChild);
+            
             let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(["<!DOCTYPE html>\n<html lang='en'>\n"+hc.innerHTML+"\n</html>"], {type:'text/html'}));
             a.download = 'YT_Clean.html'; a.click();
         }
     </script>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </body>
 </html>
